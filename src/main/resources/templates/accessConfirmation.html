@@ -1,0 +1,56 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org"
+      xmlns:sec="http://www.thymeleaf.org/extras/spring-security">
+<head>
+    <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+    <meta http-equiv="Content-Type" content="text/html; charset=utf-8"/>
+    <title>authorize to access</title>
+    <link rel="stylesheet" href="../static/assets/bootstrap/css/bootstrap.min.css"
+          th:href="@{/assets/bootstrap/css/bootstrap.min.css}"/>
+</head>
+
+<body>
+
+<div class="container">
+    <th:block sec:authorize="hasAnyRole('ROLE_USER','USER','STORE')">
+        <h2>Please Confirm</h2>
+
+        <p>
+            You hereby authorize "
+            <span th:text="${client.clientId}"/>
+            " to access your protected resources.
+        </p>
+
+        <form id="confirmationForm" name="confirmationForm"
+              action="/oauth/authorize" method="post">
+            <input name="user_oauth_approval" value="true" type="hidden"/>
+            <ul class="list-unstyled">
+                <li th:each="scope,scopeIter:${scopes}">
+                    <span th:text="${scope.key}"></span>:
+                    <div class="form-check form-check-inline">
+                        <input class="form-check-input" type="radio" th:name="${scope.key}" value="true"
+                               th:id="${scope.key+'_approve'}"
+                               th:checked="${scope.value}"/>
+                        <label class="form-check-label" th:for="${scope.key+'_approve'}">同意</label>
+                    </div>
+                    <div class="form-check form-check-inline">
+                        <input class="form-check-input" type="radio" th:name="${scope.key}" value="false"
+                               th:id="${scope.key+'_deny'}"
+                               th:checked="${!scope.value}"/>
+                        <label class="form-check-label" th:for="${scope.key+'_deny'}">拒绝</label>
+                    </div>
+                </li>
+            </ul>
+            <button class="btn btn-primary" type="submit">确认</button>
+            <a class="btn btn-info btn-sm" th:href="@{${from}}">Go back</a>
+        </form>
+
+    </th:block>
+</div>
+<script src="../static/assets/jquery-3.3.1.min.js"
+        th:src="@{/assets/jquery-3.3.1.min.js}"></script>
+<script src="../static/assets/bootstrap/js/bootstrap.min.js"
+        th:src="@{/assets/bootstrap/js/bootstrap.min.js}"></script>
+<script th:src="@{/assets/localforage.min.js}" src="../static/assets/localforage.min.js"></script>
+</body>
+</html>
