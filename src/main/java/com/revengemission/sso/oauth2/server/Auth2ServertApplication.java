@@ -11,9 +11,9 @@ import org.springframework.boot.autoconfigure.SpringBootApplication;
 * https://projects.spring.io/spring-security-oauth/docs/oauth2.html
 * */
 @SpringBootApplication
-public class SSOServertApplication {
+public class Auth2ServertApplication {
 
     public static void main(String[] args) {
-        SpringApplication.run(SSOServertApplication.class, args);
+        SpringApplication.run(Auth2ServertApplication.class, args);
     }
 }

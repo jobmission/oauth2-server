@@ -13,13 +13,15 @@
     <groupId>com.revengemission.sso</groupId>
     <artifactId>oauth2-server</artifactId>
     <packaging>jar</packaging>
-    <name>sso-server</name>
+    <name>oauth2-server</name>
+    <description>oauth2-server with resource server</description>
 
     <properties>
         <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
         <project.reporting.outputEncoding>UTF-8</project.reporting.outputEncoding>
         <java.version>1.8</java.version>
         <security.oauth2.version>2.3.0.RELEASE</security.oauth2.version>
+        <spring.security.jwt.version>1.0.9.RELEASE</spring.security.jwt.version>
     </properties>
 
 
@@ -44,6 +46,12 @@
             <groupId>org.springframework.security.oauth</groupId>
             <artifactId>spring-security-oauth2</artifactId>
             <version>${security.oauth2.version}</version>
+        </dependency>
+
+        <dependency>
+            <groupId>org.springframework.security</groupId>
+            <artifactId>spring-security-jwt</artifactId>
+            <version>${spring.security.jwt.version}</version>
         </dependency>
 
         <dependency>
@@ -84,6 +92,18 @@
             <plugin>
                 <groupId>org.springframework.boot</groupId>
                 <artifactId>spring-boot-maven-plugin</artifactId>
+            </plugin>
+
+            <plugin>
+                <groupId>org.apache.maven.plugins</groupId>
+                <artifactId>maven-resources-plugin</artifactId>
+                <configuration>
+                    <nonFilteredFileExtensions>
+                        <nonFilteredFileExtension>ttf</nonFilteredFileExtension>
+                        <nonFilteredFileExtension>woff</nonFilteredFileExtension>
+                        <nonFilteredFileExtension>jkd</nonFilteredFileExtension>
+                    </nonFilteredFileExtensions>
+                </configuration>
             </plugin>
         </plugins>
     </build>

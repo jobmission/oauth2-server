@@ -22,8 +22,8 @@ public class SecurityConfiguration extends WebSecurityConfigurerAdapter {
     public void globalUserDetails(AuthenticationManagerBuilder auth) throws Exception {
         auth.inMemoryAuthentication()
                 //.passwordEncoder(new MyPasswordEncoder())//在此处应用自定义PasswordEncoder
-                .withUser("zhangsan").password("password").roles("USER", "CLIENT", "TRUSTED_CLIENT").and()
-                .withUser("lisi").password("password").roles("USER", "CLIENT", "TRUSTED_CLIENT");
+                .withUser("zhangsan").password("password").roles("USER").and()
+                .withUser("lisi").password("password").roles("USER");
     }
 
     @Override
@@ -39,10 +39,9 @@ public class SecurityConfiguration extends WebSecurityConfigurerAdapter {
 
     @Override
     protected void configure(HttpSecurity http) throws Exception {
-        // @formatter:off
         http
                 .authorizeRequests()
-                .antMatchers("/success", "/signIn", "/security_check").permitAll()
+                .antMatchers("/signIn", "/security_check").permitAll()
                 .anyRequest().authenticated()
                 .and()
                 .exceptionHandling()
@@ -57,6 +56,5 @@ public class SecurityConfiguration extends WebSecurityConfigurerAdapter {
                 .failureUrl("/signIn?authentication_error=true")
                 .loginPage("/signIn").loginProcessingUrl("/security_check").permitAll().and()
                 .httpBasic().disable();
-        // @formatter:on
     }
 }
