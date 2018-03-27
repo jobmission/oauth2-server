@@ -8,23 +8,32 @@ import org.springframework.security.config.annotation.authentication.builders.Au
 import org.springframework.security.config.annotation.web.builders.HttpSecurity;
 import org.springframework.security.config.annotation.web.builders.WebSecurity;
 import org.springframework.security.config.annotation.web.configuration.WebSecurityConfigurerAdapter;
+import org.springframework.security.core.userdetails.UserDetailsService;
+import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.security.crypto.password.PasswordEncoder;
 
 @Configuration
 public class SecurityConfiguration extends WebSecurityConfigurerAdapter {
 
+
+    @Autowired
+    UserDetailsService userDetailsService;
+
+
     @Bean
-    public PasswordEncoder passwordEncoder() {
-        return new MyPasswordEncoder();
+    PasswordEncoder passwordEncoder() {
+        return new BCryptPasswordEncoder();
     }
 
     @Autowired
     public void globalUserDetails(AuthenticationManagerBuilder auth) throws Exception {
-        auth.inMemoryAuthentication()
-                //.passwordEncoder(new MyPasswordEncoder())//在此处应用自定义PasswordEncoder
-                .withUser("zhangsan").password("password").roles("USER").and()
-                .withUser("lisi").password("password").roles("USER");
+//        auth.inMemoryAuthentication()
+//                .withUser("zhangsan").password("password").roles("USER").and()
+//                .withUser("lisi").password("password").roles("USER");
+
+        auth.userDetailsService(userDetailsService);
     }
+
 
     @Override
     public void configure(WebSecurity web) throws Exception {
@@ -54,7 +63,6 @@ public class SecurityConfiguration extends WebSecurityConfigurerAdapter {
                 .and()
                 .formLogin()
                 .failureUrl("/signIn?authentication_error=true")
-                .loginPage("/signIn").loginProcessingUrl("/security_check").permitAll().and()
-                .httpBasic().disable();
+                .loginPage("/signIn").loginProcessingUrl("/security_check").permitAll();
     }
 }
