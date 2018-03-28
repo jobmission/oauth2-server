@@ -1,4 +1,4 @@
-package com.revengemission.sso.oauth2.server;
+package com.revengemission.sso.oauth2.server.utils;
 
 import com.fasterxml.jackson.annotation.JsonInclude;
 import com.fasterxml.jackson.core.JsonProcessingException;

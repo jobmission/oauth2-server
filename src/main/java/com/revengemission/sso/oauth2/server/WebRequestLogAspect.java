@@ -1,5 +1,6 @@
 package com.revengemission.sso.oauth2.server;
 
+import com.revengemission.sso.oauth2.server.utils.JSONUtil;
 import org.aspectj.lang.JoinPoint;
 import org.aspectj.lang.annotation.AfterReturning;
 import org.aspectj.lang.annotation.Aspect;

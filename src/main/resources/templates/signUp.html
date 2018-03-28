@@ -1,0 +1,94 @@
+<!DOCTYPE HTML>
+<html xmlns:th="http://www.thymeleaf.org">
+<head>
+    <meta charset="utf-8"/>
+    <meta http-equiv="Content-Type" content="text/html; charset=UTF-8"/>
+    <meta http-equiv="X-UA-Compatible" content="IE=edge"/>
+    <meta name="viewport" content="width=device-width, initial-scale=1"/>
+    <!-- The above 3 meta tags *must* come first in the head; any other head content must come *after* these tags -->
+
+    <title>sign up</title>
+    <link rel="stylesheet" href="../static/assets/bootstrap/css/bootstrap.min.css"
+          th:href="@{/assets/bootstrap/css/bootstrap.min.css}"/>
+    <style type="text/css">
+    </style>
+</head>
+
+<body>
+<section>
+    <div class="container mt-5">
+        <div class="row">
+            <div class="offset-3 col-6">
+                <form id="signUpForm" action="/signUp" method="post" class="form-horizontal">
+                    <h3 class="text-center">注册</h3>
+                    <div class="form-group">
+                        <input type="text" name="username" class="form-control" id="username" required="required"
+                               placeholder="登录名"/>
+                        <i class="fa fa-user"></i>
+                    </div>
+                    <div class="form-group help">
+                        <input type="password" name="password" class="form-control" id="password" required="required"
+                               placeholder="密　码"/>
+                        <i class="fa fa-lock"></i>
+                        <a href="#" class="fa fa-question-circle"></a>
+                    </div>
+                    <div class="form-group help">
+                        <input type="password" name="confirmPassword" class="form-control" id="confirmPassword" required="required"
+                               placeholder="确认密码"/>
+                        <i class="fa fa-lock"></i>
+                        <a href="#" class="fa fa-question-circle"></a>
+                    </div>
+                    <div class="form-group">
+                        <button type="submit" class="btn btn-primary">注册</button>
+                    </div>
+                </form>
+            </div>
+        </div>
+    </div>
+</section>
+<script src="../static/assets/jquery-3.3.1.min.js"
+        th:src="@{/assets/jquery-3.3.1.min.js}"></script>
+<script src="../static/assets/bootstrap/js/bootstrap.min.js"
+        th:src="@{/assets/bootstrap/js/bootstrap.min.js}"></script>
+<script th:src="@{/assets/localforage.min.js}" src="../static/assets/localforage.min.js"></script>
+<script th:inline="javascript">
+    /*<![CDATA[*/
+    $(document).ready(function () {
+
+        function trimBlank(str) {
+            return str.replace(/(^\s*)|(\s*$)/g, '')
+        }
+
+        $("#signUpForm").on("submit", function (e) {
+            if ($("#username").val() == null || trimBlank($("#username").val()) == '') {
+                $("#username").focus();
+                e.preventDefault();
+                return false;
+            }
+
+            if ($("#password").val() == null || $("#password").val().trim() == '') {
+                $("#password").focus();
+                e.preventDefault();
+                return false;
+            }
+
+            if ($("#confirmPassword").val() == null || $("#confirmPassword").val().trim() == '') {
+                $("#confirmPassword").focus();
+                e.preventDefault();
+                return false;
+            }
+
+            if ($("#confirmPassword").val() != $("#password").val()) {
+                $("#confirmPassword").focus();
+                e.preventDefault();
+                return false;
+            }
+
+            $("#signUpForm").submit();
+        })
+    });
+    /*]]>*/
+</script>
+
+</body>
+</html>

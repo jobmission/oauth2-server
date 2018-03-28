@@ -19,7 +19,7 @@
     <div class="container mt-5">
         <div class="row">
             <div class="offset-3 col-6">
-                <form id="signinForm" action="/security_check" method="post" class="form-horizontal">
+                <form id="signInForm" action="/security_check" method="post" class="form-horizontal">
                     <h3 class="text-center">登录</h3>
                     <div class="form-group">
                         <input type="text" name="username" class="form-control" id="username" required="required"
@@ -37,7 +37,8 @@
                             <input type="checkbox" id="rememberUsername" name="check"/>
                             <label for="rememberUsername">记住用户名</label>
                         </div>
-                        <button type="submit" id="signin" class="btn btn-primary">登录</button>
+                        <button type="submit" class="btn btn-primary">登录</button>
+                        <a class="btn btn-sm" href="/signUp">注册</a>
                     </div>
                 </form>
             </div>
@@ -67,7 +68,7 @@
             console.log(err);
         });
 
-        $("#signinForm").on("submit", function () {
+        $("#signInForm").on("submit", function () {
 
             if ($("#rememberUsername").prop("checked")) {
                 localforage.setItem('username', $("#username").val()).then(function (value) {
@@ -86,7 +87,7 @@
             }
 
 
-            $(this).parents("#signinForm").submit();
+            $(this).parents("#signInForm").submit();
         })
     });
     /*]]>*/

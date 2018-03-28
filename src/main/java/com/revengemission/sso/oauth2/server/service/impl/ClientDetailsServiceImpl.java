@@ -1,4 +1,4 @@
-package com.revengemission.sso.oauth2.server.service;
+package com.revengemission.sso.oauth2.server.service.impl;
 
 import com.revengemission.sso.oauth2.server.persistence.entity.OauthClientEntity;
 import com.revengemission.sso.oauth2.server.persistence.repository.OauthClientRepository;

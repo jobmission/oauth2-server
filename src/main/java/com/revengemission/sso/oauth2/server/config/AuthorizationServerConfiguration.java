@@ -1,6 +1,6 @@
 package com.revengemission.sso.oauth2.server.config;
 
-import com.revengemission.sso.oauth2.server.service.ClientDetailsServiceImpl;
+import com.revengemission.sso.oauth2.server.service.impl.ClientDetailsServiceImpl;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.beans.factory.annotation.Value;
