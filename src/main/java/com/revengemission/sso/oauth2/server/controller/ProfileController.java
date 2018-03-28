@@ -1,35 +1,95 @@
 package com.revengemission.sso.oauth2.server.controller;
 
+import com.fasterxml.jackson.annotation.JsonFormat;
+import com.revengemission.sso.oauth2.server.domain.EntityNotFoundException;
+import com.revengemission.sso.oauth2.server.domain.UserAccount;
+import com.revengemission.sso.oauth2.server.service.UserAccountService;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.format.annotation.DateTimeFormat;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PostMapping;
+import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.ResponseBody;
 
 import java.security.Principal;
+import java.util.Date;
 import java.util.HashMap;
 import java.util.Map;
 
 @Controller
 public class ProfileController {
 
+    private Logger log = LoggerFactory.getLogger(this.getClass());
+
+    @Autowired
+    UserAccountService userAccountService;
+
     @ResponseBody
     @GetMapping("/user/me")
     public Map<String, String> info(Principal principal) {
         Map<String, String> result = new HashMap<>();
-        result.put("username", principal.getName());
+        try {
+            UserAccount userAccount = userAccountService.findByUsername(principal.getName());
+            result.put("username", principal.getName());
+            result.put("gender", userAccount.getGender());
+        } catch (EntityNotFoundException e) {
+            if (log.isErrorEnabled()) {
+                log.error("findByUsername exception", e);
+            }
+        }
+
         return result;
     }
 
-    @GetMapping("/user/profile")
+    @GetMapping(value = {"/", "/user/profile"})
     public String profile(Principal principal,
                           Model model) {
+        try {
+            UserAccount userAccount = userAccountService.findByUsername(principal.getName());
+            model.addAttribute("userAccount", userAccount);
+        } catch (EntityNotFoundException e) {
+            if (log.isErrorEnabled()) {
+                log.error("findByUsername exception", e);
+            }
+        }
+
         return "profile";
     }
 
     @PostMapping("/user/profile")
     public String handleProfile(Principal principal,
+                                @RequestParam(value = "nickName", required = false) String nickName,
+                                @RequestParam(value = "avatarUrl", required = false) String avatarUrl,
+                                @RequestParam(value = "email", required = false) String email,
+                                @RequestParam(value = "mobile", required = false) String mobile,
+                                @RequestParam(value = "province", required = false) String province,
+                                @RequestParam(value = "city", required = false) String city,
+                                @RequestParam(value = "address", required = false) String address,
+                                @JsonFormat(pattern = "MM-dd-yyyy") @DateTimeFormat(pattern = "MM-dd-yyyy")
+                                @RequestParam(value = "birthday", required = false) Date birthday,
                                 Model model) {
-        return "profile";
+
+        try {
+            UserAccount userAccount = userAccountService.findByUsername(principal.getName());
+            userAccount.setNickName(nickName);
+            userAccount.setAvatarUrl(avatarUrl);
+            userAccount.setEmail(email);
+            userAccount.setMobile(mobile);
+            userAccount.setProvince(province);
+            userAccount.setCity(city);
+            userAccount.setAddress(address);
+            userAccount.setBirthday(birthday);
+            userAccountService.updateById(userAccount);
+        } catch (EntityNotFoundException e) {
+            if (log.isErrorEnabled()) {
+                log.error("findByUsername exception", e);
+            }
+        }
+
+        return "redirect:/user/profile";
     }
 }

@@ -1,5 +1,6 @@
 package com.revengemission.sso.oauth2.server.service.impl;
 
+import com.revengemission.sso.oauth2.server.domain.EntityNotFoundException;
 import com.revengemission.sso.oauth2.server.domain.JsonObjects;
 import com.revengemission.sso.oauth2.server.domain.UserAccount;
 import com.revengemission.sso.oauth2.server.persistence.entity.UserAccountEntity;
@@ -14,7 +15,7 @@ import org.springframework.data.domain.Pageable;
 import org.springframework.data.domain.Sort;
 import org.springframework.stereotype.Service;
 
-import java.util.List;
+import java.util.Optional;
 
 @Service
 public class UserAccountServiceImpl implements UserAccountService {
@@ -27,7 +28,7 @@ public class UserAccountServiceImpl implements UserAccountService {
 
     @Override
     public JsonObjects<UserAccount> listByRole(String role, int pageNum, int pageSize, String sortField, String sortOrder) {
-        JsonObjects<UserAccount> jsonObjects=new JsonObjects<>();
+        JsonObjects<UserAccount> jsonObjects = new JsonObjects<>();
         Sort sort = null;
         if (StringUtils.equalsIgnoreCase(sortOrder, "asc")) {
             sort = new Sort(Sort.Direction.ASC, sortField);
@@ -39,8 +40,8 @@ public class UserAccountServiceImpl implements UserAccountService {
         if (page.getContent() != null && page.getContent().size() > 0) {
             jsonObjects.setCurrentPage(pageNum);
             jsonObjects.setTotalPage(page.getTotalPages());
-            page.getContent().forEach(u->{
-                jsonObjects.getObjectElements().add(dozerMapper.map(u,UserAccount.class));
+            page.getContent().forEach(u -> {
+                jsonObjects.getObjectElements().add(dozerMapper.map(u, UserAccount.class));
             });
         }
         return jsonObjects;
@@ -52,5 +53,38 @@ public class UserAccountServiceImpl implements UserAccountService {
         UserAccountEntity userAccountEntity = dozerMapper.map(userAccount, UserAccountEntity.class);
         userAccountRepository.save(userAccountEntity);
         return dozerMapper.map(userAccountEntity, UserAccount.class);
+    }
+
+    @Override
+    public UserAccount updateById(UserAccount userAccount) throws EntityNotFoundException {
+        Optional<UserAccountEntity> entityOptional = userAccountRepository.findById(Long.parseLong(userAccount.getId()));
+        entityOptional.orElseThrow(EntityNotFoundException::new);
+        entityOptional.ifPresent(e -> {
+            UserAccountEntity userAccountEntity = entityOptional.get();
+            if (StringUtils.isNotEmpty(userAccount.getPassword())) {
+                userAccountEntity.setPassword(userAccount.getPassword());
+            }
+            userAccountEntity.setNickName(userAccount.getNickName());
+            userAccountEntity.setBirthday(userAccount.getBirthday());
+            userAccountEntity.setMobile(userAccount.getMobile());
+            userAccountEntity.setProvince(userAccount.getProvince());
+            userAccountEntity.setCity(userAccount.getCity());
+            userAccountEntity.setAddress(userAccount.getAddress());
+            userAccountEntity.setAvatarUrl(userAccount.getAvatarUrl());
+            userAccountEntity.setEmail(userAccount.getEmail());
+
+            userAccountRepository.save(userAccountEntity);
+        });
+        return userAccount;
+    }
+
+    @Override
+    public UserAccount findByUsername(String username) throws EntityNotFoundException {
+        UserAccountEntity userAccountEntity = userAccountRepository.findByUsername(username);
+        if (userAccountEntity != null) {
+            return dozerMapper.map(userAccountEntity, UserAccount.class);
+        } else {
+            throw new EntityNotFoundException(username + " not found!");
+        }
     }
 }

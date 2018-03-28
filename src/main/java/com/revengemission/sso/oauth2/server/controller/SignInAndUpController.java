@@ -47,7 +47,7 @@ public class SignInAndUpController {
         userAccount.setRole(RoleEnum.ROLE_USER.name());
         userAccount.setUsername(username);
         userAccount.setPassword(passwordEncoder.encode(password));
-        userAccountService.create(userAccount);
+        userAccount = userAccountService.create(userAccount);
         return "redirect:/?success=signUp";
     }
 }

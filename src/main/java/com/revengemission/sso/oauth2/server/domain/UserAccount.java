@@ -2,6 +2,8 @@ package com.revengemission.sso.oauth2.server.domain;
 
 import com.fasterxml.jackson.annotation.JsonInclude;
 
+import java.util.Date;
+
 @JsonInclude(JsonInclude.Include.NON_NULL)
 public class UserAccount extends BaseDomain {
     private String username;
@@ -14,6 +16,8 @@ public class UserAccount extends BaseDomain {
     private String province;
     private String city;
     private String address;
+    private Date birthday;
+    private String gender;
 
     public String getUsername() {
         return username;
@@ -93,5 +97,21 @@ public class UserAccount extends BaseDomain {
 
     public void setAddress(String address) {
         this.address = address;
+    }
+
+    public Date getBirthday() {
+        return birthday;
+    }
+
+    public void setBirthday(Date birthday) {
+        this.birthday = birthday;
+    }
+
+    public String getGender() {
+        return gender;
+    }
+
+    public void setGender(String gender) {
+        this.gender = gender;
     }
 }

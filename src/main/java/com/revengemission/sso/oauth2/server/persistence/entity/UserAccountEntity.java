@@ -3,6 +3,7 @@ package com.revengemission.sso.oauth2.server.persistence.entity;
 import javax.persistence.Entity;
 import javax.persistence.Table;
 import javax.persistence.UniqueConstraint;
+import java.util.Date;
 
 
 @Entity
@@ -19,6 +20,8 @@ public class UserAccountEntity extends BaseEntity {
     private String province;
     private String city;
     private String address;
+    private Date birthday;
+    private String gender;
 
     public String getUsername() {
         return username;
@@ -98,5 +101,21 @@ public class UserAccountEntity extends BaseEntity {
 
     public void setAddress(String address) {
         this.address = address;
+    }
+
+    public Date getBirthday() {
+        return birthday;
+    }
+
+    public void setBirthday(Date birthday) {
+        this.birthday = birthday;
+    }
+
+    public String getGender() {
+        return gender;
+    }
+
+    public void setGender(String gender) {
+        this.gender = gender;
     }
 }
