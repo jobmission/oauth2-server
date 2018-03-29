@@ -1,8 +1,6 @@
 package com.revengemission.sso.oauth2.server.domain;
 
-import java.io.IOException;
-
-public class EntityNotFoundException extends IOException {
+public class EntityNotFoundException extends RuntimeException {
     public EntityNotFoundException() {
     }
 

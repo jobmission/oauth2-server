@@ -36,6 +36,7 @@ public class ProfileController {
             UserAccount userAccount = userAccountService.findByUsername(principal.getName());
             result.put("username", principal.getName());
             result.put("gender", userAccount.getGender());
+            result.put("nickName", userAccount.getNickName());
         } catch (EntityNotFoundException e) {
             if (log.isErrorEnabled()) {
                 log.error("findByUsername exception", e);
@@ -90,6 +91,6 @@ public class ProfileController {
             }
         }
 
-        return "redirect:/user/profile";
+        return "redirect:/user/profile?success=update";
     }
 }

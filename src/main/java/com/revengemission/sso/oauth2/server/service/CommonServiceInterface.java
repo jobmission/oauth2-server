@@ -1,6 +1,7 @@
 package com.revengemission.sso.oauth2.server.service;
 
 
+import com.revengemission.sso.oauth2.server.domain.AlreadyExistsException;
 import com.revengemission.sso.oauth2.server.domain.EntityNotFoundException;
 import com.revengemission.sso.oauth2.server.domain.JsonObjects;
 import com.revengemission.sso.oauth2.server.domain.NotImplementException;
@@ -15,7 +16,7 @@ public interface CommonServiceInterface<T> {
         throw new NotImplementException();
     }
 
-    default T create(T t) {
+    default T create(T t) throws AlreadyExistsException{
         throw new NotImplementException();
     }
 

@@ -1,5 +1,6 @@
 package com.revengemission.sso.oauth2.server.service.impl;
 
+import com.revengemission.sso.oauth2.server.domain.AlreadyExistsException;
 import com.revengemission.sso.oauth2.server.domain.EntityNotFoundException;
 import com.revengemission.sso.oauth2.server.domain.JsonObjects;
 import com.revengemission.sso.oauth2.server.domain.UserAccount;
@@ -14,6 +15,7 @@ import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Pageable;
 import org.springframework.data.domain.Sort;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
 
 import java.util.Optional;
 
@@ -49,7 +51,12 @@ public class UserAccountServiceImpl implements UserAccountService {
     }
 
     @Override
-    public UserAccount create(UserAccount userAccount) {
+    @Transactional
+    public UserAccount create(UserAccount userAccount) throws AlreadyExistsException {
+        UserAccountEntity exist = userAccountRepository.findByUsername(userAccount.getUsername());
+        if (exist != null) {
+            throw new AlreadyExistsException(userAccount.getUsername() + " already exists!");
+        }
         UserAccountEntity userAccountEntity = dozerMapper.map(userAccount, UserAccountEntity.class);
         userAccountRepository.save(userAccountEntity);
         return dozerMapper.map(userAccountEntity, UserAccount.class);
