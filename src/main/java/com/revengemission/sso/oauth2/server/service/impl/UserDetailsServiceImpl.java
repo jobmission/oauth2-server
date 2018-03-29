@@ -22,7 +22,7 @@ public class UserDetailsServiceImpl implements UserDetailsService {
     @Override
     public UserDetails loadUserByUsername(String username) throws UsernameNotFoundException {
         UserAccountEntity userAccountEntity = userAccountRepository.findByUsername(username);
-        if (userAccountEntity != null) {
+        if (userAccountEntity != null && userAccountEntity.getRecordStatus() == 0) {
             List<GrantedAuthority> grantedAuthorities = new ArrayList<>();
             if (userAccountEntity.getRole() != null && !userAccountEntity.getRole().equals("")) {
                 GrantedAuthority grantedAuthority = new SimpleGrantedAuthority(userAccountEntity.getRole());

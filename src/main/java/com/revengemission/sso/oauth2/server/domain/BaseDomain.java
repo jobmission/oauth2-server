@@ -17,4 +17,5 @@ public class BaseDomain implements Serializable {
     private Integer recordStatus;//状态
     private Integer version;//更改次数/每次修改+1
     private String remarks;
+    private String additionalData;
 }

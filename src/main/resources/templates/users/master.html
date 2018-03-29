@@ -1,0 +1,260 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org"
+      xmlns:sec="http://www.thymeleaf.org/extras/spring-security">
+<head>
+    <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+    <meta http-equiv="Content-Type" content="text/html; charset=utf-8"/>
+    <title>authorize to access</title>
+    <link rel="stylesheet" href="../static/assets/bootstrap/css/bootstrap.min.css"
+          th:href="@{/assets/bootstrap/css/bootstrap.min.css}"/>
+    <!-- The link to the CSS that the grid needs -->
+    <link rel="stylesheet" type="text/css" media="screen"
+          th:href="@{/assets/jqGrid-master/css/ui.jqgrid-bootstrap.css}"/>
+</head>
+<body class="hold-transition skin-blue sidebar-mini">
+<div class="container">
+    <section class="mt-5">
+        <!-- Content Wrapper. Contains page content -->
+        <div class="content-wrapper">
+            <!-- Main content -->
+            <section class="content gridContainer">
+                <div style="margin-bottom: 20px;">
+                    <form class="form-inline">
+                        <div class="form-group">
+                            <input type="text" class="form-control" id="searchValue" placeholder="登录名">
+                        </div>
+                        <button type="button" class="btn btn-primary" id="search">搜索</button>
+                    </form>
+                </div>
+
+                <table id="jqGrid"></table>
+                <div id="jqGridPager"></div>
+                <br/>
+            </section>
+            <section class="content">
+                <form class="d-none" id="detailsForm">
+
+                    <input type="hidden" value="" id="id"/>
+
+                    <div class="form-group row">
+                        <label for="nickName" class="col-2 control-label text-right">昵称</label>
+                        <div class="col-6">
+                            <input type="text" class="form-control" id="nickName" placeholder="昵称" required="required"/>
+                        </div>
+                    </div>
+
+                    <div class="form-group row">
+                        <label for="password" class="col-2 control-label text-right">密码</label>
+                        <div class="col-6">
+                            <input type="text" class="form-control" id="password" placeholder="密码"/>
+                        </div>
+                    </div>
+                    <div class="form-group row">
+                        <label for="address" class="col-2 control-label text-right">地址</label>
+                        <div class="col-6">
+                            <input type="text" class="form-control" id="address" placeholder="地址"/>
+                        </div>
+                    </div>
+                    <div class="form-group row">
+                        <label class="col-2 control-label"></label>
+                        <div class="col-6">
+                            <button type="button" class="btn btn-info mr-5" id="update">保存</button>
+                            <button type="button" class="btn btn-danger d-none" id="delete">禁用</button>
+                        </div>
+                    </div>
+                </form>
+            </section>
+            <!-- /.content -->
+            <!-- /.content -->
+        </div>
+    </section>
+</div>
+</section>
+<!-- /.content-wrapper -->
+<footer class="main-footer">
+</footer>
+</div>
+
+
+<script src="../static/assets/jquery-3.3.1.min.js"
+        th:src="@{/assets/jquery-3.3.1.min.js}"></script>
+<script src="../static/assets/bootstrap/js/bootstrap.min.js"
+        th:src="@{/assets/bootstrap/js/bootstrap.min.js}"></script>
+<script src="../../static/assets/moment-with-locales.min.js"
+        th:src="@{/assets/moment-with-locales.min.js}"></script>
+<script th:src="@{/assets/localforage.min.js}" src="../static/assets/localforage.min.js"></script>
+
+<th:block th:inline="javascript">
+    <!-- We support more than 40 localizations -->
+    <script type="text/javascript" th:src="@{/assets/jqGrid-master/js/i18n/grid.locale-cn.js}"></script>
+    <!-- This is the Javascript file of jqGrid -->
+    <script type="text/javascript" th:src="@{/assets/jqGrid-master/js/jquery.jqGrid.min.js}"></script>
+
+    <script>
+        $.jgrid.defaults.responsive = true;
+        $.jgrid.defaults.styleUI = 'Bootstrap';
+    </script>
+    <script>
+
+        function formatBoolean(cellValue, options, rowObject) {
+            if (cellValue == null || cellValue == "") {
+                return "";
+            } else if (cellValue == true) {
+                return "是";
+            } else {
+                return "否";
+            }
+        }
+
+        function formatStatus(cellValue, options, rowObject) {
+            if (cellValue === null || cellValue === "") {
+                return "";
+            } else if (Number(cellValue) == -1) {
+                return "是";
+            } else {
+                return "否";
+            }
+        }
+
+        function formatDate(cellValue, options, rowObject) {
+            if (cellValue != null && cellValue != "") {
+                var day = moment(cellValue);
+                var formatted = day.format("YYYY-MM-DD HH:mm");
+                return formatted;
+            } else {
+                return "";
+            }
+
+        }
+
+        function formatButton(cellValue, options, rowObject) {
+
+            var userId = rowObject.id;
+            var buttonEdit = "<button class='btn btn-info btn-edit' data-user-id=" + userId + ">编辑</button>";
+            return buttonEdit;
+        }
+
+        $(document).ready(function () {
+            $("#jqGrid").jqGrid({
+                url: "/management/user/list",
+                datatype: "json",
+                mtype: 'post',
+                postData: {
+                    searchValue: function () {
+                        return $("#searchValue").val();
+                    }
+                },
+                colModel: [
+                    {label: 'id', name: 'id', key: true, width: 130, hidden: true},
+                    {label: '登录名', name: 'username', width: 150},
+                    {label: '昵称', name: 'nickName', width: 100},
+                    {label: '地址', name: 'address', width: 200},
+                    {label: '是否禁用', name: 'recordStatus', width: 80, formatter: formatStatus},
+                    {label: '创建时间', name: 'dateCreated', formatter: formatDate, width: 150},
+                    {label: '操作', formatter: formatButton}
+                ],
+                jsonReader: {
+                    repeatitems: false,
+                    id: "id",
+                    root: "objectElements",
+                    page: "currentPage",
+                    total: "totalPage",
+                    records: "total"
+                },
+                sortorder: 'desc',
+                width: $("#jqGrid").parent().width(),
+                shrinkToFit: false,
+                height: 230,
+                rowNum: 10,
+                viewrecords: true,
+                caption: '',
+                onSelectRow: function () {
+                    return false;
+                },
+                pager: "#jqGridPager"
+            }).trigger("reloadGrid");
+
+            $("#jqGrid").navGrid("#jqGridPager", {
+                edit: false,
+                add: false,
+                del: false,
+                search: false,
+                refresh: true,
+                view: false,
+                position: "left",
+                cloneToTop: false
+            });
+
+            $(".gridContainer").on("click", ".btn-edit", function () {
+                var userId = $(this).data("user-id");
+                $("#detailsForm").removeClass("d-none");
+                var url = "/management/user/details?id=" + userId;
+                $.get(url, function (data) {
+                    $("#id").val(data.id);
+                    $("#nickName").val(data.nickName);
+                    $("#address").val(data.address);
+                    $("#password").val('');
+                    if (data.recordStatus == -1) {
+                        $("#detailsForm #delete").text("启用");
+                    } else if (data.recordStatus == 0) {
+                        $("#detailsForm #delete").text("禁用");
+                    }
+                    $("#detailsForm #delete").data("record-status", data.recordStatus);
+                    $("#detailsForm #delete").removeClass("d-none");
+                    $("#message").removeClass("bg-danger").html("");
+                    $("#message").removeClass("bg-success").html("");
+                });
+            });
+
+
+            $("#update").click(function () {
+                $.ajax({
+                    type: 'POST',
+                    url: '/management/user/details',
+                    data: {
+                        id: $("#id").val(),
+                        nickName: $("#nickName").val(),
+                        address: $("#address").val(),
+                        password: $("#password").val()
+                    },
+                    success: function (data) {
+                        if (data.status == 20000) {
+                            $("#jqGrid").trigger("reloadGrid");
+                            $("#createNew").trigger("click");
+                            $("#detailsForm").addClass("d-none");
+                            alert("保存成功!");
+                        } else {
+                            alert(data.message);
+                        }
+                    }
+                });
+            });
+
+
+            $("#delete").click(function () {
+                var r = confirm($("#detailsForm #delete").text() + " ?");
+                if (r == true) {
+                    $.ajax({
+                        type: 'POST',
+                        url: '/management/user/details',
+                        data: {id: $("#id").val(), deleteOperation: $("#detailsForm #delete").data("record-status")},
+                        success: function (data) {
+                            $("#detailsForm").addClass("d-none");
+                            $("#jqGrid").trigger("reloadGrid");
+                            $("#createNew").trigger("click");
+                        }
+                    });
+                }
+
+            });
+
+
+            $("#search").click(function () {
+                $('#jqGrid').trigger('reloadGrid');
+            });
+
+        });
+    </script>
+</th:block>
+</body>
+</html>

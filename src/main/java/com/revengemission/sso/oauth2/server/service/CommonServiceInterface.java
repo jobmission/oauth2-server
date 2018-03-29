@@ -16,7 +16,7 @@ public interface CommonServiceInterface<T> {
         throw new NotImplementException();
     }
 
-    default T create(T t) throws AlreadyExistsException{
+    default T create(T t) throws AlreadyExistsException {
         throw new NotImplementException();
     }
 
@@ -29,6 +29,10 @@ public interface CommonServiceInterface<T> {
     }
 
     default void deleteById(long id) {
+        throw new NotImplementException();
+    }
+
+    default void updateRecordStatus(long id, int recordStatus) {
         throw new NotImplementException();
     }
 }

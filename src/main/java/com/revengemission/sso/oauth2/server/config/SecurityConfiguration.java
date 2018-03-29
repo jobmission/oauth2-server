@@ -1,5 +1,6 @@
 package com.revengemission.sso.oauth2.server.config;
 
+import com.revengemission.sso.oauth2.server.domain.RoleEnum;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
@@ -52,6 +53,7 @@ public class SecurityConfiguration extends WebSecurityConfigurerAdapter {
         http
                 .authorizeRequests()
                 .antMatchers("/signIn", "/signUp", "/security_check").permitAll()
+                .antMatchers("/management/**").hasAnyAuthority(RoleEnum.ROLE_ADMIN.name(), RoleEnum.ROLE_SUPER.name())
                 .anyRequest().authenticated()
                 .and()
                 .exceptionHandling()
