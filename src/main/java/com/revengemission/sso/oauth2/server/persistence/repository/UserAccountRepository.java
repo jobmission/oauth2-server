@@ -9,4 +9,6 @@ public interface UserAccountRepository extends JpaRepository<UserAccountEntity, 
     UserAccountEntity findByUsername(String username);
 
     Page<UserAccountEntity> findByRole(String role, Pageable page);
+
+    Page<UserAccountEntity> findByRoleAndUsernameLike(String role, String username, Pageable page);
 }

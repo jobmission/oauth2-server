@@ -4,7 +4,7 @@
 <head>
     <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
     <meta http-equiv="Content-Type" content="text/html; charset=utf-8"/>
-    <title>authorize to access</title>
+    <title>用户管理</title>
     <link rel="stylesheet" href="../static/assets/bootstrap/css/bootstrap.min.css"
           th:href="@{/assets/bootstrap/css/bootstrap.min.css}"/>
     <!-- The link to the CSS that the grid needs -->
@@ -250,6 +250,7 @@
 
 
             $("#search").click(function () {
+                $("#jqGrid").jqGrid("setGridParam", {page: 1});
                 $('#jqGrid').trigger('reloadGrid');
             });
 

@@ -1,17 +1,18 @@
 package com.revengemission.sso.oauth2.server.persistence.entity;
 
-import javax.persistence.Entity;
-import javax.persistence.Table;
-import javax.persistence.UniqueConstraint;
+import javax.persistence.*;
 import java.util.Date;
 
 
 @Entity
-@Table(uniqueConstraints = @UniqueConstraint(columnNames = {"username"}))
+@Table(uniqueConstraints = @UniqueConstraint(columnNames = {"username"}),
+        indexes = {@Index(columnList = "role,username")})
 public class UserAccountEntity extends BaseEntity {
 
+    @Column(columnDefinition = "VARCHAR(40)")
     private String username;
     private String password;
+    @Column(columnDefinition = "VARCHAR(20)")
     private String role;
     private String nickName;
     private String avatarUrl;

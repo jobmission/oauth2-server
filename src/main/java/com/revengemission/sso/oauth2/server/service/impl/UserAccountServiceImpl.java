@@ -29,7 +29,7 @@ public class UserAccountServiceImpl implements UserAccountService {
     Mapper dozerMapper;
 
     @Override
-    public JsonObjects<UserAccount> listByRole(String role, int pageNum, int pageSize, String sortField, String sortOrder) {
+    public JsonObjects<UserAccount> listByRole(String role, String username, int pageNum, int pageSize, String sortField, String sortOrder) {
         JsonObjects<UserAccount> jsonObjects = new JsonObjects<>();
         Sort sort = null;
         if (StringUtils.equalsIgnoreCase(sortOrder, "asc")) {
@@ -38,7 +38,7 @@ public class UserAccountServiceImpl implements UserAccountService {
             sort = new Sort(Sort.Direction.DESC, sortField);
         }
         Pageable pageable = PageRequest.of(pageNum - 1, pageSize, sort);
-        Page<UserAccountEntity> page = userAccountRepository.findByRole(role, pageable);
+        Page<UserAccountEntity> page = userAccountRepository.findByRoleAndUsernameLike(role, username + "%", pageable);
         if (page.getContent() != null && page.getContent().size() > 0) {
             jsonObjects.setCurrentPage(pageNum);
             jsonObjects.setTotalPage(page.getTotalPages());

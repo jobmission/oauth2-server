@@ -37,7 +37,7 @@ public class ManageUserController {
                                                 @RequestParam(value = "page", defaultValue = "1") Integer pageNum,
                                                 @RequestParam(value = "sidx", defaultValue = "id") String sortField,
                                                 @RequestParam(value = "sord", defaultValue = "desc") String sortOrder) {
-        return userAccountService.listByRole(RoleEnum.ROLE_USER.name(), pageNum, pageSize, sortField, sortOrder);
+        return userAccountService.listByRole(RoleEnum.ROLE_USER.name(), searchValue, pageNum, pageSize, sortField, sortOrder);
     }
 
     @GetMapping(value = "/details")
