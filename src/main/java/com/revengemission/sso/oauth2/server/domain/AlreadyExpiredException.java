@@ -1,11 +1,11 @@
 package com.revengemission.sso.oauth2.server.domain;
 
-public class ParameterException extends RuntimeException {
-    public ParameterException() {
+public class AlreadyExpiredException extends RuntimeException {
+    public AlreadyExpiredException() {
         super();
     }
 
-    public ParameterException(String message) {
+    public AlreadyExpiredException(String message) {
         super(message);
     }
 }

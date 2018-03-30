@@ -3,6 +3,7 @@ package com.revengemission.sso.oauth2.server.persistence.entity;
 import javax.persistence.Entity;
 import javax.persistence.Table;
 import javax.persistence.UniqueConstraint;
+import java.util.Date;
 
 @Entity
 @Table(uniqueConstraints = @UniqueConstraint(columnNames = {"clientId"}))
@@ -18,6 +19,7 @@ public class OauthClientEntity extends BaseEntity {
     private Integer refreshTokenValidity;
     private String additionalInformation;
     private String autoApprove;
+    private Date expirationDate;//客户端过期时间，比如应用于多店系统
 
 
     public String getClientId() {
@@ -106,5 +108,13 @@ public class OauthClientEntity extends BaseEntity {
 
     public void setAutoApprove(String autoApprove) {
         this.autoApprove = autoApprove;
+    }
+
+    public Date getExpirationDate() {
+        return expirationDate;
+    }
+
+    public void setExpirationDate(Date expirationDate) {
+        this.expirationDate = expirationDate;
     }
 }

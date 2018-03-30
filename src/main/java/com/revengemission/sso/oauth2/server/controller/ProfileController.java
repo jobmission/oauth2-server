@@ -4,6 +4,7 @@ import com.fasterxml.jackson.annotation.JsonFormat;
 import com.revengemission.sso.oauth2.server.domain.EntityNotFoundException;
 import com.revengemission.sso.oauth2.server.domain.UserAccount;
 import com.revengemission.sso.oauth2.server.service.UserAccountService;
+import org.apache.commons.lang3.StringUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -35,8 +36,12 @@ public class ProfileController {
         try {
             UserAccount userAccount = userAccountService.findByUsername(principal.getName());
             result.put("username", principal.getName());
-            result.put("gender", userAccount.getGender());
-            result.put("nickName", userAccount.getNickName());
+            if (StringUtils.isNotEmpty(userAccount.getGender())) {
+                result.put("gender", userAccount.getGender());
+            }
+            if (StringUtils.isNotEmpty(userAccount.getNickName())) {
+                result.put("nickName", userAccount.getNickName());
+            }
         } catch (EntityNotFoundException e) {
             if (log.isErrorEnabled()) {
                 log.error("findByUsername exception", e);

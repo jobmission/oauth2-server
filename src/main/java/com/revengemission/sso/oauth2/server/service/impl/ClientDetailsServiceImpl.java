@@ -1,5 +1,6 @@
 package com.revengemission.sso.oauth2.server.service.impl;
 
+import com.revengemission.sso.oauth2.server.domain.AlreadyExpiredException;
 import com.revengemission.sso.oauth2.server.persistence.entity.OauthClientEntity;
 import com.revengemission.sso.oauth2.server.persistence.repository.OauthClientRepository;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -13,6 +14,7 @@ import org.springframework.stereotype.Service;
 import org.springframework.util.StringUtils;
 
 import java.util.ArrayList;
+import java.util.Date;
 import java.util.List;
 
 @Service
@@ -26,6 +28,9 @@ public class ClientDetailsServiceImpl implements ClientDetailsService {
 
         OauthClientEntity oauthClientEntity = oauthClientRepository.findByClientId(clientId);
         if (oauthClientEntity != null) {
+            if (oauthClientEntity.getExpirationDate() != null && oauthClientEntity.getExpirationDate().compareTo(new Date()) < 0) {
+                throw new AlreadyExpiredException("clientId " + clientId + " already expired!");
+            }
             BaseClientDetails baseClientDetails = new BaseClientDetails();
             baseClientDetails.setClientId(oauthClientEntity.getClientId());
             if (!StringUtils.isEmpty(oauthClientEntity.getResourceIds())) {
@@ -37,6 +42,8 @@ public class ClientDetailsServiceImpl implements ClientDetailsService {
             }
             if (!StringUtils.isEmpty(oauthClientEntity.getAuthorizedGrantTypes())) {
                 baseClientDetails.setAuthorizedGrantTypes(StringUtils.commaDelimitedListToSet(oauthClientEntity.getAuthorizedGrantTypes()));
+            } else {
+                baseClientDetails.setAuthorizedGrantTypes(StringUtils.commaDelimitedListToSet("authorization_code"));
             }
             if (!StringUtils.isEmpty(oauthClientEntity.getWebServerRedirectUri())) {
                 baseClientDetails.setRegisteredRedirectUri(StringUtils.commaDelimitedListToSet(oauthClientEntity.getWebServerRedirectUri()));
