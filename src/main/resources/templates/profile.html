@@ -19,49 +19,49 @@
             <div class="col-sm-6">
                 <form id="profileForm" action="/user/profile" method="post">
                     <div class="form-group row">
-                        <label for="nickName" class="col-2 col-form-label">昵称</label>
-                        <div class="col-10">
+                        <label for="nickName" class="col-3 col-form-label text-right">昵称</label>
+                        <div class="col-9">
                             <input type="text" class="form-control" name="nickName" id="nickName" th:value="${userAccount.nickName}" placeholder="昵称">
                         </div>
                     </div>
                     <div class="form-group row">
-                        <label for="email" class="col-2 col-form-label">邮箱</label>
-                        <div class="col-10">
+                        <label for="email" class="col-3 col-form-label text-right">邮箱</label>
+                        <div class="col-9">
                             <input type="email" class="form-control" name="email" id="email" th:value="${userAccount.email}" placeholder="邮箱">
                         </div>
                     </div>
                     <div class="form-group row">
-                        <label for="mobile" class="col-2 col-form-label">手机号</label>
-                        <div class="col-10">
+                        <label for="mobile" class="col-3 col-form-label text-right">手机号</label>
+                        <div class="col-9">
                             <input type="text" class="form-control" name="mobile" id="mobile" th:value="${userAccount.mobile}" placeholder="手机号">
                         </div>
                     </div>
                     <div class="form-group row">
-                        <label for="province" class="col-2 col-form-label">省</label>
+                        <label for="province" class="col-3 col-form-label text-right">省/市</label>
                         <div class="col-4">
                             <input type="text" class="form-control" name="province" id="province" th:value="${userAccount.province}" placeholder="省">
                         </div>
-                        <label for="city" class="col-2 col-form-label text-right">市</label>
-                        <div class="col-4">
+                        <div class="col-5">
                             <input type="text" class="form-control" name="city" id="city" th:value="${userAccount.city}" placeholder="市">
                         </div>
                     </div>
                     <div class="form-group row">
-                        <label for="address" class="col-2 col-form-label">地址</label>
-                        <div class="col-10">
+                        <label for="address" class="col-3 col-form-label text-right">地址</label>
+                        <div class="col-9">
                             <input type="text" class="form-control" name="address" id="address" th:value="${userAccount.address}" placeholder="地址">
                         </div>
                     </div>
                     <div class="form-group row">
-                        <label for="birthday" class="col-2 col-form-label">生日</label>
-                        <div class="col-10">
+                        <label for="birthday" class="col-3 col-form-label text-right">生日</label>
+                        <div class="col-9">
                             <input type="text" class="form-control" name="birthday" id="birthday" th:value="${userAccount.birthday!=null?(#dates.format(userAccount.birthday,'MM-dd-yyyy')):('')}" placeholder="生日MM-dd-yyyy">
                         </div>
                     </div>
                     <div class="form-group row">
-                        <label for="birthday" class="col-2 col-form-label"></label>
-                        <div class="col-10">
+                        <label for="birthday" class="col-3 col-form-label"></label>
+                        <div class="col-9">
                             <button type="submit" class="btn btn-primary">提交</button>
+                            <a class="btn btn-info btn-sm" href="/logout">退出</a>
                         </div>
                     </div>
 

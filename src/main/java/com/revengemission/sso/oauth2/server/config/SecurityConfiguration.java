@@ -20,6 +20,14 @@ public class SecurityConfiguration extends WebSecurityConfigurerAdapter {
     @Autowired
     UserDetailsService userDetailsService;
 
+    @Autowired
+    CustomAuthenticationFailureHandler customAuthenticationFailureHandler;
+
+    @Autowired
+    CustomAuthenticationSuccessHandler customAuthenticationSuccessHandler;
+
+    @Autowired
+    CustomAccessDeniedHandler customAccessDeniedHandler;
 
     @Bean
     PasswordEncoder passwordEncoder() {
@@ -52,7 +60,7 @@ public class SecurityConfiguration extends WebSecurityConfigurerAdapter {
         //.sessionManagement().sessionCreationPolicy(SessionCreationPolicy.IF_REQUIRED)
         http
                 .authorizeRequests()
-                .antMatchers("/signIn", "/signUp", "/security_check").permitAll()
+                .antMatchers("/signIn", "/signUp", "/security_check", "/404").permitAll()
                 .antMatchers("/management/**").hasAnyAuthority(RoleEnum.ROLE_ADMIN.name(), RoleEnum.ROLE_SUPER.name())
                 .anyRequest().authenticated()
                 .and()
@@ -65,7 +73,10 @@ public class SecurityConfiguration extends WebSecurityConfigurerAdapter {
                 .logoutSuccessUrl("/signIn?out")
                 .and()
                 .formLogin()
-                .failureUrl("/signIn?authentication_error=true")
+                .failureHandler(customAuthenticationFailureHandler)
+                .successHandler(customAuthenticationSuccessHandler)
                 .loginPage("/signIn").loginProcessingUrl("/security_check").permitAll();
+
+        http.exceptionHandling().accessDeniedHandler(customAccessDeniedHandler);
     }
 }

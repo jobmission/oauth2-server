@@ -22,26 +22,35 @@
 
             </div>
             <div class="col-sm-6">
-                <form id="signInForm" action="/security_check" method="post" class="form-horizontal">
+                <form id="signInForm" action="/security_check" method="post">
                     <h3 class="text-center">登录</h3>
-                    <div class="form-group">
-                        <input type="text" name="username" class="form-control" id="username" required="required"
-                               placeholder="登录名"/>
-                        <i class="fa fa-user"></i>
-                    </div>
-                    <div class="form-group help">
-                        <input type="password" name="password" class="form-control" id="password" required="required"
-                               placeholder="密　码"/>
-                        <i class="fa fa-lock"></i>
-                        <a href="#" class="fa fa-question-circle"></a>
-                    </div>
-                    <div class="form-group">
-                        <div class="main-checkbox">
-                            <input type="checkbox" id="rememberUsername" name="check"/>
-                            <label for="rememberUsername">记住用户名</label>
+                    <div class="form-group row">
+                        <label for="username" class="col-3 col-form-label text-right">用户名</label>
+                        <div class="col-9">
+                            <input type="text" name="username" class="form-control" id="username" required="required"
+                                   placeholder="用户名"/>
+                            <i class="fa fa-user"></i>
                         </div>
-                        <button type="submit" class="btn btn-primary">登录</button>
-                        <a class="btn btn-sm" href="/signUp">注册</a>
+                    </div>
+                    <div class="form-group row">
+                        <label for="password" class="col-3 col-form-label text-right">密　码</label>
+                        <div class="col-9">
+                            <input type="password" name="password" class="form-control" id="password" required="required"
+                                   placeholder="密　码"/>
+                            <i class="fa fa-lock"></i>
+                        </div>
+                    </div>
+                    <div class="form-group row">
+                        <label class="col-3 col-form-label text-right"></label>
+                        <div class="col-9">
+                            <div class="main-checkbox">
+                                <input type="checkbox" id="rememberUsername" name="check"/>
+                                <label for="rememberUsername">记住用户名</label>
+                            </div>
+                            <button type="submit" class="btn btn-primary">登录</button>
+                            <a class="btn btn-sm" href="/signUp">注册</a>
+                        </div>
+
                     </div>
                 </form>
             </div>
