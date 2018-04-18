@@ -65,40 +65,35 @@ public class UserAccountServiceImpl implements UserAccountService {
     @Override
     public UserAccount retrieveById(long id) throws EntityNotFoundException {
         Optional<UserAccountEntity> entityOptional = userAccountRepository.findById(id);
-        entityOptional.orElseThrow(EntityNotFoundException::new);
-        return dozerMapper.map(entityOptional.get(), UserAccount.class);
+        return dozerMapper.map(entityOptional.orElseThrow(EntityNotFoundException::new), UserAccount.class);
     }
 
     @Override
     public UserAccount updateById(UserAccount userAccount) throws EntityNotFoundException {
         Optional<UserAccountEntity> entityOptional = userAccountRepository.findById(Long.parseLong(userAccount.getId()));
-        entityOptional.orElseThrow(EntityNotFoundException::new);
-        entityOptional.ifPresent(e -> {
-            if (StringUtils.isNotEmpty(userAccount.getPassword())) {
-                e.setPassword(userAccount.getPassword());
-            }
-            e.setNickName(userAccount.getNickName());
-            e.setBirthday(userAccount.getBirthday());
-            e.setMobile(userAccount.getMobile());
-            e.setProvince(userAccount.getProvince());
-            e.setCity(userAccount.getCity());
-            e.setAddress(userAccount.getAddress());
-            e.setAvatarUrl(userAccount.getAvatarUrl());
-            e.setEmail(userAccount.getEmail());
+        UserAccountEntity e = entityOptional.orElseThrow(EntityNotFoundException::new);
+        if (StringUtils.isNotEmpty(userAccount.getPassword())) {
+            e.setPassword(userAccount.getPassword());
+        }
+        e.setNickName(userAccount.getNickName());
+        e.setBirthday(userAccount.getBirthday());
+        e.setMobile(userAccount.getMobile());
+        e.setProvince(userAccount.getProvince());
+        e.setCity(userAccount.getCity());
+        e.setAddress(userAccount.getAddress());
+        e.setAvatarUrl(userAccount.getAvatarUrl());
+        e.setEmail(userAccount.getEmail());
 
-            userAccountRepository.save(e);
-        });
+        userAccountRepository.save(e);
         return userAccount;
     }
 
     @Override
     public void updateRecordStatus(long id, int recordStatus) {
         Optional<UserAccountEntity> entityOptional = userAccountRepository.findById(id);
-        entityOptional.orElseThrow(EntityNotFoundException::new);
-        entityOptional.ifPresent(e -> {
-            e.setRecordStatus(recordStatus);
-            userAccountRepository.save(e);
-        });
+        UserAccountEntity e = entityOptional.orElseThrow(EntityNotFoundException::new);
+        e.setRecordStatus(recordStatus);
+        userAccountRepository.save(e);
     }
 
     @Override
