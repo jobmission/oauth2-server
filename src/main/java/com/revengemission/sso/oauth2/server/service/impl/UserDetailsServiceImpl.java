@@ -1,11 +1,11 @@
 package com.revengemission.sso.oauth2.server.service.impl;
 
+import com.revengemission.sso.oauth2.server.domain.UserInfo;
 import com.revengemission.sso.oauth2.server.persistence.entity.UserAccountEntity;
 import com.revengemission.sso.oauth2.server.persistence.repository.UserAccountRepository;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.security.core.GrantedAuthority;
 import org.springframework.security.core.authority.SimpleGrantedAuthority;
-import org.springframework.security.core.userdetails.User;
 import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.security.core.userdetails.UserDetailsService;
 import org.springframework.security.core.userdetails.UsernameNotFoundException;
@@ -28,7 +28,7 @@ public class UserDetailsServiceImpl implements UserDetailsService {
                 GrantedAuthority grantedAuthority = new SimpleGrantedAuthority(userAccountEntity.getRole());
                 grantedAuthorities.add(grantedAuthority);
             }
-            return new User(userAccountEntity.getUsername(), userAccountEntity.getPassword(), grantedAuthorities);
+            return  new UserInfo(String.valueOf(userAccountEntity.getId()),userAccountEntity.getUsername(), userAccountEntity.getPassword(), grantedAuthorities);
         } else {
             throw new UsernameNotFoundException(username + " not found!");
         }

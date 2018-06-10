@@ -1,5 +1,6 @@
 package com.revengemission.sso.oauth2.server.config;
 
+import com.revengemission.sso.oauth2.server.domain.UserInfo;
 import com.revengemission.sso.oauth2.server.service.impl.ClientDetailsServiceImpl;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Qualifier;
@@ -8,6 +9,7 @@ import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.core.io.ClassPathResource;
 import org.springframework.security.authentication.AuthenticationManager;
+import org.springframework.security.oauth2.common.DefaultOAuth2AccessToken;
 import org.springframework.security.oauth2.common.OAuth2AccessToken;
 import org.springframework.security.oauth2.config.annotation.configurers.ClientDetailsServiceConfigurer;
 import org.springframework.security.oauth2.config.annotation.web.configuration.AuthorizationServerConfigurerAdapter;
@@ -19,6 +21,9 @@ import org.springframework.security.oauth2.provider.token.TokenStore;
 import org.springframework.security.oauth2.provider.token.store.JwtAccessTokenConverter;
 import org.springframework.security.oauth2.provider.token.store.JwtTokenStore;
 import org.springframework.security.oauth2.provider.token.store.KeyStoreKeyFactory;
+
+import java.util.HashMap;
+import java.util.Map;
 
 @Configuration
 @EnableAuthorizationServer
@@ -47,15 +52,13 @@ public class AuthorizationServerConfiguration extends AuthorizationServerConfigu
             public OAuth2AccessToken enhance(OAuth2AccessToken accessToken, OAuth2Authentication authentication) {
 
                 /** 自定义一些token属性 ***/
-//                final Map<String, Object> additionalInformation = new HashMap<>();
-//                additionalInformation.put("roles", authentication.getAuthorities());
-//
-//                //Important !,client_credentials mode ,no user!
-//                if (authentication.getUserAuthentication() != null) {
-//                  User user = (User) authentication.getUserAuthentication().getPrincipal();// 与登录时候放进去的UserDetail实现类一致
-//                    additionalInformation.put("username", authentication.getName());
-//                }
-//                ((DefaultOAuth2AccessToken) accessToken).setAdditionalInformation(additionalInformation);
+                final Map<String, Object> additionalInformation = new HashMap<>();
+                //Important !,client_credentials mode ,no user!
+                if (authentication.getUserAuthentication() != null) {
+                  UserInfo user = (UserInfo) authentication.getUserAuthentication().getPrincipal();// 与登录时候放进去的UserDetail实现类一致
+                    additionalInformation.put("userId", user.getUserId());
+                }
+                ((DefaultOAuth2AccessToken) accessToken).setAdditionalInformation(additionalInformation);
                 return super.enhance(accessToken, authentication);
             }
 

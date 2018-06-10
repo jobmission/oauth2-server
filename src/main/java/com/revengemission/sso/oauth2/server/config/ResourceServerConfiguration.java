@@ -22,7 +22,11 @@ public class ResourceServerConfiguration extends ResourceServerConfigurerAdapter
                 .and()
                 .authorizeRequests()
                 .antMatchers("/user/me").access("#oauth2.hasScope('read')")
-                .antMatchers("/photos").access("#oauth2.hasScope('read') or (!#oauth2.isOAuth() and hasRole('ROLE_USER'))");
+                .antMatchers("/photos").access("#oauth2.hasScope('read') or (!#oauth2.isOAuth() and hasRole('ROLE_USER'))").antMatchers("/photos").access("#oauth2.hasScope('read') or (!#oauth2.isOAuth() and hasRole('ROLE_USER'))")
+                .regexMatchers(HttpMethod.DELETE, "/photos/([^/].*?)/,*")
+                .access("#oauth2.clientHasRole('ROLE_TRUSTED_CLIENT') and (hasRole('ROLE_USER')) and #oauth2.hasScope('write')")
+                .regexMatchers(HttpMethod.POST, "/photos/([^/].*?)/,*")
+                .access("#oauth2.clientHasRole('ROLE_TRUSTED_CLIENT') and (hasRole('ROLE_USER')) and #oauth2.hasScope('write')");
     }
 
 }
