@@ -26,7 +26,8 @@ public class ResourceServerConfiguration extends ResourceServerConfigurerAdapter
                 .regexMatchers(HttpMethod.DELETE, "/photos/([^/].*?)/,*")
                 .access("#oauth2.clientHasRole('ROLE_TRUSTED_CLIENT') and (hasRole('ROLE_USER')) and #oauth2.hasScope('write')")
                 .regexMatchers(HttpMethod.POST, "/photos/([^/].*?)/,*")
-                .access("#oauth2.clientHasRole('ROLE_TRUSTED_CLIENT') and (hasRole('ROLE_USER')) and #oauth2.hasScope('write')");
+                .access("#oauth2.clientHasRole('ROLE_TRUSTED_CLIENT') and (hasRole('ROLE_USER')) and #oauth2.hasScope('write')")
+                .anyRequest().authenticated();
     }
 
 }
