@@ -29,6 +29,8 @@ java -jar oauth2-server-0.0.1-SNAPSHOT.jar
 或者指定文件覆盖默认配置
 java -jar oauth2-server-0.0.1-SNAPSHOT.jar --spring.config.additional-location=/path/to/override.properties
 ````
+## OAuth 2 Developers Guide
+[spring-security-oauth官方文档](https://projects.spring.io/spring-security-oauth/docs/oauth2.html)
 
 ## 注意！！！
 当Server和Client在一台机器上时，请配置域名代理，避免cookie相互覆盖
