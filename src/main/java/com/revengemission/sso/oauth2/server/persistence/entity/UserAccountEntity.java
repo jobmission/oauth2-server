@@ -9,6 +9,8 @@ import java.util.Date;
         indexes = {@Index(columnList = "role,username")})
 public class UserAccountEntity extends BaseEntity {
 
+    //用于记录用户在哪个子系统进行的注册
+    private String clientId;
     @Column(columnDefinition = "VARCHAR(40)")
     private String username;
     private String password;
@@ -23,6 +25,14 @@ public class UserAccountEntity extends BaseEntity {
     private String address;
     private Date birthday;
     private String gender;
+
+    public String getClientId() {
+        return clientId;
+    }
+
+    public void setClientId(String clientId) {
+        this.clientId = clientId;
+    }
 
     public String getUsername() {
         return username;

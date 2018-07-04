@@ -12,6 +12,7 @@ import java.util.Date;
 @EqualsAndHashCode(callSuper = true)
 @Data
 public class UserAccount extends BaseDomain {
+    private String clientId;
     private String username;
     private String password;
     private String role;

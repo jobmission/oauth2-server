@@ -61,6 +61,7 @@ public class SecurityConfiguration extends WebSecurityConfigurerAdapter {
         http
                 .authorizeRequests()
                 .antMatchers("/signIn", "/signUp", "/security_check", "/404").permitAll()
+                .antMatchers("/oauth/signUp").permitAll()
                 .antMatchers("/management/**").hasAnyAuthority(RoleEnum.ROLE_ADMIN.name(), RoleEnum.ROLE_SUPER.name())
                 .anyRequest().authenticated()
                 .and()

@@ -5,9 +5,6 @@ import org.springframework.boot.autoconfigure.SpringBootApplication;
 
 /*
 *
-* https://github.com/eugenp/tutorials/tree/master/spring-security-sso
-*
-*
 * https://projects.spring.io/spring-security-oauth/docs/oauth2.html
 * */
 @SpringBootApplication
