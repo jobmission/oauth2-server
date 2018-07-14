@@ -5,10 +5,15 @@ CREATE DATABASE IF NOT EXISTS oauth2_server DEFAULT CHARSET utf8 COLLATE utf8_ge
 grant all privileges on oauth2_server.* to oauth2_server@localhost identified by 'password_dev';
 初始化sql在src/main/resources/sql/init.sql,项目启动后可自行修改client_id等参数进行数据初始化
 ````
-## 支持的授权模式grant_type
+## 支持的授权模式grant_type</br>
+>>>4种授权模式：authorization_code,implicit,password,client_credentials;
+#####
+>>>**authorization_code模式：**,相对复杂，需要两步获取token
 ````
-4种授权模式：authorization_code,implicit,password,client_credentials;
-/oauth/token?grant_type=password&scope=read&client_id=SampleClientId&client_secret=secret&username=zhangsan&password=password
+1. Get /oauth/authorize?client_id=SampleClientId&response_type=code&redirect_uri=http://client.sso.com/login
+响应：
+重定向到：http://client.sso.com/login?code=1E37Xk，接收code,然后后端调用步骤2获取token
+2. Post /oauth/token?client_id=SampleClientId&client_secret=secret&grant_type=authorization_code&redirect_uri=http://client.sso.com/login&code=F8277u
 响应：
 {
     "access_token": "a.b.c",
@@ -20,7 +25,21 @@ grant all privileges on oauth2_server.* to oauth2_server@localhost identified by
     "jti": "823cdd71-4732-4f9d-b949-a37ceb4488a4"
 }
 ````
-## 非对称密钥token</br>
+>>>**password模式：**
+````
+Post /oauth/token?grant_type=password&scope=read&client_id=SampleClientId&client_secret=secret&username=zhangsan&password=password
+响应：
+{
+    "access_token": "a.b.c",
+    "token_type": "bearer",
+    "refresh_token": "d.e.f",
+    "expires_in": 43199,
+    "scope": "read",
+    "userId": "1",
+    "jti": "823cdd71-4732-4f9d-b949-a37ceb4488a4"
+}
+````
+## 非对称密钥生成，用于签名token</br>
 ````
 使用Java工具包中的keytool制作证书jwt.jks，设置别名为【jwt】，密码为【keypass】,替换位置src/main/resources/jwt.jks
 keytool -genkey -alias jwt -keyalg RSA -keysize 1024 -keystore jwt.jks -validity 3650
@@ -35,12 +54,12 @@ keytool -genkey -alias jwt -keyalg RSA -keysize 1024 -keystore jwt.jks -validity
 ````
 ## 刷新token</br>
 ````
-/oauth/token?grant_type=refresh_token&refresh_token=d.e.f
+Post /oauth/token?grant_type=refresh_token&refresh_token=d.e.f
 ````
 
 ## 注册新用户接口</br>
 ````
-/oauth/signUp?username=lisi&password=password&client_id=SampleClientId&client_secret=secret
+Post /oauth/signUp?username=lisi&password=password&client_id=SampleClientId&client_secret=secret
 ````
 
 ## 启动方法</br>
