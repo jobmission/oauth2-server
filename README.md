@@ -51,6 +51,7 @@ java -jar oauth2-server-0.0.1-SNAPSHOT.jar --spring.config.additional-location=/
 ````
 ## OAuth 2 Developers Guide
 [spring-security-oauth官方文档](https://projects.spring.io/spring-security-oauth/docs/oauth2.html)
+[Tutorial](https://spring.io/guides/tutorials/spring-boot-oauth2/)
 
 ## 注意！！！
 当Server和Client在一台机器上时，请配置域名代理，避免cookie相互覆盖
