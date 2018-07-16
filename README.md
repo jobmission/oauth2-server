@@ -8,12 +8,12 @@ grant all privileges on oauth2_server.* to oauth2_server@localhost identified by
 ## 支持的授权模式grant_type</br>
 >>>4种授权模式：authorization_code,implicit,password,client_credentials;
 #####
->>>**authorization_code模式：**,相对复杂，需要两步获取token
+>>>**authorization_code模式：**相对复杂，需要两步获取token
 ````
 1. Get /oauth/authorize?client_id=SampleClientId&response_type=code&redirect_uri=http://client.sso.com/login
 响应：
 重定向到：http://client.sso.com/login?code=1E37Xk，接收code,然后后端调用步骤2获取token
-2. Post /oauth/token?client_id=SampleClientId&client_secret=secret&grant_type=authorization_code&redirect_uri=http://client.sso.com/login&code=F8277u
+2. Post /oauth/token?client_id=SampleClientId&client_secret=secret&grant_type=authorization_code&redirect_uri=http://client.sso.com/login&code=1E37Xk
 响应：
 {
     "access_token": "a.b.c",
