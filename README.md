@@ -8,7 +8,7 @@ grant all privileges on oauth2_server.* to oauth2_server@localhost identified by
 ## 支持的授权模式grant_type</br>
 >>>4种授权模式：authorization_code,implicit,password,client_credentials;
 #####
->>>**authorization_code模式：**相对复杂，需要两步获取token
+>>>**authorization_code模式，用于PC端，页面跳转** 相对复杂，安全性最高，需要两步获取token
 ````
 1. Get /oauth/authorize?client_id=SampleClientId&response_type=code&redirect_uri=http://client.sso.com/login
 响应：
@@ -25,7 +25,7 @@ grant all privileges on oauth2_server.* to oauth2_server@localhost identified by
     "jti": "823cdd71-4732-4f9d-b949-a37ceb4488a4"
 }
 ````
->>>**password模式：**
+>>>**password模式，用于手机端或者其他无页面跳转场景**
 ````
 Post /oauth/token?grant_type=password&scope=read&client_id=SampleClientId&client_secret=secret&username=zhangsan&password=password
 响应：
@@ -39,16 +39,16 @@ Post /oauth/token?grant_type=password&scope=read&client_id=SampleClientId&client
     "jti": "823cdd71-4732-4f9d-b949-a37ceb4488a4"
 }
 ````
-## 非对称密钥生成，用于签名token</br>
+## 非对称密钥生成，用于签名token，用于在资源端本地验证token</br>
 ````
 使用Java工具包中的keytool制作证书jwt.jks，设置别名为【jwt】，密码为【keypass】,替换位置src/main/resources/jwt.jks
 keytool -genkey -alias jwt -keyalg RSA -keysize 1024 -keystore jwt.jks -validity 3650
 ````
-## 获取token公钥,用于本地直接验证token</br>
+## 获取token签名公钥,用于本地直接验证token</br>
 ````
 /oauth/token_key
 ````
-## 验证token是否有效</br>
+## 验证token是否有效，用于在资源端调用验证token</br>
 ````
 /oauth/check_token?token=a.b.c
 ````
