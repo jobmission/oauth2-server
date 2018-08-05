@@ -25,7 +25,7 @@ grant all privileges on oauth2_server.* to oauth2_server@localhost identified by
     "jti": "823cdd71-4732-4f9d-b949-a37ceb4488a4"
 }
 ````
->>>**password模式，用于手机端或者其他无页面跳转场景**
+>>>**password模式，用于手机端或者其他无页面跳转场景,应由后台服务端调用，保护client_id和client_secret**
 ````
 Post /oauth/token?grant_type=password&scope=read&client_id=SampleClientId&client_secret=secret&username=zhangsan&password=password
 响应：
@@ -57,7 +57,7 @@ keytool -genkey -alias jwt -keyalg RSA -keysize 1024 -keystore jwt.jks -validity
 Post /oauth/token?grant_type=refresh_token&refresh_token=d.e.f
 ````
 
-## 注册新用户接口</br>
+## 注册新用户接口，应由后台服务端调用，保护client_id和client_secret</br>
 ````
 Post /oauth/signUp?username=lisi&password=password&client_id=SampleClientId&client_secret=secret
 ````
@@ -74,3 +74,6 @@ java -jar oauth2-server-0.0.1-SNAPSHOT.jar --spring.config.additional-location=/
 
 ## 注意！！！
 当Server和Client在一台机器上时，请配置域名代理，避免cookie相互覆盖
+
+### todo list
+1.登陆注册验证码
