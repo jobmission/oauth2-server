@@ -38,6 +38,9 @@ public class CustomAuthenticationSuccessHandler extends SavedRequestAwareAuthent
             redirectUrl = savedRequest.getRedirectUrl();
         }
 
+        //移除验证码
+        request.getSession().removeAttribute(GlobalConstant.VERIFICATION_CODE);
+
         boolean isAjax = "XMLHttpRequest".equals(request
                 .getHeader("X-Requested-With")) || "apiLogin".equals(request
                 .getHeader("api-login"));

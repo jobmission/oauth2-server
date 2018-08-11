@@ -34,7 +34,7 @@ public class CustomAuthenticationFailureHandler extends SimpleUrlAuthenticationF
                                         HttpServletResponse response, AuthenticationException exception)
             throws IOException, ServletException {
         String username = request.getParameter("username");
-        logger.debug(username + " try to login");
+        log.debug(username + " try to login");
 
         boolean isAjax = "XMLHttpRequest".equals(request
                 .getHeader("X-Requested-With")) || "apiLogin".equals(request
@@ -44,28 +44,28 @@ public class CustomAuthenticationFailureHandler extends SimpleUrlAuthenticationF
             try {
                 ResponseResult responseMessage = new ResponseResult<>();
                 responseMessage.setStatus(GlobalConstant.ERROR);
-                responseMessage.setMessage("Username and password do not match");
+                responseMessage.setMessage(exception.getMessage());
                 ObjectMapper objectMapper = new ObjectMapper();
                 JsonGenerator jsonGenerator = objectMapper.getFactory().createGenerator(response.getOutputStream(),
                         JsonEncoding.UTF8);
                 objectMapper.writeValue(jsonGenerator, responseMessage);
             } catch (Exception ex) {
-                if (logger.isErrorEnabled()) {
-                    logger.error("Could not write JSON:", ex);
+                if (log.isErrorEnabled()) {
+                    log.error("Could not write JSON:", ex);
                 }
                 throw new HttpMessageNotWritableException("Could not write JSON: " + ex.getMessage(), ex);
             }
         } else {
-            String encodedId = "";
+            String encodedMessage = "";
             try {
-                encodedId = URLEncoder.encode("用户名和密码不匹配", "UTF-8");
+                encodedMessage = URLEncoder.encode(exception.getMessage(), "UTF-8");
             } catch (UnsupportedEncodingException e) {
-                if (logger.isErrorEnabled()) {
-                    logger.error("encodedId", e);
+                if (log.isErrorEnabled()) {
+                    log.error("encodedMessage", e);
                 }
             }
-            response.sendRedirect(failureUrl + "?authentication_error=true&loginMessage=" + encodedId);
-        /*super.onAuthenticationFailure(request, response, exception);*/
+            response.sendRedirect(failureUrl + "?authentication_error=true&loginMessage=" + encodedMessage);
+            /*super.onAuthenticationFailure(request, response, exception);*/
         }
     }
 }

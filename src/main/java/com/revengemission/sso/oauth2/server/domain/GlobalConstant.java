@@ -32,4 +32,6 @@ public class GlobalConstant {
     public final static String ERROR_MESSAGE_NOT_ENOUGH = "不够";
 
     public final static int RECORD_DEFAULT = 0;//默认初始值
+
+    public final static String VERIFICATION_CODE = "verificationCode";//验证码key
 }

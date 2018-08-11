@@ -44,15 +44,26 @@ public class SignInAndUpController {
         return "signUp";
     }
 
+    @ResponseBody
     @PostMapping("/signUp")
-    public String handleSignUp(HttpServletRequest request,
-                               Model model,
-                               @RequestParam(value = "username") String username,
-                               @RequestParam(value = "password") String password,
-                               @RequestParam(value = "confirmPassword") String confirmPassword) {
+    public ResponseResult handleSignUp(HttpServletRequest request,
+                                       Model model,
+                                       @RequestParam(value = "verificationCode") String verificationCode,
+                                       @RequestParam(value = "username") String username,
+                                       @RequestParam(value = "password") String password,
+                                       @RequestParam(value = "confirmPassword") String confirmPassword) {
 
-        if (StringUtils.isAnyEmpty(username, password, confirmPassword) || !StringUtils.equals(password, confirmPassword)) {
-            return "redirect:/signUp?error=parameters";
+        ResponseResult responseResult = new ResponseResult();
+        if (StringUtils.isAnyEmpty(verificationCode, username, password, confirmPassword) || !StringUtils.equals(password, confirmPassword)) {
+            responseResult.setStatus(GlobalConstant.ERROR);
+            responseResult.setMessage("请检查输入");
+            return responseResult;
+        }
+        String sessionVerificationCode = String.valueOf(request.getSession().getAttribute(GlobalConstant.VERIFICATION_CODE));
+        if (!StringUtils.equalsIgnoreCase(verificationCode, sessionVerificationCode)) {
+            responseResult.setStatus(GlobalConstant.ERROR);
+            responseResult.setMessage("验证码错误");
+            return responseResult;
         }
         UserAccount userAccount = new UserAccount();
         userAccount.setRole(RoleEnum.ROLE_USER.name());
@@ -60,13 +71,22 @@ public class SignInAndUpController {
         userAccount.setPassword(passwordEncoder.encode(password));
         try {
             userAccount = userAccountService.create(userAccount);
+            //移除验证码
+            request.getSession().removeAttribute(GlobalConstant.VERIFICATION_CODE);
         } catch (AlreadyExistsException e) {
             if (log.isErrorEnabled()) {
                 log.error("create user exception", e);
             }
-            return "redirect:/signUp?error=Already exists";
+            responseResult.setStatus(GlobalConstant.ERROR);
+            responseResult.setMessage("用户已经存在");
+        } catch (Exception e) {
+            if (log.isErrorEnabled()) {
+                log.error("create user exception", e);
+            }
+            responseResult.setStatus(GlobalConstant.ERROR);
+            responseResult.setMessage("错误，请重试");
         }
-        return "redirect:/?success=signUp";
+        return responseResult;
     }
 
     @CrossOrigin
@@ -82,14 +102,14 @@ public class SignInAndUpController {
 
         ResponseResult responseResult = new ResponseResult();
 
-        if (StringUtils.isAnyEmpty(clientId,clientSecret,username, password)) {
+        if (StringUtils.isAnyEmpty(clientId, clientSecret, username, password)) {
             responseResult.setStatus(GlobalConstant.ERROR);
             responseResult.setMessage(GlobalConstant.ERROR_MESSAGE_ILLEGAL_PARAMETER);
             return responseResult;
         }
 
-        ClientDetails clientDetails=clientDetailsService.loadClientByClientId(clientId);
-        if(clientDetails==null||passwordEncoder.matches(password,clientDetails.getClientSecret())){
+        ClientDetails clientDetails = clientDetailsService.loadClientByClientId(clientId);
+        if (clientDetails == null || passwordEncoder.matches(password, clientDetails.getClientSecret())) {
             responseResult.setStatus(GlobalConstant.ERROR_NO_LOGIN);
             responseResult.setMessage(GlobalConstant.ERROR_MESSAGE_ILLEGAL_PARAMETER);
             return responseResult;

@@ -9,6 +9,8 @@
 
     <title>sign up</title>
     <link rel="stylesheet" href="../static/assets/bootstrap/css/bootstrap.min.css"
+          th:href="@{/assets/sweetalert2/sweetalert2.min.css}"/>
+    <link rel="stylesheet" href="../static/assets/sweetalert2/sweetalert2.min.css"
           th:href="@{/assets/bootstrap/css/bootstrap.min.css}"/>
     <style type="text/css">
     </style>
@@ -35,7 +37,8 @@
                     <div class="form-group row">
                         <label for="password" class="col-3 col-form-label text-right">密　码</label>
                         <div class="col-9">
-                            <input type="password" name="password" class="form-control" id="password" required="required"
+                            <input type="password" name="password" class="form-control" id="password"
+                                   required="required"
                                    placeholder="密　码"/>
                             <i class="fa fa-lock"></i>
                         </div>
@@ -43,15 +46,34 @@
                     <div class="form-group row">
                         <label for="confirmPassword" class="col-3 col-form-label text-right">确认密码</label>
                         <div class="col-9">
-                            <input type="password" name="confirmPassword" class="form-control" id="confirmPassword" required="required"
+                            <input type="password" name="confirmPassword" class="form-control" id="confirmPassword"
+                                   required="required"
                                    placeholder="确认密码"/>
                             <i class="fa fa-lock"></i>
                         </div>
                     </div>
                     <div class="form-group row">
+                        <label for="verificationCode" class="col-3 col-form-label text-right">验证码</label>
+                        <div class="col-9">
+                            <input type="text" name="verificationCode" class="form-control" id="verificationCode"
+                                   required="required"
+                                   placeholder="验证码"/>
+                            <i class="fa fa-lock"></i>
+                        </div>
+                    </div>
+                    <div class="form-group row">
+                        <label for="verificationCode" class="col-3 col-form-label text-right"></label>
+                        <div class="col-5">
+                            <img src="/captcha?ts=1" id="captchaImg">
+                        </div>
+                        <div class="col-4">
+                            <button type="button" class="btn btn-info" id="refreshCaptcha">刷新</button>
+                        </div>
+                    </div>
+                    <div class="form-group row">
                         <label class="col-3 col-form-label text-right"></label>
                         <div class="col-9">
-                            <button type="submit" class="btn btn-primary">注册</button>
+                            <button type="submit" class="btn btn-primary btn-block">注册</button>
                         </div>
                     </div>
                 </form>
@@ -67,6 +89,8 @@
 <script src="../static/assets/bootstrap/js/bootstrap.min.js"
         th:src="@{/assets/bootstrap/js/bootstrap.min.js}"></script>
 <script th:src="@{/assets/localforage.min.js}" src="../static/assets/localforage.min.js"></script>
+<script th:src="@{/assets/sweetalert2/sweetalert2.min.js}"
+        src="../static/assets/sweetalert2/sweetalert2.min.js"></script>
 <script th:inline="javascript">
     /*<![CDATA[*/
     $(document).ready(function () {
@@ -75,7 +99,13 @@
             return str.replace(/(^\s*)|(\s*$)/g, '')
         }
 
+        $("#refreshCaptcha").on("click", function () {
+            var timestamp = (new Date()).valueOf();
+            $("#captchaImg").attr("src", "/captcha?ts=" + timestamp);
+        })
+
         $("#signUpForm").on("submit", function (e) {
+
             if ($("#username").val() == null || trimBlank($("#username").val()) == '') {
                 $("#username").focus();
                 e.preventDefault();
@@ -100,7 +130,19 @@
                 return false;
             }
 
-            $("#signUpForm").submit();
+            $.ajax({
+                url: "/signUp",
+                method: 'post',
+                data: $('#signUpForm').serialize(),
+                success: function (result) {
+                    if (result.status < 0) {
+                        Swal('Oops...', result.message, 'error')
+                    } else {
+                        window.location.href = "/";
+                    }
+                }
+            })
+            return false;
         })
     });
     /*]]>*/
