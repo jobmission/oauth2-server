@@ -35,7 +35,7 @@ public class SecurityConfiguration extends WebSecurityConfigurerAdapter {
     CustomAccessDeniedHandler customAccessDeniedHandler;
 
     @Autowired
-     AuthenticationDetailsSource<HttpServletRequest, WebAuthenticationDetails> authenticationDetailsSource;
+    AuthenticationDetailsSource<HttpServletRequest, WebAuthenticationDetails> authenticationDetailsSource;
 
     @Autowired
     AuthenticationProvider customAuthenticationProvider;

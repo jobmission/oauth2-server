@@ -102,12 +102,6 @@
         </dependency>
 
         <dependency>
-            <groupId>net.pusuo</groupId>
-            <artifactId>patchca</artifactId>
-            <version>0.5.0</version>
-        </dependency>
-
-        <dependency>
             <groupId>com.google.guava</groupId>
             <artifactId>guava</artifactId>
             <version>26.0-jre</version>

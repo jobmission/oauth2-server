@@ -55,7 +55,7 @@ public class AuthorizationServerConfiguration extends AuthorizationServerConfigu
                 final Map<String, Object> additionalInformation = new HashMap<>();
                 //Important !,client_credentials mode ,no user!
                 if (authentication.getUserAuthentication() != null) {
-                  UserInfo user = (UserInfo) authentication.getUserAuthentication().getPrincipal();// 与登录时候放进去的UserDetail实现类一致
+                    UserInfo user = (UserInfo) authentication.getUserAuthentication().getPrincipal();// 与登录时候放进去的UserDetail实现类一致
                     additionalInformation.put("userId", user.getUserId());
                 }
                 ((DefaultOAuth2AccessToken) accessToken).setAdditionalInformation(additionalInformation);

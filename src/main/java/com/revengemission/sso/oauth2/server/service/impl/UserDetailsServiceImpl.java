@@ -3,6 +3,7 @@ package com.revengemission.sso.oauth2.server.service.impl;
 import com.revengemission.sso.oauth2.server.domain.UserInfo;
 import com.revengemission.sso.oauth2.server.persistence.entity.UserAccountEntity;
 import com.revengemission.sso.oauth2.server.persistence.repository.UserAccountRepository;
+import org.apache.commons.lang3.StringUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.security.core.GrantedAuthority;
 import org.springframework.security.core.authority.SimpleGrantedAuthority;
@@ -24,11 +25,11 @@ public class UserDetailsServiceImpl implements UserDetailsService {
         UserAccountEntity userAccountEntity = userAccountRepository.findByUsername(username);
         if (userAccountEntity != null && userAccountEntity.getRecordStatus() == 0) {
             List<GrantedAuthority> grantedAuthorities = new ArrayList<>();
-            if (userAccountEntity.getRole() != null && !userAccountEntity.getRole().equals("")) {
+            if (StringUtils.isNotEmpty(userAccountEntity.getRole())) {
                 GrantedAuthority grantedAuthority = new SimpleGrantedAuthority(userAccountEntity.getRole());
                 grantedAuthorities.add(grantedAuthority);
             }
-            return  new UserInfo(String.valueOf(userAccountEntity.getId()),userAccountEntity.getUsername(), userAccountEntity.getPassword(), grantedAuthorities);
+            return new UserInfo(String.valueOf(userAccountEntity.getId()), userAccountEntity.getUsername(), userAccountEntity.getPassword(), grantedAuthorities);
         } else {
             throw new UsernameNotFoundException(username + " not found!");
         }

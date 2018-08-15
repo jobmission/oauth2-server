@@ -48,4 +48,13 @@ public class JSONUtil {
 //JSON from String to Object
         return mapper.readValue(jsonString, t);
     }
+
+    public static Map<String, Object> JSONStringToMap(String jsonString) throws IOException {
+        ObjectMapper mapper = new ObjectMapper();
+        mapper.disable(DeserializationFeature.FAIL_ON_UNKNOWN_PROPERTIES);
+
+
+//JSON from String to Object
+        return mapper.readValue(jsonString, Map.class);
+    }
 }
