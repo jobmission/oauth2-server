@@ -57,11 +57,10 @@ public class OAuth2Test {
         ResponseEntity<String> response = client.exchange(url, HttpMethod.POST, requestEntity, String.class);
 
         String jsonString = response.getBody();
-        Map<String, Object> result = JSONUtil.JSONStringToMap(jsonString);
+        Map<String, String> result = JSONUtil.JSONStringToMap(jsonString);
 //  输出结果
         System.out.println(result);
-
-        return String.valueOf(result.get("access_token"));
+        return result.get("access_token");
     }
 
 
@@ -79,11 +78,11 @@ public class OAuth2Test {
         HttpEntity<MultiValueMap<String, String>> requestEntity = new HttpEntity<>(params, headers);
 //  执行HTTP请求
         ResponseEntity<String> response = client.exchange(url, HttpMethod.POST, requestEntity, String.class);
-        Map<String, Object> result = JSONUtil.JSONStringToMap(response.getBody());
+        Map<String, String> result = JSONUtil.JSONStringToMap(response.getBody());
 //  输出结果
         System.out.println(result);
 
-        return String.valueOf(result.get("active"));
+        return result.get("active");
     }
 
 

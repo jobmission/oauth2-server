@@ -29,8 +29,8 @@ public class VerificationCodeController {
     @RequestMapping(value = "/captcha")
     public void captcha(HttpServletRequest request,
                         HttpServletResponse response,
-                        @RequestParam(value = "w", defaultValue = "160") int width,
-                        @RequestParam(value = "h", defaultValue = "40") int height,
+                        @RequestParam(value = "w", defaultValue = "150") int width,
+                        @RequestParam(value = "h", defaultValue = "38") int height,
                         @RequestParam(value = "length", defaultValue = "4") int length) throws IOException {
 
         if (!rateLimiter.tryAcquire()) {

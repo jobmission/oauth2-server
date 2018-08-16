@@ -2,6 +2,7 @@ package com.revengemission.sso.oauth2.server.utils;
 
 import com.fasterxml.jackson.annotation.JsonInclude;
 import com.fasterxml.jackson.core.JsonProcessingException;
+import com.fasterxml.jackson.core.type.TypeReference;
 import com.fasterxml.jackson.databind.DeserializationFeature;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import org.apache.commons.lang3.StringUtils;
@@ -49,12 +50,11 @@ public class JSONUtil {
         return mapper.readValue(jsonString, t);
     }
 
-    public static Map<String, Object> JSONStringToMap(String jsonString) throws IOException {
+    public static Map<String, String> JSONStringToMap(String jsonString) throws IOException {
         ObjectMapper mapper = new ObjectMapper();
         mapper.disable(DeserializationFeature.FAIL_ON_UNKNOWN_PROPERTIES);
 
-
-//JSON from String to Object
-        return mapper.readValue(jsonString, Map.class);
+        return mapper.readValue(jsonString, new TypeReference<Map<String, String>>() {
+        });
     }
 }

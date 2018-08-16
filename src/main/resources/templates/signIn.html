@@ -43,20 +43,14 @@
                     </div>
                     <div class="form-group row">
                         <label for="verificationCode" class="col-3 col-form-label text-right">验证码</label>
-                        <div class="col-9">
+                        <div class="col-4">
                             <input type="text" name="verificationCode" class="form-control" id="verificationCode"
                                    required="required"
                                    placeholder="验证码"/>
                             <i class="fa fa-lock"></i>
                         </div>
-                    </div>
-                    <div class="form-group row">
-                        <label for="verificationCode" class="col-3 col-form-label text-right"></label>
                         <div class="col-5">
-                            <img src="/captcha?ts=1" id="captchaImg">
-                        </div>
-                        <div class="col-4">
-                            <button type="button" class="btn btn-info" id="refreshCaptcha">刷新</button>
+                            <img src="/captcha?ts=1" id="captchaImg" style="cursor: pointer;" class="img-fluid"/>
                         </div>
                     </div>
                     <div class="form-group row">
@@ -101,7 +95,7 @@
             console.log(err);
         });
 
-        $("#refreshCaptcha").on("click", function () {
+        $("#captchaImg").on("click", function () {
             var timestamp = (new Date()).valueOf();
             $("#captchaImg").attr("src", "/captcha?ts=" + timestamp);
         })
