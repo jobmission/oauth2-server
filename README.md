@@ -76,6 +76,7 @@ java -jar oauth2-server-0.0.1-SNAPSHOT.jar --spring.config.additional-location=/
 [api 资源接口端DEMO](https://github.com/jobmission/oauth2-resource.git)
 
 ### TODO LIST
+* 完善客户端管理
 * 完善用户管理
 * 分布式支持
 

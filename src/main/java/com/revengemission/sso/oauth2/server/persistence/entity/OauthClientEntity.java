@@ -1,5 +1,6 @@
 package com.revengemission.sso.oauth2.server.persistence.entity;
 
+import javax.persistence.Column;
 import javax.persistence.Entity;
 import javax.persistence.Table;
 import javax.persistence.UniqueConstraint;
@@ -8,12 +9,16 @@ import java.util.Date;
 @Entity
 @Table(uniqueConstraints = @UniqueConstraint(columnNames = {"clientId"}))
 public class OauthClientEntity extends BaseEntity {
+    @Column(nullable = false)
     private String clientId;
     private String resourceIds;
+    @Column(nullable = false)
     private String clientSecret;
     private String scope;
+    @Column(nullable = false)
     private String authorizedGrantTypes;
     private String webServerRedirectUri;
+    @Column(nullable = false)
     private String authorities;
     private Integer accessTokenValidity;
     private Integer refreshTokenValidity;

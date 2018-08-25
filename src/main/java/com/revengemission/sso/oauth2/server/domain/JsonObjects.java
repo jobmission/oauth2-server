@@ -5,39 +5,43 @@ import java.util.ArrayList;
 import java.util.List;
 
 public class JsonObjects<T> implements Serializable {
-    private List<T> objectElements;
-    private long currentPage;
-    private long totalPage;
-    private long total;
+    private List<T> data;
+    private int draw;
+    private long recordsFiltered;
+    private long recordsTotal;
 
-    public long getCurrentPage() {
-        return currentPage;
-    }
-
-    public void setCurrentPage(long currentPage) {
-        this.currentPage = currentPage;
-    }
-
-    public long getTotalPage() {
-        return totalPage;
-    }
-
-    public void setTotalPage(long totalPage) {
-        this.totalPage = totalPage;
-    }
-
-    public long getTotal() {
-        return total;
-    }
-
-    public void setTotal(long total) {
-        this.total = total;
-    }
-
-    public List<T> getObjectElements() {
-        if (objectElements == null) {
-            objectElements = new ArrayList<>();
+    public List<T> getData() {
+        if (data == null) {
+            data = new ArrayList<>();
         }
-        return objectElements;
+        return data;
+    }
+
+    public void setData(List<T> data) {
+        this.data = data;
+    }
+
+    public int getDraw() {
+        return draw;
+    }
+
+    public void setDraw(int draw) {
+        this.draw = draw;
+    }
+
+    public long getRecordsFiltered() {
+        return recordsFiltered;
+    }
+
+    public void setRecordsFiltered(long recordsFiltered) {
+        this.recordsFiltered = recordsFiltered;
+    }
+
+    public long getRecordsTotal() {
+        return recordsTotal;
+    }
+
+    public void setRecordsTotal(long recordsTotal) {
+        this.recordsTotal = recordsTotal;
     }
 }

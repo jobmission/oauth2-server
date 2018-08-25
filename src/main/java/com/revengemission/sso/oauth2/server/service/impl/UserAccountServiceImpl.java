@@ -40,10 +40,10 @@ public class UserAccountServiceImpl implements UserAccountService {
         Pageable pageable = PageRequest.of(pageNum - 1, pageSize, sort);
         Page<UserAccountEntity> page = userAccountRepository.findByRoleAndUsernameLike(role, username + "%", pageable);
         if (page.getContent() != null && page.getContent().size() > 0) {
-            jsonObjects.setCurrentPage(pageNum);
-            jsonObjects.setTotalPage(page.getTotalPages());
+            jsonObjects.setRecordsTotal(page.getTotalElements());
+            jsonObjects.setRecordsFiltered(page.getTotalElements());
             page.getContent().forEach(u -> {
-                jsonObjects.getObjectElements().add(dozerMapper.map(u, UserAccount.class));
+                jsonObjects.getData().add(dozerMapper.map(u, UserAccount.class));
             });
         }
         return jsonObjects;

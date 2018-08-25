@@ -30,14 +30,18 @@ public class ManageUserController {
         return "users/master";
     }
 
-    @PostMapping(value = "/list")
+    @GetMapping(value = "/list")
     @ResponseBody
-    public JsonObjects<UserAccount> listObjects(@RequestParam(value = "searchValue", required = false) String searchValue,
-                                                @RequestParam(value = "rows", defaultValue = "10") Integer pageSize,
-                                                @RequestParam(value = "page", defaultValue = "1") Integer pageNum,
+    public JsonObjects<UserAccount> listObjects(@RequestParam(value = "search[value]", required = false, defaultValue = "") String searchValue,
+                                                @RequestParam(value = "draw", defaultValue = "0") int draw,
+                                                @RequestParam(value = "length", defaultValue = "10") Integer pageSize,
+                                                @RequestParam(value = "start", defaultValue = "0") Integer start,
                                                 @RequestParam(value = "sidx", defaultValue = "id") String sortField,
                                                 @RequestParam(value = "sord", defaultValue = "desc") String sortOrder) {
-        return userAccountService.listByRole(RoleEnum.ROLE_USER.name(), searchValue, pageNum, pageSize, sortField, sortOrder);
+        int pageNum = start / 10 + 1;
+        JsonObjects<UserAccount> result = userAccountService.listByRole(RoleEnum.ROLE_USER.name(), searchValue, pageNum, pageSize, sortField, sortOrder);
+        result.setDraw(draw + 1);
+        return result;
     }
 
     @GetMapping(value = "/details")

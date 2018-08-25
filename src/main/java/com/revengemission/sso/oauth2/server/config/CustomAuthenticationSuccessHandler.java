@@ -5,11 +5,13 @@ import com.fasterxml.jackson.core.JsonGenerator;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.revengemission.sso.oauth2.server.domain.GlobalConstant;
 import com.revengemission.sso.oauth2.server.domain.ResponseResult;
+import com.revengemission.sso.oauth2.server.domain.RoleEnum;
 import org.apache.commons.lang3.StringUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.http.converter.HttpMessageNotWritableException;
 import org.springframework.security.core.Authentication;
+import org.springframework.security.core.authority.SimpleGrantedAuthority;
 import org.springframework.security.web.authentication.SavedRequestAwareAuthenticationSuccessHandler;
 import org.springframework.security.web.savedrequest.HttpSessionRequestCache;
 import org.springframework.security.web.savedrequest.RequestCache;
@@ -65,7 +67,15 @@ public class CustomAuthenticationSuccessHandler extends SavedRequestAwareAuthent
         } else {
             //Call the parent method to manage the successful authentication
             //setDefaultTargetUrl("/");
-            super.onAuthenticationSuccess(request, response, authentication);
+            if (StringUtils.isNotEmpty(redirectUrl)) {
+                super.onAuthenticationSuccess(request, response, authentication);
+            } else {
+                if (authentication.getAuthorities().contains(new SimpleGrantedAuthority(RoleEnum.ROLE_USER.toString()))) {
+                    response.sendRedirect("/");
+                } else {
+                    response.sendRedirect("/management/user");
+                }
+            }
         }
 
     }

@@ -5,11 +5,16 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
     <meta http-equiv="Content-Type" content="text/html; charset=utf-8"/>
     <title>用户管理</title>
-    <link rel="stylesheet" href="../static/assets/bootstrap/css/bootstrap.min.css"
+    <link rel="stylesheet" href="../../static/assets/bootstrap/css/bootstrap.min.css"
           th:href="@{/assets/bootstrap/css/bootstrap.min.css}"/>
     <!-- The link to the CSS that the grid needs -->
+    <!--<link rel="stylesheet" type="text/css" media="screen" href="../../static/assets/DataTables/datatables.min.css"
+          th:href="@{/assets/DataTables/datatables.min.css}"/>-->
     <link rel="stylesheet" type="text/css" media="screen"
-          th:href="@{/assets/jqGrid-master/css/ui.jqgrid-bootstrap.css}"/>
+          href="../../static/assets/DataTables/DataTables-1.10.18/css/dataTables.bootstrap4.min.css"
+          th:href="@{/assets/DataTables/DataTables-1.10.18/css/dataTables.bootstrap4.min.css}"/>
+    <script src="../../static/assets/jquery-3.3.1.min.js"
+            th:src="@{/assets/jquery-3.3.1.min.js}"></script>
 </head>
 <body class="hold-transition skin-blue sidebar-mini">
 <div class="container">
@@ -18,17 +23,16 @@
         <div class="content-wrapper">
             <!-- Main content -->
             <section class="content gridContainer">
-                <div style="margin-bottom: 20px;">
-                    <form class="form-inline">
-                        <div class="form-group">
-                            <input type="text" class="form-control" id="searchValue" placeholder="登录名">
-                        </div>
-                        <button type="button" class="btn btn-primary" id="search">搜索</button>
-                    </form>
-                </div>
-
-                <table id="jqGrid"></table>
-                <div id="jqGridPager"></div>
+                <table id="myTable" class="table table-striped table-bordered">
+                    <thead>
+                    <tr>
+                        <th>id</th>
+                        <th>username</th>
+                        <th>role</th>
+                        <th>Operation</th>
+                    </tr>
+                    </thead>
+                </table>
                 <br/>
             </section>
             <section class="content">
@@ -76,24 +80,19 @@
 </div>
 
 
-<script src="../static/assets/jquery-3.3.1.min.js"
-        th:src="@{/assets/jquery-3.3.1.min.js}"></script>
-<script src="../static/assets/bootstrap/js/bootstrap.min.js"
+<script src="../../static/assets/bootstrap/js/bootstrap.min.js"
         th:src="@{/assets/bootstrap/js/bootstrap.min.js}"></script>
 <script src="../../static/assets/moment-with-locales.min.js"
         th:src="@{/assets/moment-with-locales.min.js}"></script>
 <script th:src="@{/assets/localforage.min.js}" src="../static/assets/localforage.min.js"></script>
 
-<th:block th:inline="javascript">
-    <!-- We support more than 40 localizations -->
-    <script type="text/javascript" th:src="@{/assets/jqGrid-master/js/i18n/grid.locale-cn.js}"></script>
-    <!-- This is the Javascript file of jqGrid -->
-    <script type="text/javascript" th:src="@{/assets/jqGrid-master/js/jquery.jqGrid.min.js}"></script>
+<script type="text/javascript" charset="utf8" src="../../static/assets/DataTables/datatables.min.js"
+        th:src="@{/assets/DataTables/datatables.min.js}"></script>
+<script type="text/javascript" charset="utf8"
+        src="../../static/assets/DataTables/DataTables-1.10.18/js/dataTables.bootstrap4.min.js"
+        th:src="@{/assets/DataTables/DataTables-1.10.18/js/dataTables.bootstrap4.min.js}"></script>
 
-    <script>
-        $.jgrid.defaults.responsive = true;
-        $.jgrid.defaults.styleUI = 'Bootstrap';
-    </script>
+<th:block th:inline="javascript">
     <script>
 
         function formatBoolean(cellValue, options, rowObject) {
@@ -127,65 +126,33 @@
 
         }
 
-        function formatButton(cellValue, options, rowObject) {
-
-            var userId = rowObject.id;
-            var buttonEdit = "<button class='btn btn-info btn-edit' data-user-id=" + userId + ">编辑</button>";
-            return buttonEdit;
-        }
-
         $(document).ready(function () {
-            $("#jqGrid").jqGrid({
-                url: "/management/user/list",
-                datatype: "json",
-                mtype: 'post',
-                postData: {
-                    searchValue: function () {
-                        return $("#searchValue").val();
-                    }
-                },
-                colModel: [
-                    {label: 'id', name: 'id', key: true, width: 130, hidden: true},
-                    {label: '登录名', name: 'username', width: 150},
-                    {label: '昵称', name: 'nickName', width: 100},
-                    {label: '地址', name: 'address', width: 200},
-                    {label: '是否禁用', name: 'recordStatus', width: 80, formatter: formatStatus},
-                    {label: '创建时间', name: 'dateCreated', formatter: formatDate, width: 150},
-                    {label: '操作', formatter: formatButton}
-                ],
-                jsonReader: {
-                    repeatitems: false,
-                    id: "id",
-                    root: "objectElements",
-                    page: "currentPage",
-                    total: "totalPage",
-                    records: "total"
-                },
-                sortorder: 'desc',
-                width: $("#jqGrid").parent().width(),
-                shrinkToFit: false,
-                height: 230,
-                rowNum: 10,
-                viewrecords: true,
-                caption: '',
-                onSelectRow: function () {
-                    return false;
-                },
-                pager: "#jqGridPager"
-            }).trigger("reloadGrid");
 
-            $("#jqGrid").navGrid("#jqGridPager", {
-                edit: false,
-                add: false,
-                del: false,
-                search: false,
-                refresh: true,
-                view: false,
-                position: "left",
-                cloneToTop: false
+            $('#myTable').DataTable({
+                paging: true,
+                serverSide: true,
+                ajax: {
+                    url: '/management/user/list',
+                    dataSrc: 'data'
+                },
+                columns: [
+                    {data: 'id'},
+                    {data: 'username'},
+                    {data: 'role', bSortable: false}
+                ],
+                columnDefs: [
+                    {
+                        "targets": [3],
+                        "data": "id",
+                        "render": function (data, type, full) {
+                            return "<button class='btn btn-primary btn-sm btn-edit' data-user-id='" + data + "'>修改</button>";
+                        }
+                    }
+                ]
             });
 
-            $(".gridContainer").on("click", ".btn-edit", function () {
+
+            $("#myTable").on("click", ".btn-edit", function () {
                 var userId = $(this).data("user-id");
                 $("#detailsForm").removeClass("d-none");
                 var url = "/management/user/details?id=" + userId;
@@ -246,12 +213,6 @@
                     });
                 }
 
-            });
-
-
-            $("#search").click(function () {
-                $("#jqGrid").jqGrid("setGridParam", {page: 1});
-                $('#jqGrid').trigger('reloadGrid');
             });
 
         });

@@ -11,10 +11,11 @@ public class UserAccountEntity extends BaseEntity {
 
     //用于记录用户在哪个子系统进行的注册
     private String clientId;
-    @Column(columnDefinition = "VARCHAR(40)")
+    @Column(nullable = false, columnDefinition = "VARCHAR(40)")
     private String username;
+    @Column(nullable = false)
     private String password;
-    @Column(columnDefinition = "VARCHAR(20)")
+    @Column(nullable = false, columnDefinition = "VARCHAR(20)")
     private String role;
     private String nickName;
     private String avatarUrl;
