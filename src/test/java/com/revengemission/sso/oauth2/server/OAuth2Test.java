@@ -1,5 +1,6 @@
 package com.revengemission.sso.oauth2.server;
 
+import com.fasterxml.jackson.core.type.TypeReference;
 import com.revengemission.sso.oauth2.server.utils.JSONUtil;
 import org.junit.Ignore;
 import org.junit.Test;
@@ -57,7 +58,8 @@ public class OAuth2Test {
         ResponseEntity<String> response = client.exchange(url, HttpMethod.POST, requestEntity, String.class);
 
         String jsonString = response.getBody();
-        Map<String, String> result = JSONUtil.JSONStringToMap(jsonString);
+        Map<String, String> result = JSONUtil.JSONStringToObject(jsonString, new TypeReference<Map<String, String>>() {
+        });
 //  输出结果
         System.out.println(result);
         return result.get("access_token");
@@ -78,7 +80,8 @@ public class OAuth2Test {
         HttpEntity<MultiValueMap<String, String>> requestEntity = new HttpEntity<>(params, headers);
 //  执行HTTP请求
         ResponseEntity<String> response = client.exchange(url, HttpMethod.POST, requestEntity, String.class);
-        Map<String, String> result = JSONUtil.JSONStringToMap(response.getBody());
+        Map<String, String> result = JSONUtil.JSONStringToObject(response.getBody(), new TypeReference<Map<String, String>>() {
+        });
 //  输出结果
         System.out.println(result);
 

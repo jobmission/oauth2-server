@@ -69,9 +69,16 @@ java -jar oauth2-server-0.0.1-SNAPSHOT.jar
 java -jar oauth2-server-0.0.1-SNAPSHOT.jar --spring.config.additional-location=/path/to/override.properties
 ````
 ## OAuth 2 Developers Guide
-[spring-security-oauth官方文档](https://projects.spring.io/spring-security-oauth/docs/oauth2.html)
-[Tutorial](https://spring.io/guides/tutorials/spring-boot-oauth2/)
+[spring-security-oauth官方文档](https://projects.spring.io/spring-security-oauth/docs/oauth2.html) <br/>
+[Spring Boot and OAuth2 Tutorial](https://spring.io/guides/tutorials/spring-boot-oauth2/)
+
+[client 前端DEMO](https://github.com/jobmission/oauth2-client.git) <br/>
+[api 资源接口端DEMO](https://github.com/jobmission/oauth2-resource.git)
+
+### TODO LIST
+* 完善用户管理
+* 分布式支持
 
 ## 注意！！！
-当Server和Client在一台机器上时，请配置域名代理，避免cookie相互覆盖
+<p style="color: red">当Server和Client在一台机器上时，请配置域名代理，避免cookie相互覆盖 </p>
 
