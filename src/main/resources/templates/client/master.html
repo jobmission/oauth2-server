@@ -79,6 +79,7 @@
                         <th>webServerRedirectUri</th>
                         <th>authorities</th>
                         <th>remarks</th>
+                        <th>加入时间</th>
                         <th>操作</th>
                     </tr>
                     </thead>
@@ -197,7 +198,7 @@
             }
         }
 
-        function formatDate(cellValue, options, rowObject) {
+        function formatDate(cellValue) {
             if (cellValue != null && cellValue != "") {
                 var day = moment(cellValue);
                 var formatted = day.format("YYYY-MM-DD HH:mm");
@@ -232,6 +233,13 @@
                 columnDefs: [
                     {
                         "targets": [7],
+                        "data": "id",
+                        "render": function (data, type, row, meta) {
+                            return formatDate(row.dateCreated);
+                        }
+                    },
+                    {
+                        "targets": [8],
                         "data": "id",
                         "render": function (data, type, row, meta) {
                             var btnString = "";

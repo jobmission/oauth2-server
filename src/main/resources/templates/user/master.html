@@ -76,6 +76,7 @@
                         <th>username</th>
                         <th>role</th>
                         <th>nickName</th>
+                        <th>加入时间</th>
                         <th>操作</th>
                     </tr>
                     </thead>
@@ -161,7 +162,7 @@
             }
         }
 
-        function formatDate(cellValue, options, rowObject) {
+        function formatDate(cellValue) {
             if (cellValue != null && cellValue != "") {
                 var day = moment(cellValue);
                 var formatted = day.format("YYYY-MM-DD HH:mm");
@@ -192,6 +193,13 @@
                 columnDefs: [
                     {
                         "targets": [4],
+                        "data": "id",
+                        "render": function (data, type, row, meta) {
+                            return formatDate(row.dateCreated);
+                        }
+                    },
+                    {
+                        "targets": [5],
                         "data": "id",
                         "render": function (data, type, row, meta) {
                             var btnString = "";

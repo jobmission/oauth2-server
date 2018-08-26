@@ -6,7 +6,7 @@ CREATE DATABASE IF NOT EXISTS oauth2_server DEFAULT CHARSET utf8 COLLATE utf8_ge
 grant all privileges on oauth2_server.* to oauth2_server@localhost identified by 'password_dev';
 #初始化sql在src/main/resources/sql/init.sql,项目启动后可自行修改client_id等初始化数据
 ````
-##管理员角色登录后，可以对用户和client进行管理</br>
+## 管理员角色登录后，可以对用户和client进行管理</br>
 ## 支持的授权模式grant_type</br>
 >>>4种授权模式：authorization_code,implicit,password,client_credentials;
 #####
@@ -67,7 +67,7 @@ Post /oauth/signUp?username=lisi&password=password&client_id=SampleClientId&clie
 ## 启动方法</br>
 ````
 java -jar oauth2-server-0.0.1-SNAPSHOT.jar
-或者指定文件覆盖默认配置
+或者指定配置文件覆盖默认配置
 java -jar oauth2-server-0.0.1-SNAPSHOT.jar --spring.config.additional-location=/path/to/override.properties
 ````
 ## OAuth 2 Developers Guide
@@ -83,5 +83,5 @@ java -jar oauth2-server-0.0.1-SNAPSHOT.jar --spring.config.additional-location=/
 * 分布式支持
 
 ## 注意！！！
-<p style="color: red">当Server和Client在一台机器上时，请配置域名代理，避免cookie相互覆盖 </p>
+当Server和Client在一台机器上时，请配置域名代理，避免cookie相互覆盖
 
