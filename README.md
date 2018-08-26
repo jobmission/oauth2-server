@@ -1,10 +1,12 @@
 ## SpringBoot2 oauth2 Server, SSO 单点登录
-## 创建SSO数据库，采用JPA框架，项目启动时数据表会自动创建</br>
-````SQL
+## 创建SSO数据库，项目采用JPA框架，启动前先创建数据库，启动时数据表会自动创建</br>
+````
+#创建数据库SQL
 CREATE DATABASE IF NOT EXISTS oauth2_server DEFAULT CHARSET utf8 COLLATE utf8_general_ci;
 grant all privileges on oauth2_server.* to oauth2_server@localhost identified by 'password_dev';
-初始化sql在src/main/resources/sql/init.sql,项目启动后可自行修改client_id等参数进行数据初始化
+#初始化sql在src/main/resources/sql/init.sql,项目启动后可自行修改client_id等初始化数据
 ````
+##管理员角色登录后，可以对用户和client进行管理</br>
 ## 支持的授权模式grant_type</br>
 >>>4种授权模式：authorization_code,implicit,password,client_credentials;
 #####

@@ -27,7 +27,7 @@ public class ManageUserController {
     @GetMapping(value = {"/", "", "/master"})
     public String master(Principal principal) {
 
-        return "users/master";
+        return "user/master";
     }
 
     @GetMapping(value = "/list")

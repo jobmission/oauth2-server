@@ -17,12 +17,58 @@
             th:src="@{/assets/jquery-3.3.1.min.js}"></script>
 </head>
 <body class="hold-transition skin-blue sidebar-mini">
-<div class="container">
-    <section class="mt-5">
+<nav class="navbar navbar-expand-lg navbar-light static-top sb-navbar">
+    <div class="container">
+        <a class="navbar-brand">OAuth2 后台管理</a>
+        <button class="navbar-toggler navbar-toggler-right collapsed" type="button" data-toggle="collapse"
+                data-target="#navbarResponsive" aria-controls="navbarResponsive" aria-expanded="false"
+                aria-label="Toggle navigation">
+            Menu
+            <i class="fas fa-bars"></i>
+        </button>
+        <div class="navbar-collapse collapse" id="navbarResponsive" style="">
+            <ul class="navbar-nav mr-auto">
+                <!-- <li class="nav-item dropdown">
+                     <a class="nav-link dropdown-toggle" href="#" id="dropdownThemes" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">Themes</a>
+                     <div class="dropdown-menu" aria-labelledby="dropdownThemes">
+                         <a class="dropdown-item" href="#">
+                             <i class="fa fa-star"></i>
+                             Most Popular</a>
+                         <div class="dropdown-divider"></div>
+                         <a class="dropdown-item" href="#">Full Websites</a>
+                     </div>
+                 </li>-->
+                <li class="nav-item">
+                    <a class="nav-link" href="/management/client/">应用接入管理</a>
+                </li>
+                <li class="nav-item active">
+                    <a class="nav-link" href="/management/user/">用户管理</a>
+                </li>
+                <li class="nav-item">
+                    <a class="nav-link" href="/logout">退出</a>
+                </li>
+            </ul>
+            <!--<ul class="navbar-nav">
+                <li class="nav-item">
+                    <a class="nav-link" href="https://twitter.com/sbootstrap">
+                        <i class="fab fa-twitter"></i>
+                    </a>
+                </li>
+                <li class="nav-item">
+                    <a class="nav-link" href="https://twitter.com/sbootstrap">
+                        <i class="fab fa-twitter"></i>
+                    </a>
+                </li>
+            </ul>-->
+        </div>
+    </div>
+</nav>
+<div class="container mt-3">
+    <section>
         <!-- Content Wrapper. Contains page content -->
         <div class="content-wrapper">
             <!-- Main content -->
-            <section class="content gridContainer">
+            <section class="content">
                 <table id="myTable" class="table table-striped table-bordered">
                     <thead>
                     <tr>
@@ -63,8 +109,7 @@
                     <div class="form-group row">
                         <label class="col-2 control-label"></label>
                         <div class="col-6">
-                            <button type="button" class="btn btn-info mr-5" id="update">保存</button>
-                            <button type="button" class="btn btn-danger d-none" id="delete">禁用</button>
+                            <button type="submit" class="btn btn-info mr-5" id="update">保存</button>
                         </div>
                     </div>
                 </form>
@@ -142,7 +187,7 @@
                     {data: 'id'},
                     {data: 'username'},
                     {data: 'role', bSortable: false},
-                    {data: 'nickName', "defaultContent": "", bSortable: false}
+                    {data: 'nickName', defaultContent: "", bSortable: false}
                 ],
                 columnDefs: [
                     {
@@ -172,20 +217,14 @@
                     $("#nickName").val(data.nickName);
                     $("#address").val(data.address);
                     $("#password").val('');
-                    if (data.recordStatus == -1) {
-                        $("#detailsForm #delete").text("启用");
-                    } else if (data.recordStatus == 0) {
-                        $("#detailsForm #delete").text("禁用");
-                    }
-                    $("#detailsForm #delete").data("record-status", data.recordStatus);
-                    $("#detailsForm #delete").removeClass("d-none");
                     $("#message").removeClass("bg-danger").html("");
                     $("#message").removeClass("bg-success").html("");
                 });
             });
 
 
-            $("#update").click(function () {
+            $("#detailsForm").on("submit", function (e) {
+                e.preventDefault();
                 $.ajax({
                     type: 'POST',
                     url: '/management/user/details',
@@ -196,8 +235,8 @@
                         password: $("#password").val()
                     },
                     success: function (data) {
-                        if (data.status == 20000) {
-                            $("#jqGrid").trigger("reloadGrid");
+                        if (data.status == 1) {
+                            table.ajax.reload(null, false); // 刷新表格数据，分页信息不会重置
                             $("#createNew").trigger("click");
                             $("#detailsForm").addClass("d-none");
                             alert("保存成功!");
@@ -206,6 +245,7 @@
                         }
                     }
                 });
+                return false;
             });
 
 
