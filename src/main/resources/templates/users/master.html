@@ -29,7 +29,8 @@
                         <th>id</th>
                         <th>username</th>
                         <th>role</th>
-                        <th>Operation</th>
+                        <th>nickName</th>
+                        <th>操作</th>
                     </tr>
                     </thead>
                 </table>
@@ -128,9 +129,11 @@
 
         $(document).ready(function () {
 
-            $('#myTable').DataTable({
+            var table = $('#myTable').DataTable({
                 paging: true,
                 serverSide: true,
+                orderMulti: false,
+                responsive: true,
                 ajax: {
                     url: '/management/user/list',
                     dataSrc: 'data'
@@ -138,14 +141,22 @@
                 columns: [
                     {data: 'id'},
                     {data: 'username'},
-                    {data: 'role', bSortable: false}
+                    {data: 'role', bSortable: false},
+                    {data: 'nickName', "defaultContent": "", bSortable: false}
                 ],
                 columnDefs: [
                     {
-                        "targets": [3],
+                        "targets": [4],
                         "data": "id",
-                        "render": function (data, type, full) {
-                            return "<button class='btn btn-primary btn-sm btn-edit' data-user-id='" + data + "'>修改</button>";
+                        "render": function (data, type, row, meta) {
+                            var btnString = "";
+                            if (row.recordStatus < 0) {
+                                btnString = "<button class='btn btn-secondary btn-sm btn-status' data-user-id='" + data + "' data-record-status='" + row.recordStatus + "'>启用</button>";
+                            } else {
+                                btnString = "<button class='btn btn-success btn-sm btn-status' data-user-id='" + data + "' data-record-status='" + row.recordStatus + "'>禁用</button>";
+                            }
+                            btnString += "&nbsp;&nbsp;&nbsp;<button class='btn btn-primary btn-sm btn-edit' data-user-id='" + data + "'>编辑</button>";
+                            return btnString;
                         }
                     }
                 ]
@@ -198,20 +209,17 @@
             });
 
 
-            $("#delete").click(function () {
-                var r = confirm($("#detailsForm #delete").text() + " ?");
-                if (r == true) {
-                    $.ajax({
-                        type: 'POST',
-                        url: '/management/user/details',
-                        data: {id: $("#id").val(), deleteOperation: $("#detailsForm #delete").data("record-status")},
-                        success: function (data) {
-                            $("#detailsForm").addClass("d-none");
-                            $("#jqGrid").trigger("reloadGrid");
-                            $("#createNew").trigger("click");
-                        }
-                    });
-                }
+            $("#myTable").on("click", ".btn-status", function () {
+                var userId = $(this).data("user-id");
+                var deleteOperation = $(this).data("record-status");
+                $.ajax({
+                    type: 'POST',
+                    url: '/management/user/details',
+                    data: {id: userId, deleteOperation: deleteOperation},
+                    success: function (data) {
+                        table.ajax.reload(null, false); // 刷新表格数据，分页信息不会重置
+                    }
+                });
 
             });
 

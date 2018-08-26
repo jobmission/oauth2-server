@@ -55,7 +55,7 @@ public class ManageUserController {
 
     @PostMapping(value = "/details")
     @ResponseBody
-    public ResponseResult handlePost(@RequestParam(value = "id", required = false) Long id,
+    public ResponseResult handlePost(@RequestParam(value = "id", required = false) long id,
                                      @RequestParam(value = "deleteOperation", required = false, defaultValue = "1") int deleteOperation,
                                      @RequestParam(value = "nickName", required = false) String nickName,
                                      @RequestParam(value = "address", required = false) String address,
@@ -63,13 +63,13 @@ public class ManageUserController {
 
         ResponseResult responseResult = new ResponseResult();
 
-        if (deleteOperation == -1 && id != null && id > 0) {
+        if (deleteOperation == -1 && id > 0) {
             userAccountService.updateRecordStatus(id, 0);
             responseResult.setStatus(GlobalConstant.SUCCESS);
-        } else if (deleteOperation == 0 && id != null && id > 0) {
+        } else if (deleteOperation == 0 && id > 0) {
             userAccountService.updateRecordStatus(id, -1);
             responseResult.setStatus(GlobalConstant.SUCCESS);
-        } else if (id != null && id > 0) {
+        } else if (id > 0) {
             UserAccount object = userAccountService.retrieveById(id);
             if (StringUtils.isNotEmpty(password)) {
                 object.setPassword(passwordEncoder.encode(StringUtils.trim(password)));
