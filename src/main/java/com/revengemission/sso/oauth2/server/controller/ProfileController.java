@@ -5,6 +5,7 @@ import com.revengemission.sso.oauth2.server.domain.EntityNotFoundException;
 import com.revengemission.sso.oauth2.server.domain.UserAccount;
 import com.revengemission.sso.oauth2.server.service.UserAccountService;
 import org.apache.commons.lang3.StringUtils;
+import org.apache.commons.text.StringEscapeUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -81,13 +82,13 @@ public class ProfileController {
 
         try {
             UserAccount userAccount = userAccountService.findByUsername(principal.getName());
-            userAccount.setNickName(nickName);
-            userAccount.setAvatarUrl(avatarUrl);
-            userAccount.setEmail(email);
-            userAccount.setMobile(mobile);
-            userAccount.setProvince(province);
-            userAccount.setCity(city);
-            userAccount.setAddress(address);
+            userAccount.setNickName(StringEscapeUtils.escapeHtml4(nickName));
+            userAccount.setAvatarUrl(StringEscapeUtils.escapeHtml4(avatarUrl));
+            userAccount.setEmail(StringEscapeUtils.escapeHtml4(email));
+            userAccount.setMobile(StringEscapeUtils.escapeHtml4(mobile));
+            userAccount.setProvince(StringEscapeUtils.escapeHtml4(province));
+            userAccount.setCity(StringEscapeUtils.escapeHtml4(city));
+            userAccount.setAddress(StringEscapeUtils.escapeHtml4(address));
             userAccount.setBirthday(birthday);
             userAccountService.updateById(userAccount);
         } catch (EntityNotFoundException e) {

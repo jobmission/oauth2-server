@@ -3,6 +3,7 @@ package com.revengemission.sso.oauth2.server.controller;
 import com.revengemission.sso.oauth2.server.domain.*;
 import com.revengemission.sso.oauth2.server.service.UserAccountService;
 import org.apache.commons.lang3.StringUtils;
+import org.apache.commons.text.StringEscapeUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -67,7 +68,7 @@ public class SignInAndUpController {
         }
         UserAccount userAccount = new UserAccount();
         userAccount.setRole(RoleEnum.ROLE_USER.name());
-        userAccount.setUsername(username);
+        userAccount.setUsername(StringEscapeUtils.escapeHtml4(username));
         userAccount.setPassword(passwordEncoder.encode(password));
         try {
             userAccount = userAccountService.create(userAccount);

@@ -73,9 +73,9 @@
                     <thead>
                     <tr>
                         <th>id</th>
-                        <th>username</th>
-                        <th>role</th>
-                        <th>nickName</th>
+                        <th>登录名</th>
+                        <th>角色</th>
+                        <th>昵称</th>
                         <th>加入时间</th>
                         <th>操作</th>
                     </tr>
@@ -186,18 +186,25 @@
                 },
                 columns: [
                     {data: 'id'},
-                    {data: 'username'},
+                    {
+                        data: 'username',
+                        render: $.fn.dataTable.render.text()
+                    },
                     {data: 'role', bSortable: false},
-                    {data: 'nickName', defaultContent: "", bSortable: false}
+                    {
+                        data: 'nickName',
+                        defaultContent: '',
+                        bSortable: false,
+                        render: $.fn.dataTable.render.text()
+                    },
+                    {
+                        data: 'dateCreated',
+                        render: function (data, type, row) {
+                            return formatDate(data);
+                        }
+                    }
                 ],
                 columnDefs: [
-                    {
-                        "targets": [4],
-                        "data": "id",
-                        "render": function (data, type, row, meta) {
-                            return formatDate(row.dateCreated);
-                        }
-                    },
                     {
                         "targets": [5],
                         "data": "id",

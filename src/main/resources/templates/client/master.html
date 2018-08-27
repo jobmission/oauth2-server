@@ -79,7 +79,7 @@
                         <th>webServerRedirectUri</th>
                         <th>authorities</th>
                         <th>remarks</th>
-                        <th>加入时间</th>
+                        <th>时间</th>
                         <th>操作</th>
                     </tr>
                     </thead>
@@ -225,19 +225,29 @@
                     {data: 'id'},
                     {data: 'clientId'},
                     {data: 'scope', bSortable: false},
-                    {data: 'authorizedGrantTypes', bSortable: false, width: '10%'},
-                    {data: 'webServerRedirectUri', bSortable: false},
-                    {data: 'authorities', bSortable: false},
-                    {data: 'remarks', defaultContent: "", bSortable: false}
-                ],
-                columnDefs: [
                     {
-                        "targets": [7],
-                        "data": "id",
-                        "render": function (data, type, row, meta) {
-                            return formatDate(row.dateCreated);
+                        data: 'authorizedGrantTypes',
+                        bSortable: false,
+                        render: function (data, type, row) {
+                            var gts = data.split(",");
+                            var result = "";
+                            for (j = 0; j < gts.length; j++) {
+                                result = result + gts[j] + "\n";
+                            }
+                            return result;
                         }
                     },
+                    {data: 'webServerRedirectUri', bSortable: false},
+                    {data: 'authorities', bSortable: false},
+                    {data: 'remarks', defaultContent: "", bSortable: false},
+                    {
+                        data: 'dateCreated',
+                        render: function (data, type, row) {
+                            return formatDate(data);
+                        }
+                    }
+                ],
+                columnDefs: [
                     {
                         "targets": [8],
                         "data": "id",
