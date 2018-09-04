@@ -15,6 +15,7 @@ import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Pageable;
 import org.springframework.data.domain.Sort;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
 
 import java.util.Optional;
 
@@ -59,6 +60,7 @@ public class OauthClientServiceImpl implements OauthClientService {
     }
 
     @Override
+    @Transactional
     public OauthClient create(OauthClient oauthClient) throws AlreadyExistsException {
         OauthClientEntity exist = oauthClientRepository.findByClientId(oauthClient.getClientId());
         if (exist != null) {
@@ -76,6 +78,7 @@ public class OauthClientServiceImpl implements OauthClientService {
     }
 
     @Override
+    @Transactional
     public OauthClient updateById(OauthClient oauthClient) throws EntityNotFoundException {
         Optional<OauthClientEntity> entityOptional = oauthClientRepository.findById(Long.parseLong(oauthClient.getId()));
         OauthClientEntity e = entityOptional.orElseThrow(EntityNotFoundException::new);
@@ -96,6 +99,7 @@ public class OauthClientServiceImpl implements OauthClientService {
     }
 
     @Override
+    @Transactional
     public void updateRecordStatus(long id, int recordStatus) {
         Optional<OauthClientEntity> entityOptional = oauthClientRepository.findById(id);
         OauthClientEntity e = entityOptional.orElseThrow(EntityNotFoundException::new);

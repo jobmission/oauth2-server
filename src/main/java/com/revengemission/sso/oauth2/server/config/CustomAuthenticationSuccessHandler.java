@@ -6,9 +6,12 @@ import com.fasterxml.jackson.databind.ObjectMapper;
 import com.revengemission.sso.oauth2.server.domain.GlobalConstant;
 import com.revengemission.sso.oauth2.server.domain.ResponseResult;
 import com.revengemission.sso.oauth2.server.domain.RoleEnum;
+import com.revengemission.sso.oauth2.server.service.LoginHistoryService;
+import com.revengemission.sso.oauth2.server.service.UserAccountService;
 import org.apache.commons.lang3.StringUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.converter.HttpMessageNotWritableException;
 import org.springframework.security.core.Authentication;
 import org.springframework.security.core.authority.SimpleGrantedAuthority;
@@ -26,6 +29,12 @@ import java.io.IOException;
 @Component
 public class CustomAuthenticationSuccessHandler extends SavedRequestAwareAuthenticationSuccessHandler {
     private Logger log = LoggerFactory.getLogger(this.getClass());
+
+    @Autowired
+    UserAccountService userAccountService;
+
+    @Autowired
+    LoginHistoryService loginHistoryService;
 
     RequestCache requestCache = new HttpSessionRequestCache();
 

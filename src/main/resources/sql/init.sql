@@ -3,6 +3,6 @@ VALUES (1, 'SampleClientId', '$2a$10$jdSgDx1AN.BUHYAqV1YOZOAo5KIl62iPgpPl.oszt1E
         'implicit,authorization_code,refresh_token,password,client_credentials', 'ROLE_TRUSTED_CLIENT', 'read,write',
         'http://client.sso.com/login');
 
-INSERT INTO user_account_entity (id, username, password, role)
+INSERT INTO user_account_entity (id, username, password, role,remarks)
 VALUES (1, 'zhangsan', '$2a$10$8ZYKma84VAkov7wxhCbK9eYVcdetXoYM8Nnm8xIZA/8X/Kvwg7BN6', 'ROLE_SUPER'),
-  (2, 'lisi', '$2a$10$8ZYKma84VAkov7wxhCbK9eYVcdetXoYM8Nnm8xIZA/8X/Kvwg7BN6', 'ROLE_USER');
+  (2, 'lisi', '$2a$10$8ZYKma84VAkov7wxhCbK9eYVcdetXoYM8Nnm8xIZA/8X/Kvwg7BN6', 'ROLE_USER','密码明文:password');

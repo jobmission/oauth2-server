@@ -5,10 +5,12 @@ import com.fasterxml.jackson.core.JsonGenerator;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.revengemission.sso.oauth2.server.domain.GlobalConstant;
 import com.revengemission.sso.oauth2.server.domain.ResponseResult;
+import com.revengemission.sso.oauth2.server.service.LoginHistoryService;
 import com.revengemission.sso.oauth2.server.service.UserAccountService;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.beans.factory.annotation.Value;
 import org.springframework.http.converter.HttpMessageNotWritableException;
 import org.springframework.security.core.AuthenticationException;
 import org.springframework.security.web.authentication.SimpleUrlAuthenticationFailureHandler;
@@ -29,10 +31,16 @@ public class CustomAuthenticationFailureHandler extends SimpleUrlAuthenticationF
     @Autowired
     UserAccountService userAccountService;
 
+    @Autowired
+    LoginHistoryService loginHistoryService;
+
+    @Value("${signin.failure.max:5}")
+    private int failureMax;
+
     @Override
     public void onAuthenticationFailure(HttpServletRequest request,
                                         HttpServletResponse response, AuthenticationException exception)
-            throws IOException, ServletException {
+            throws IOException {
         String username = request.getParameter("username");
         log.debug(username + " try to login");
 

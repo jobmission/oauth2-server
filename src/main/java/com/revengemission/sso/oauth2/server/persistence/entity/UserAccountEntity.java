@@ -26,6 +26,9 @@ public class UserAccountEntity extends BaseEntity {
     private String address;
     private Date birthday;
     private String gender;
+    private Date failureTime;
+    @Column(name = "failure_count", columnDefinition = "int default 0")
+    private int failureCount;
 
     public String getClientId() {
         return clientId;
@@ -129,5 +132,21 @@ public class UserAccountEntity extends BaseEntity {
 
     public void setGender(String gender) {
         this.gender = gender;
+    }
+
+    public Date getFailureTime() {
+        return failureTime;
+    }
+
+    public void setFailureTime(Date failureTime) {
+        this.failureTime = failureTime;
+    }
+
+    public int getFailureCount() {
+        return failureCount;
+    }
+
+    public void setFailureCount(int failureCount) {
+        this.failureCount = failureCount;
     }
 }

@@ -25,4 +25,6 @@ public class UserAccount extends BaseDomain {
     private String address;
     private Date birthday;
     private String gender;
+    private Date failureTime;
+    private int failureCount;
 }

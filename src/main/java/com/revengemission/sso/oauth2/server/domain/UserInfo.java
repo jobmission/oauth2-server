@@ -11,17 +11,17 @@ public class UserInfo extends User {
     private String nickname;
 
     public UserInfo(String userId, String username, String password, Collection<? extends GrantedAuthority> authorities) {
-        this(username, password, true, true, true, true, authorities);
-        this.userId = userId;
+        this(userId, username, password, true, true, true, true, authorities);
     }
 
-    public UserInfo(String username, String password, boolean enabled,
+    public UserInfo(String userId, String username, String password, boolean enabled,
                     boolean accountNonExpired, boolean credentialsNonExpired,
                     boolean accountNonLocked,
                     Collection<? extends GrantedAuthority> authorities)
             throws IllegalArgumentException {
         super(username, password, enabled, accountNonExpired,
                 credentialsNonExpired, accountNonLocked, authorities);
+        this.userId = userId;
     }
 
     public String getUserId() {

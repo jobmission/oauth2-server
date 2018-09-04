@@ -4,32 +4,48 @@ import com.revengemission.sso.oauth2.server.domain.UserAccount;
 import com.revengemission.sso.oauth2.server.domain.VerificationCodeException;
 import org.apache.commons.lang3.StringUtils;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.security.authentication.AuthenticationProvider;
 import org.springframework.security.authentication.BadCredentialsException;
+import org.springframework.security.authentication.InternalAuthenticationServiceException;
 import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
-import org.springframework.security.core.Authentication;
+import org.springframework.security.authentication.dao.AbstractUserDetailsAuthenticationProvider;
 import org.springframework.security.core.AuthenticationException;
 import org.springframework.security.core.GrantedAuthority;
 import org.springframework.security.core.authority.AuthorityUtils;
 import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.security.core.userdetails.UserDetailsService;
-import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
+import org.springframework.security.core.userdetails.UsernameNotFoundException;
+import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Component;
 
 import java.util.Collection;
 
 @Component
-public class CustomAuthenticationProvider implements AuthenticationProvider {
+public class CustomAuthenticationProvider extends AbstractUserDetailsAuthenticationProvider {
 
     @Autowired
     UserDetailsService userService;
 
-    /**
-     * 自定义验证方式
-     */
-    @Override
-    public Authentication authenticate(Authentication authentication) throws AuthenticationException {
+    @Autowired
+    PasswordEncoder passwordEncoder;
 
+    @Override
+    protected void additionalAuthenticationChecks(UserDetails userDetails, UsernamePasswordAuthenticationToken authentication) throws AuthenticationException {
+        if (authentication.getCredentials() == null) {
+            this.logger.debug("Authentication failed: no credentials provided");
+            throw new BadCredentialsException(this.messages.getMessage("AbstractUserDetailsAuthenticationProvider.badCredentials", "Bad credentials"));
+        } else {
+            String presentedPassword = authentication.getCredentials().toString();
+            if (!this.passwordEncoder.matches(presentedPassword, userDetails.getPassword())) {
+                this.logger.debug("Authentication failed: password does not match stored value");
+                throw new BadCredentialsException(this.messages.getMessage("AbstractUserDetailsAuthenticationProvider.badCredentials", "Bad credentials"));
+            }
+        }
+    }
+
+    @Override
+    protected UserDetails retrieveUser(String username, UsernamePasswordAuthenticationToken authentication) throws AuthenticationException {
+
+        //添加额外处理，如验证码等
         Object details = authentication.getDetails();
         if (details instanceof CustomWebAuthenticationDetails) {
             CustomWebAuthenticationDetails customWebAuthenticationDetails = (CustomWebAuthenticationDetails) details;
@@ -38,21 +54,20 @@ public class CustomAuthenticationProvider implements AuthenticationProvider {
             }
         }
 
-        String username = authentication.getName();
-        String password = (String) authentication.getCredentials();
-
-        UserDetails userDetails = userService.loadUserByUsername(username);
-        if (userDetails == null) {
-            throw new BadCredentialsException("Username not found.");
+        try {
+            UserDetails loadedUser = userService.loadUserByUsername(username);
+            if (loadedUser == null) {
+                throw new InternalAuthenticationServiceException(
+                        "UserDetailsService returned null, which is an interface contract violation");
+            }
+            return loadedUser;
+        } catch (UsernameNotFoundException ex) {
+            throw ex;
+        } catch (InternalAuthenticationServiceException ex) {
+            throw ex;
+        } catch (Exception ex) {
+            throw new InternalAuthenticationServiceException(ex.getMessage(), ex);
         }
-
-        BCryptPasswordEncoder bCryptPasswordEncoder = new BCryptPasswordEncoder();
-
-        //加密过程在这里体现
-        if (!bCryptPasswordEncoder.matches(password, userDetails.getPassword())) {
-            throw new BadCredentialsException("Wrong password.");
-        }
-        return new UsernamePasswordAuthenticationToken(userDetails, password, userDetails.getAuthorities());
     }
 
     @Override

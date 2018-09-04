@@ -69,6 +69,7 @@ public class UserAccountServiceImpl implements UserAccountService {
     }
 
     @Override
+    @Transactional
     public UserAccount updateById(UserAccount userAccount) throws EntityNotFoundException {
         Optional<UserAccountEntity> entityOptional = userAccountRepository.findById(Long.parseLong(userAccount.getId()));
         UserAccountEntity e = entityOptional.orElseThrow(EntityNotFoundException::new);
@@ -89,6 +90,7 @@ public class UserAccountServiceImpl implements UserAccountService {
     }
 
     @Override
+    @Transactional
     public void updateRecordStatus(long id, int recordStatus) {
         Optional<UserAccountEntity> entityOptional = userAccountRepository.findById(id);
         UserAccountEntity e = entityOptional.orElseThrow(EntityNotFoundException::new);
