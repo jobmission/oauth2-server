@@ -4,10 +4,12 @@ import com.fasterxml.jackson.core.JsonEncoding;
 import com.fasterxml.jackson.core.JsonGenerator;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.revengemission.sso.oauth2.server.domain.GlobalConstant;
+import com.revengemission.sso.oauth2.server.domain.LoginHistory;
 import com.revengemission.sso.oauth2.server.domain.ResponseResult;
 import com.revengemission.sso.oauth2.server.domain.RoleEnum;
 import com.revengemission.sso.oauth2.server.service.LoginHistoryService;
 import com.revengemission.sso.oauth2.server.service.UserAccountService;
+import com.revengemission.sso.oauth2.server.utils.ClientIPUtils;
 import org.apache.commons.lang3.StringUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -51,6 +53,15 @@ public class CustomAuthenticationSuccessHandler extends SavedRequestAwareAuthent
 
         //移除验证码
         request.getSession().removeAttribute(GlobalConstant.VERIFICATION_CODE);
+
+        LoginHistory loginHistory=new LoginHistory();
+        loginHistory.setUsername(authentication.getName());
+        loginHistory.setIp(ClientIPUtils.getIpAddress(request));
+        loginHistory.setDevice(request.getHeader("User-Agent"));
+        loginHistory.setRecordStatus(1);
+        loginHistoryService.asyncCreate(loginHistory);
+
+        userAccountService.loginSuccess(authentication.getName());
 
         boolean isAjax = "XMLHttpRequest".equals(request
                 .getHeader("X-Requested-With")) || "apiLogin".equals(request

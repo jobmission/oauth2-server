@@ -13,6 +13,7 @@ import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Pageable;
 import org.springframework.data.domain.Sort;
+import org.springframework.scheduling.annotation.Async;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
@@ -47,9 +48,9 @@ public class LoginHistoryServiceImpl implements LoginHistoryService {
 
     @Override
     @Transactional
-    public LoginHistory create(LoginHistory loginHistory) throws AlreadyExistsException {
+    @Async
+    public void asyncCreate(LoginHistory loginHistory) throws AlreadyExistsException {
         LoginHistoryEntity entity = dozerMapper.map(loginHistory, LoginHistoryEntity.class);
         loginHistoryRepository.save(entity);
-        return dozerMapper.map(entity, LoginHistory.class);
     }
 }

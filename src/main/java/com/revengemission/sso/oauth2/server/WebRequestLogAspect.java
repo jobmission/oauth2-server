@@ -1,5 +1,6 @@
 package com.revengemission.sso.oauth2.server;
 
+import com.revengemission.sso.oauth2.server.utils.ClientIPUtils;
 import com.revengemission.sso.oauth2.server.utils.JSONUtil;
 import org.aspectj.lang.JoinPoint;
 import org.aspectj.lang.annotation.AfterReturning;
@@ -54,7 +55,7 @@ public class WebRequestLogAspect {
                 if (object != null) {
                     requestBody = JSONUtil.objectToJSONString(object);
                 }
-                log.info("\nRequest from " + request.getRemoteHost() +
+                log.info("\nRequest from " + ClientIPUtils.getIpAddress(request) +
                         ";\nHeaders =" + JSONUtil.objectToJSONString(getHeadersInfo(request)) +
                         ";\nuri =" + request.getRequestURL().toString() +
                         "; \nrequest method=" + request.getMethod() +

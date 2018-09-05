@@ -8,7 +8,7 @@ import java.util.Date;
 public abstract class BaseEntity implements Serializable {
 
     @Id
-    @GeneratedValue(strategy=GenerationType.IDENTITY)
+    @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
 
     @Column(name = "record_status", columnDefinition = "int default 0")
@@ -19,6 +19,8 @@ public abstract class BaseEntity implements Serializable {
     private Integer version;
 
     private String remarks;
+
+    @Column(name = "sort_priority", columnDefinition = "int default 0")
     private Integer sortPriority;
 
     @Temporal(TemporalType.TIMESTAMP)

@@ -7,16 +7,20 @@ import com.revengemission.sso.oauth2.server.domain.UserAccount;
 import com.revengemission.sso.oauth2.server.persistence.entity.UserAccountEntity;
 import com.revengemission.sso.oauth2.server.persistence.repository.UserAccountRepository;
 import com.revengemission.sso.oauth2.server.service.UserAccountService;
+import com.revengemission.sso.oauth2.server.utils.DateUtil;
 import org.apache.commons.lang3.StringUtils;
 import org.dozer.Mapper;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.beans.factory.annotation.Value;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Pageable;
 import org.springframework.data.domain.Sort;
+import org.springframework.scheduling.annotation.Async;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
+import java.util.Date;
 import java.util.Optional;
 
 @Service
@@ -27,6 +31,9 @@ public class UserAccountServiceImpl implements UserAccountService {
 
     @Autowired
     Mapper dozerMapper;
+
+    @Value("${signin.failure.max:5}")
+    private int failureMax;
 
     @Override
     public JsonObjects<UserAccount> listByRole(String role, String username, int pageNum, int pageSize, String sortField, String sortOrder) {
@@ -103,6 +110,44 @@ public class UserAccountServiceImpl implements UserAccountService {
         UserAccountEntity userAccountEntity = userAccountRepository.findByUsername(username);
         if (userAccountEntity != null) {
             return dozerMapper.map(userAccountEntity, UserAccount.class);
+        } else {
+            throw new EntityNotFoundException(username + " not found!");
+        }
+    }
+
+    @Override
+    @Transactional
+    @Async
+    public void loginSuccess(String username) throws EntityNotFoundException {
+        UserAccountEntity userAccountEntity = userAccountRepository.findByUsername(username);
+        if (userAccountEntity != null) {
+            userAccountEntity.setFailureCount(0);
+            userAccountEntity.setFailureTime(null);
+            userAccountRepository.save(userAccountEntity);
+        } else {
+            throw new EntityNotFoundException(username + " not found!");
+        }
+    }
+
+    @Override
+    @Transactional
+    public void loginFailure(String username) throws EntityNotFoundException {
+        UserAccountEntity userAccountEntity = userAccountRepository.findByUsername(username);
+        if (userAccountEntity != null) {
+            if (userAccountEntity.getFailureTime() == null) {
+                userAccountEntity.setFailureCount(1);
+            } else {
+                if (DateUtil.beforeToday(userAccountEntity.getFailureTime())) {
+                    userAccountEntity.setFailureCount(0);
+                } else {
+                    userAccountEntity.setFailureCount(userAccountEntity.getFailureCount() + 1);
+                }
+            }
+            userAccountEntity.setFailureTime(new Date());
+            if (userAccountEntity.getFailureCount() >= failureMax && userAccountEntity.getRecordStatus() >= 0) {
+                userAccountEntity.setRecordStatus(-1);
+            }
+            userAccountRepository.save(userAccountEntity);
         } else {
             throw new EntityNotFoundException(username + " not found!");
         }

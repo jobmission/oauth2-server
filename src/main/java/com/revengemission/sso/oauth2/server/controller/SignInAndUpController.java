@@ -31,7 +31,11 @@ public class SignInAndUpController {
     PasswordEncoder passwordEncoder;
 
     @GetMapping("/signIn")
-    public String signIn() {
+    public String signIn(@RequestParam(value = "error", required = false) String error,
+                         Model model) {
+        if (StringUtils.isNotEmpty(error)) {
+            model.addAttribute("error", error);
+        }
         return "signIn";
     }
 
