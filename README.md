@@ -1,16 +1,18 @@
-## SpringBoot2 oauth2 Server, SSO 单点登录
-## 创建SSO数据库，项目采用JPA框架，启动前先创建数据库，启动时数据表会自动创建</br>
+## SpringBoot 2.x oauth2 Server, SSO 单点登录
+## 创建数据库：持久层采用JPA框架，项目启动前应先创建数据库，启动时数据表会自动创建</br>
 ````
-#创建数据库SQL
+#创建数据库SQL，数据库名、数据库用户名、密码需要和application.properties中的一致
 CREATE DATABASE IF NOT EXISTS oauth2_server DEFAULT CHARSET utf8 COLLATE utf8_general_ci;
 grant all privileges on oauth2_server.* to oauth2_server@localhost identified by 'password_dev';
 #初始化sql在src/main/resources/sql/init.sql,项目启动后可自行修改client_id等初始化数据
 ````
 ## 管理员角色登录后，可以对用户和client进行管理</br>
-## 支持的授权模式grant_type</br>
->>>4种授权模式：authorization_code,implicit,password,client_credentials;
+## 支持的4种授权模式grant_type</br>
+````
+authorization_code,implicit,password,client_credentials;
+````
 #####
->>>**authorization_code模式，用于PC端，页面跳转** 相对复杂，安全性最高，需要两步获取token
+>>**authorization_code模式：用于PC端，页面跳转** 相对复杂，安全性最高，需要两步获取token
 ````
 1. Get /oauth/authorize?client_id=SampleClientId&response_type=code&redirect_uri=http://client.sso.com/login
 响应：
@@ -27,7 +29,7 @@ grant all privileges on oauth2_server.* to oauth2_server@localhost identified by
     "jti": "823cdd71-4732-4f9d-b949-a37ceb4488a4"
 }
 ````
->>>**password模式，用于手机端或者其他无页面跳转场景,应由后台服务端调用，保护client_id和client_secret**
+>>**password模式：用于手机端或者其他无页面跳转场景，应由后台服务端调用，保护client_id和client_secret**
 ````
 Post /oauth/token?grant_type=password&scope=read&client_id=SampleClientId&client_secret=secret&username=zhangsan&password=password
 响应：
@@ -41,12 +43,12 @@ Post /oauth/token?grant_type=password&scope=read&client_id=SampleClientId&client
     "jti": "823cdd71-4732-4f9d-b949-a37ceb4488a4"
 }
 ````
-## 非对称密钥生成，用于签名token，用于在资源端本地验证token</br>
+## 非对称密钥生成，用于签名token、在资源端本地验证token</br>
 ````
 使用Java工具包中的keytool制作证书jwt.jks，设置别名为【jwt】，密码为【keypass】,替换位置src/main/resources/jwt.jks
 keytool -genkey -alias jwt -keyalg RSA -keysize 1024 -keystore jwt.jks -validity 3650
 ````
-## 获取token签名公钥,用于本地直接验证token</br>
+## 获取token签名公钥，用于本地直接验证token</br>
 ````
 /oauth/token_key
 ````
