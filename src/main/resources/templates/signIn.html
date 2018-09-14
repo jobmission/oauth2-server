@@ -24,6 +24,7 @@
             <div class="col-sm-6">
                 <form id="signInForm" action="/security_check" method="post">
                     <h3 class="text-center">登录</h3>
+                    <p class="text-center alert alert-danger" th:classappend="${error==null || error==''?'invisible':''}" th:text="${error}"></p>
                     <div class="form-group row">
                         <label for="username" class="col-3 col-form-label text-right">用户名</label>
                         <div class="col-9">

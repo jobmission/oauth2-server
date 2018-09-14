@@ -63,11 +63,11 @@ public class ManageUserController {
 
         ResponseResult responseResult = new ResponseResult();
 
-        if (deleteOperation == -1 && id > 0) {
+        if (deleteOperation == -2 && id > 0) {
             userAccountService.updateRecordStatus(id, 0);
             responseResult.setStatus(GlobalConstant.SUCCESS);
         } else if (deleteOperation == 0 && id > 0) {
-            userAccountService.updateRecordStatus(id, -1);
+            userAccountService.updateRecordStatus(id, -2);
             responseResult.setStatus(GlobalConstant.SUCCESS);
         } else if (id > 0) {
             UserAccount object = userAccountService.retrieveById(id);

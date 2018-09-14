@@ -11,4 +11,8 @@ public interface UserAccountService extends CommonServiceInterface<UserAccount> 
                                         String sortOrder);
 
     UserAccount findByUsername(String username) throws EntityNotFoundException;
+
+    void loginSuccess(String username) throws EntityNotFoundException;
+
+    void loginFailure(String username) throws EntityNotFoundException;
 }

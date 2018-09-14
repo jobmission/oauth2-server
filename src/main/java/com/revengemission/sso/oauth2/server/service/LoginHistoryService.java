@@ -8,5 +8,7 @@ public interface LoginHistoryService extends CommonServiceInterface<LoginHistory
                                              int pageSize,
                                              String sortField,
                                              String sortOrder);
+    
+    void asyncCreate(LoginHistory loginHistory);
 
 }

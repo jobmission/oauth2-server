@@ -1,6 +1,7 @@
 package com.revengemission.sso.oauth2.server.service.impl;
 
 import com.revengemission.sso.oauth2.server.domain.AlreadyExpiredException;
+import com.revengemission.sso.oauth2.server.domain.InvalidClientException;
 import com.revengemission.sso.oauth2.server.persistence.entity.OauthClientEntity;
 import com.revengemission.sso.oauth2.server.persistence.repository.OauthClientRepository;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -28,8 +29,11 @@ public class ClientDetailsServiceImpl implements ClientDetailsService {
 
         OauthClientEntity oauthClientEntity = oauthClientRepository.findByClientId(clientId);
         if (oauthClientEntity != null) {
+            if (oauthClientEntity.getRecordStatus() < 0) {
+                throw new InvalidClientException(String.format("clientId %s is disabled!", clientId));
+            }
             if (oauthClientEntity.getExpirationDate() != null && oauthClientEntity.getExpirationDate().compareTo(new Date()) < 0) {
-                throw new AlreadyExpiredException("clientId " + clientId + " already expired!");
+                throw new AlreadyExpiredException(String.format("clientId %s already expired!", clientId));
             }
             BaseClientDetails baseClientDetails = new BaseClientDetails();
             baseClientDetails.setClientId(oauthClientEntity.getClientId());
