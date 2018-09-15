@@ -1,5 +1,8 @@
 package com.revengemission.sso.oauth2.server.utils;
 
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
+
 import javax.imageio.ImageIO;
 import java.awt.*;
 import java.awt.geom.AffineTransform;
@@ -12,9 +15,11 @@ import java.util.Arrays;
 import java.util.Random;
 
 public class VerifyCodeUtils {
-    //使用到Algerian字体，系统里没有的话需要安装字体，字体只显示大写，去掉了1,0,i,o几个容易混淆的字符
-    public static final String VERIFY_CODES = "23456789ABCDEFGHJKLMNPQRSTUVWXYZ";
-    private static Random random = new Random();
+
+    private static final Logger _log = LoggerFactory.getLogger(VerifyCodeUtils.class);
+    //使用到Algerian字体，系统里没有的话需要安装字体，去掉了1,0,i,o几个容易混淆的字符
+    public static final String VERIFY_CODES = "23456789aAbBcCdDeEfFgGhHjJkKlLmMnNpPqQrRsStTuUvVwWxXyYzZ";
+    private static Random random = new Random(System.currentTimeMillis());
 
     /**
      * 使用系统默认的字符源生成验证码
@@ -34,14 +39,13 @@ public class VerifyCodeUtils {
      * @return
      */
     public static String generateVerifyCode(int captchaLength, String sources) {
-        if (sources == null || sources.length() == 0) {
+        if (sources == null || sources.trim() == "") {
             sources = VerifyCodeUtils.VERIFY_CODES;
         }
         int codesLen = sources.length();
-        Random r = new Random(System.currentTimeMillis());
         StringBuffer verifyCode = new StringBuffer(captchaLength);
         for (int i = 0; i < captchaLength; i++) {
-            verifyCode.append(sources.charAt(r.nextInt(codesLen - 1)));
+            verifyCode.append(sources.charAt(random.nextInt(codesLen - 1)));
         }
         return verifyCode.toString();
     }
@@ -91,24 +95,37 @@ public class VerifyCodeUtils {
         }
         File dir = outputFile.getParentFile();
         if (!dir.exists()) {
-            dir.mkdir();
+            boolean flag = dir.mkdir();
+            if (!flag) {
+                throw new RuntimeException("创建文件夹失败！");
+            }
         }
+        FileOutputStream fos = null;
         try {
-            outputFile.createNewFile();
-            FileOutputStream fos = new FileOutputStream(outputFile);
+            boolean flag = outputFile.createNewFile();
+            if (!flag) {
+                throw new RuntimeException("创建文件失败！");
+            }
+            fos = new FileOutputStream(outputFile);
             outputImage(w, h, fos, code);
-            fos.close();
         } catch (IOException e) {
-            e.printStackTrace();
             throw e;
-
+        } finally {
+            if (fos != null) {
+                try {
+                    fos.close();
+                } catch (Exception e) {
+                    if (_log.isDebugEnabled()) {
+                        _log.error("VerifyCodeUtils outputFileImage close os exception", e);
+                    }
+                }
+            }
         }
     }
 
     public static void outputImage(int w, int h, OutputStream os, String code) throws IOException {
         int captchaLength = code.length();
         BufferedImage image = new BufferedImage(w, h, BufferedImage.TYPE_3BYTE_BGR);
-        Random r = new Random();
         Graphics2D g2 = image.createGraphics();
         g2.setRenderingHint(RenderingHints.KEY_ANTIALIASING, RenderingHints.VALUE_ANTIALIAS_ON);
         Color[] colors = new Color[5];
@@ -117,8 +134,8 @@ public class VerifyCodeUtils {
                 Color.PINK, Color.YELLOW};
         float[] fractions = new float[colors.length];
         for (int i = 0; i < colors.length; i++) {
-            colors[i] = colorSpaces[r.nextInt(colorSpaces.length)];
-            fractions[i] = r.nextFloat();
+            colors[i] = colorSpaces[random.nextInt(colorSpaces.length)];
+            fractions[i] = random.nextFloat();
         }
         Arrays.sort(fractions);
 
@@ -130,7 +147,6 @@ public class VerifyCodeUtils {
         g2.fillRect(0, 2, w, h - 4);
 
         //绘制干扰线
-        Random random = new Random();
         g2.setColor(getRandColor(160, 200));// 设置线条的颜色
         for (int i = 0; i < 20; i++) {
             int x = random.nextInt(w - 1);
@@ -159,7 +175,7 @@ public class VerifyCodeUtils {
         char[] chars = code.toCharArray();
         for (int i = 0; i < captchaLength; i++) {
             AffineTransform affine = new AffineTransform();
-            affine.setToRotation(Math.PI / 4 * r.nextDouble() * (r.nextBoolean() ? 1 : -1), (w / captchaLength) * i + fontSize / 2, h / 2);
+            affine.setToRotation(Math.PI / 4 * random.nextDouble() * (random.nextBoolean() ? 1 : -1), (w / captchaLength) * i + fontSize / 2, h / 2);
             g2.setTransform(affine);
             g2.drawChars(chars, i, 1, ((w - 10) / captchaLength) * i + 5, h / 2 + fontSize / 2 - 10);
         }
@@ -169,10 +185,6 @@ public class VerifyCodeUtils {
     }
 
     private static Color getRandColor(int fc, int bc) {
-        if (fc > 255)
-            fc = 255;
-        if (bc > 255)
-            bc = 255;
         int r = fc + random.nextInt(bc - fc);
         int g = fc + random.nextInt(bc - fc);
         int b = fc + random.nextInt(bc - fc);
@@ -206,7 +218,6 @@ public class VerifyCodeUtils {
 
         int period = random.nextInt(2);
 
-        boolean borderGap = true;
         int frames = 1;
         int phase = random.nextInt(2);
 
@@ -216,11 +227,9 @@ public class VerifyCodeUtils {
                     + (6.2831853071795862D * (double) phase)
                     / (double) frames);
             g.copyArea(0, i, w1, 1, (int) d, 0);
-            if (borderGap) {
-                g.setColor(color);
-                g.drawLine((int) d, i, 0, i);
-                g.drawLine((int) d + w1, i, w1, i);
-            }
+            g.setColor(color);
+            g.drawLine((int) d, i, 0, i);
+            g.drawLine((int) d + w1, i, w1, i);
         }
 
     }
@@ -229,7 +238,6 @@ public class VerifyCodeUtils {
 
         int period = random.nextInt(40) + 10; // 50;
 
-        boolean borderGap = true;
         int frames = 20;
         int phase = 7;
         for (int i = 0; i < w1; i++) {
@@ -238,22 +246,12 @@ public class VerifyCodeUtils {
                     + (6.2831853071795862D * (double) phase)
                     / (double) frames);
             g.copyArea(i, 0, 1, h1, 0, (int) d);
-            if (borderGap) {
-                g.setColor(color);
-                g.drawLine(i, (int) d, i, 0);
-                g.drawLine(i, (int) d + h1, i, h1);
-            }
+            g.setColor(color);
+            g.drawLine(i, (int) d, i, 0);
+            g.drawLine(i, (int) d + h1, i, h1);
 
         }
     }
 
-    public static void main(String[] args) throws IOException {
-        File dir = new File("F:/tmp");
-        int w = 200, h = 80;
-        for (int i = 0; i < 50; i++) {
-            String verifyCode = generateVerifyCode(4);
-            File f = new File(dir, verifyCode + ".jpg");
-            outputFileImage(w, h, f, verifyCode);
-        }
-    }
+
 }

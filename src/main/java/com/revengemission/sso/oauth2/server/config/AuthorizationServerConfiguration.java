@@ -79,7 +79,7 @@ public class AuthorizationServerConfiguration extends AuthorizationServerConfigu
 
     @Override
     public void configure(ClientDetailsServiceConfigurer clients) throws Exception {
-//      import!,secret和user的password加密方式一致
+//      import!,client和user的加密方式须一致
 //        clients.inMemory()
 //                .withClient("SampleClientId")
 //                .authorizedGrantTypes("implicit", "authorization_code", "refresh_token", "password", "client_credentials")
