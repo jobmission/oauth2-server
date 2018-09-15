@@ -1,5 +1,6 @@
 package com.revengemission.sso.oauth2.server.utils;
 
+import org.apache.commons.lang3.StringUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -39,7 +40,7 @@ public class VerifyCodeUtils {
      * @return
      */
     public static String generateVerifyCode(int captchaLength, String sources) {
-        if (sources == null || sources.trim() == "") {
+        if (StringUtils.isEmpty(sources)) {
             sources = VerifyCodeUtils.VERIFY_CODES;
         }
         int codesLen = sources.length();
@@ -175,7 +176,7 @@ public class VerifyCodeUtils {
         char[] chars = code.toCharArray();
         for (int i = 0; i < captchaLength; i++) {
             AffineTransform affine = new AffineTransform();
-            affine.setToRotation(Math.PI / 4 * random.nextDouble() * (random.nextBoolean() ? 1 : -1), (w / captchaLength) * i + fontSize / 2, h / 2);
+            affine.setToRotation(Math.PI / 4 * random.nextDouble() * (random.nextBoolean() ? 1 : -1), (w / (double)captchaLength) * i + fontSize / 2.0, h / 2.0);
             g2.setTransform(affine);
             g2.drawChars(chars, i, 1, ((w - 10) / captchaLength) * i + 5, h / 2 + fontSize / 2 - 10);
         }

@@ -6,6 +6,8 @@ import org.junit.Test;
 
 import java.io.File;
 import java.io.IOException;
+import java.nio.file.Path;
+import java.nio.file.Paths;
 
 /**
  * Created by zhang wanchao on 18-9-15.
@@ -15,7 +17,8 @@ public class SimpleTest {
     @Test
     @Ignore
     public static void outputFileImageTest(String[] args) throws IOException {
-        File dir = new File("F:/tmp");
+        Path path = Paths.get("/tmp", "code");
+        File dir = new File(path.toString());
         int w = 200, h = 80;
         for (int i = 0; i < 50; i++) {
             String verifyCode = VerifyCodeUtils.generateVerifyCode(4);

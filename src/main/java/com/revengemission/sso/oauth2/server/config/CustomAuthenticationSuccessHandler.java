@@ -11,8 +11,6 @@ import com.revengemission.sso.oauth2.server.service.LoginHistoryService;
 import com.revengemission.sso.oauth2.server.service.UserAccountService;
 import com.revengemission.sso.oauth2.server.utils.ClientIPUtils;
 import org.apache.commons.lang3.StringUtils;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.converter.HttpMessageNotWritableException;
 import org.springframework.security.core.Authentication;
@@ -30,8 +28,6 @@ import java.io.IOException;
 
 @Component
 public class CustomAuthenticationSuccessHandler extends SavedRequestAwareAuthenticationSuccessHandler {
-    private Logger log = LoggerFactory.getLogger(this.getClass());
-
     @Autowired
     UserAccountService userAccountService;
 
@@ -54,7 +50,7 @@ public class CustomAuthenticationSuccessHandler extends SavedRequestAwareAuthent
         //移除验证码
         request.getSession().removeAttribute(GlobalConstant.VERIFICATION_CODE);
 
-        LoginHistory loginHistory=new LoginHistory();
+        LoginHistory loginHistory = new LoginHistory();
         loginHistory.setUsername(authentication.getName());
         loginHistory.setIp(ClientIPUtils.getIpAddress(request));
         loginHistory.setDevice(request.getHeader("User-Agent"));

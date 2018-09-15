@@ -75,7 +75,7 @@ public class SignInAndUpController {
         userAccount.setUsername(StringEscapeUtils.escapeHtml4(username));
         userAccount.setPassword(passwordEncoder.encode(password));
         try {
-            userAccount = userAccountService.create(userAccount);
+            userAccountService.create(userAccount);
             //移除验证码
             request.getSession().removeAttribute(GlobalConstant.VERIFICATION_CODE);
         } catch (AlreadyExistsException e) {

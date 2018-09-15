@@ -6,8 +6,6 @@ import com.revengemission.sso.oauth2.server.domain.OauthClient;
 import com.revengemission.sso.oauth2.server.domain.ResponseResult;
 import com.revengemission.sso.oauth2.server.service.OauthClientService;
 import org.apache.commons.lang3.StringUtils;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Controller;
@@ -18,8 +16,6 @@ import java.security.Principal;
 @Controller
 @RequestMapping(value = "/management/client")
 public class ManageClientController {
-
-    private Logger log = LoggerFactory.getLogger(this.getClass());
 
     @Autowired
     PasswordEncoder passwordEncoder;

@@ -80,6 +80,7 @@ public class ManageUserController {
             object.setNickName(nickName);
             userAccountService.updateById(object);
         } else {
+            log.info("invalid request!");
             responseResult.setStatus(GlobalConstant.ERROR);
         }
 

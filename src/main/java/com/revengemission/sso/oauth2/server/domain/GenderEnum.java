@@ -12,10 +12,6 @@ public enum GenderEnum {
         return meaning;
     }
 
-    public void setMeaning(String meaning) {
-        this.meaning = meaning;
-    }
-
     GenderEnum() {
     }
 
