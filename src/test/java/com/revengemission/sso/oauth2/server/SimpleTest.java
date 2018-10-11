@@ -16,7 +16,7 @@ public class SimpleTest {
 
     @Test
     @Ignore
-    public static void outputFileImageTest(String[] args) throws IOException {
+    public void outputFileImageTest() throws IOException {
         Path path = Paths.get("/tmp", "code");
         File dir = new File(path.toString());
         int w = 200, h = 80;
