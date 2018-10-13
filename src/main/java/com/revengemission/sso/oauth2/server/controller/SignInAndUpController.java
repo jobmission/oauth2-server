@@ -2,6 +2,7 @@ package com.revengemission.sso.oauth2.server.controller;
 
 import com.revengemission.sso.oauth2.server.domain.*;
 import com.revengemission.sso.oauth2.server.service.UserAccountService;
+import com.revengemission.sso.oauth2.server.utils.CheckPasswordStrength;
 import org.apache.commons.lang3.StringUtils;
 import org.apache.commons.text.StringEscapeUtils;
 import org.slf4j.Logger;
@@ -59,11 +60,26 @@ public class SignInAndUpController {
                                        @RequestParam(value = "confirmPassword") String confirmPassword) {
 
         ResponseResult responseResult = new ResponseResult();
-        if (StringUtils.isAnyEmpty(verificationCode, username, password, confirmPassword) || !StringUtils.equals(password, confirmPassword)) {
+        if (StringUtils.isAnyBlank(verificationCode, username, password, confirmPassword) || !StringUtils.equals(password, confirmPassword)) {
             responseResult.setStatus(GlobalConstant.ERROR);
             responseResult.setMessage("请检查输入");
             return responseResult;
         }
+
+        username = StringUtils.trimToEmpty(username);
+        password = StringUtils.trimToEmpty(password);
+        if (password.length() < 6) {
+            responseResult.setStatus(GlobalConstant.ERROR);
+            responseResult.setMessage("密码至少6位");
+            return responseResult;
+        }
+
+        if (CheckPasswordStrength.check(password) < 4) {
+            responseResult.setStatus(GlobalConstant.ERROR);
+            responseResult.setMessage("密码应包含字母、数字、符号");
+            return responseResult;
+        }
+
         String sessionVerificationCode = String.valueOf(request.getSession().getAttribute(GlobalConstant.VERIFICATION_CODE));
         if (!StringUtils.equalsIgnoreCase(verificationCode, sessionVerificationCode)) {
             responseResult.setStatus(GlobalConstant.ERROR);

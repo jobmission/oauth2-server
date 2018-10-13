@@ -21,8 +21,7 @@ public class OAuth2Test {
     @Test
     @Ignore
     public void encodePassword() {
-        System.out.println("password=" + new BCryptPasswordEncoder().encode("password"));
-        System.out.println("secret=" + new BCryptPasswordEncoder().encode("secret"));
+        System.out.println("tgb.258------" + new BCryptPasswordEncoder().encode("tgb.258"));
     }
 
 

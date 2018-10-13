@@ -17,7 +17,7 @@ authorization_code,implicit,password,client_credentials;
 1. Get /oauth/authorize?client_id=SampleClientId&response_type=code&redirect_uri=http://client.sso.com/login
 响应：
 重定向到：http://client.sso.com/login?code=1E37Xk，接收code,然后后端调用步骤2获取token
-2. Post /oauth/token?client_id=SampleClientId&client_secret=secret&grant_type=authorization_code&redirect_uri=http://client.sso.com/login&code=1E37Xk
+2. Post /oauth/token?client_id=SampleClientId&client_secret=tgb.258&grant_type=authorization_code&redirect_uri=http://client.sso.com/login&code=1E37Xk
 响应：
 {
     "access_token": "a.b.c",
@@ -31,7 +31,7 @@ authorization_code,implicit,password,client_credentials;
 ````
 >>**password模式：用于手机端或者其他无页面跳转场景，应由后台服务端调用，保护client_id和client_secret**
 ````
-Post /oauth/token?grant_type=password&scope=read&client_id=SampleClientId&client_secret=secret&username=zhangsan&password=password
+Post /oauth/token?grant_type=password&scope=read&client_id=SampleClientId&client_secret=tgb.258&username=zhangsan&password=tgb.258
 响应：
 {
     "access_token": "a.b.c",
@@ -63,7 +63,7 @@ Post /oauth/token?grant_type=refresh_token&refresh_token=d.e.f
 
 ## 注册新用户接口，应由后台服务端调用，保护client_id和client_secret</br>
 ````
-Post /oauth/signUp?username=lisi&password=password&client_id=SampleClientId&client_secret=secret
+Post /oauth/signUp?username=lisi&password=yourpass&client_id=SampleClientId&client_secret=tgb.258
 ````
 
 ## 启动方法</br>

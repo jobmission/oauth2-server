@@ -26,11 +26,14 @@ public class UserDetailsServiceImpl implements UserDetailsService {
         if (userAccountEntity != null) {
             List<GrantedAuthority> grantedAuthorities = new ArrayList<>();
             if (StringUtils.isNotEmpty(userAccountEntity.getRole())) {
-                GrantedAuthority grantedAuthority = new SimpleGrantedAuthority(userAccountEntity.getRole());
-                grantedAuthorities.add(grantedAuthority);
+                String[] roles = StringUtils.split(userAccountEntity.getRole());
+                for (String temp : roles) {
+                    GrantedAuthority grantedAuthority = new SimpleGrantedAuthority(temp);
+                    grantedAuthorities.add(grantedAuthority);
+                }
             }
             return new UserInfo(String.valueOf(userAccountEntity.getId()), userAccountEntity.getUsername(), userAccountEntity.getPassword(),
-                    userAccountEntity.getRecordStatus() >= 0, true, true, userAccountEntity.getRecordStatus() != -2,grantedAuthorities);
+                    userAccountEntity.getRecordStatus() >= 0, true, true, userAccountEntity.getRecordStatus() != -2, grantedAuthorities);
         } else {
             throw new UsernameNotFoundException(username + " not found!");
         }
