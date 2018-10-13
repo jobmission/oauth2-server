@@ -21,6 +21,8 @@ public class GlobalConstant {
     public final static String ERROR_MESSAGE_PARAMETER_TYPE = "参数类型或者格式错误";
     public final static String ERROR_MESSAGE_PARAMETER_ABSENCE = "参数不足";
     public final static String ERROR_MESSAGE_ILLEGAL_PARAMETER = "非法参数";
+    public final static String ERROR_MESSAGE_DENIED = "权限不足";
+    public final static String ERROR_MESSAGE_NO_LOGIN = "未登录";
     public final static String ERROR_MESSAGE_NOT_MATCH = "不匹配";
     public final static String ERROR_MESSAGE_EXPIRED = "已过期";
     public final static String ERROR_MESSAGE_DISABLED = "已禁用";

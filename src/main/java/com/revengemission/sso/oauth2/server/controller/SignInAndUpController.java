@@ -53,7 +53,6 @@ public class SignInAndUpController {
     @ResponseBody
     @PostMapping("/signUp")
     public ResponseResult handleSignUp(HttpServletRequest request,
-                                       Model model,
                                        @RequestParam(value = "verificationCode") String verificationCode,
                                        @RequestParam(value = "username") String username,
                                        @RequestParam(value = "password") String password,
@@ -68,6 +67,13 @@ public class SignInAndUpController {
 
         username = StringUtils.trimToEmpty(username);
         password = StringUtils.trimToEmpty(password);
+
+        if (username.length() < 6) {
+            responseResult.setStatus(GlobalConstant.ERROR);
+            responseResult.setMessage("用户名至少6位");
+            return responseResult;
+        }
+
         if (password.length() < 6) {
             responseResult.setStatus(GlobalConstant.ERROR);
             responseResult.setMessage("密码至少6位");
@@ -114,7 +120,6 @@ public class SignInAndUpController {
     @ResponseBody
     @PostMapping("/oauth/signUp")
     public ResponseResult handleOauthSignUp(HttpServletRequest request,
-                                            Model model,
                                             Principal principal,
                                             @RequestParam(value = "client_id") String clientId,
                                             @RequestParam(value = "client_secret") String clientSecret,
@@ -123,18 +128,33 @@ public class SignInAndUpController {
 
         ResponseResult responseResult = new ResponseResult();
 
-        if (StringUtils.isAnyEmpty(clientId, clientSecret, username, password)) {
+        if (StringUtils.isAnyBlank(clientId, clientSecret, username, password)) {
             responseResult.setStatus(GlobalConstant.ERROR);
             responseResult.setMessage(GlobalConstant.ERROR_MESSAGE_ILLEGAL_PARAMETER);
+            return responseResult;
+        }
+        username = StringUtils.trimToEmpty(username);
+        password = StringUtils.trimToEmpty(password);
+
+        if (username.length() < 6) {
+            responseResult.setStatus(GlobalConstant.ERROR);
+            responseResult.setMessage("用户名至少6位");
+            return responseResult;
+        }
+
+        if (password.length() < 6) {
+            responseResult.setStatus(GlobalConstant.ERROR);
+            responseResult.setMessage("密码至少6位");
             return responseResult;
         }
 
         ClientDetails clientDetails = clientDetailsService.loadClientByClientId(clientId);
         if (clientDetails == null || passwordEncoder.matches(password, clientDetails.getClientSecret())) {
-            responseResult.setStatus(GlobalConstant.ERROR_NO_LOGIN);
-            responseResult.setMessage(GlobalConstant.ERROR_MESSAGE_ILLEGAL_PARAMETER);
+            responseResult.setStatus(GlobalConstant.ERROR_DENIED);
+            responseResult.setMessage(GlobalConstant.ERROR_MESSAGE_DENIED);
             return responseResult;
         }
+
         UserAccount userAccount = new UserAccount();
         userAccount.setClientId(clientId);
         userAccount.setRole(RoleEnum.ROLE_USER.name());
