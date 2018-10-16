@@ -20,7 +20,7 @@
         <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
         <project.reporting.outputEncoding>UTF-8</project.reporting.outputEncoding>
         <java.version>1.8</java.version>
-        <security.oauth2.version>2.3.3.RELEASE</security.oauth2.version>
+        <security.oauth2.version>2.3.4.RELEASE</security.oauth2.version>
         <spring.security.jwt.version>1.0.9.RELEASE</spring.security.jwt.version>
     </properties>
 
