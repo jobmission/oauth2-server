@@ -44,7 +44,7 @@ public class SecurityConfiguration extends WebSecurityConfigurerAdapter {
         return new BCryptPasswordEncoder();
     }
 
-    @Autowired
+/*    @Autowired
     public void globalUserDetails(AuthenticationManagerBuilder auth) throws Exception {
 //        auth.inMemoryAuthentication()
 //                .withUser("zhangsan").password("password").roles("USER").and()
@@ -52,7 +52,7 @@ public class SecurityConfiguration extends WebSecurityConfigurerAdapter {
 
         //auth.userDetailsService(userDetailsService);
         auth.authenticationProvider(customAuthenticationProvider);//重点
-    }
+    }*/
 
 
     @Override
