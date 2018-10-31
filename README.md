@@ -34,7 +34,7 @@ authorization_code,implicit,password,client_credentials;
 ````
 >>**password模式：用于手机端或者其他无页面跳转场景，应由后台服务端调用，保护client_id和client_secret**
 ````
-Post /oauth/token?grant_type=password&scope=read&client_id=SampleClientId&client_secret=tgb.258&username=zhangsan&password=tgb.258
+Post /oauth/token?client_id=SampleClientId&client_secret=tgb.258&grant_type=password&scope=read&username=zhangsan&password=tgb.258
 响应：
 {
     "access_token": "a.b.c",
@@ -53,15 +53,15 @@ keytool -genkey -alias jwt -keyalg RSA -keysize 1024 -keystore jwt.jks -validity
 ````
 ## 获取token签名公钥，用于本地直接验证token</br>
 ````
-/oauth/token_key
+Get /oauth/token_key
 ````
 ## 验证token是否有效，用于在资源端调用验证token</br>
 ````
-/oauth/check_token?token=a.b.c
+Post /oauth/check_token?token=a.b.c
 ````
 ## 刷新token</br>
 ````
-Post /oauth/token?grant_type=refresh_token&refresh_token=d.e.f
+Post /oauth/token?client_id=SampleClientId&client_secret=tgb.258&grant_type=refresh_token&refresh_token=d.e.f
 ````
 
 ## 注册新用户接口，应由后台服务端调用，保护client_id和client_secret</br>

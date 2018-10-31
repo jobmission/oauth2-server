@@ -4,11 +4,11 @@ import com.revengemission.sso.oauth2.server.domain.UserInfo;
 import com.revengemission.sso.oauth2.server.service.impl.ClientDetailsServiceImpl;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Qualifier;
-import org.springframework.beans.factory.annotation.Value;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.core.io.ClassPathResource;
 import org.springframework.security.authentication.AuthenticationManager;
+import org.springframework.security.core.userdetails.UserDetailsService;
 import org.springframework.security.oauth2.common.DefaultOAuth2AccessToken;
 import org.springframework.security.oauth2.common.OAuth2AccessToken;
 import org.springframework.security.oauth2.config.annotation.configurers.ClientDetailsServiceConfigurer;
@@ -29,18 +29,16 @@ import java.util.Map;
 @EnableAuthorizationServer
 public class AuthorizationServerConfiguration extends AuthorizationServerConfigurerAdapter {
 
-    @Value("${access_token.validity_period:3600}") // 默认值3600
-    private int accessTokenValiditySeconds = 3600;
-
-    @Value("${refresh_token.validity_period:2592000}") // 默认值3600
-    private int refreshTokenValiditySeconds = 2592000;
-
     @Autowired
     @Qualifier("authenticationManagerBean")
     private AuthenticationManager authenticationManager;
 
     @Autowired
     ClientDetailsServiceImpl clientDetailsService;
+
+    @Autowired
+    UserDetailsService userDetailsService;
+
 
     @Bean
     public JwtAccessTokenConverter accessTokenConverter() {
@@ -86,8 +84,8 @@ public class AuthorizationServerConfiguration extends AuthorizationServerConfigu
 //                .authorities("ROLE_CLIENT", "ROLE_TRUSTED_CLIENT")
 //                .scopes("read", "write", "trust")
 //                .secret("secret")
-//                .accessTokenValiditySeconds(accessTokenValiditySeconds)
-//                .refreshTokenValiditySeconds(refreshTokenValiditySeconds);
+//                .accessTokenValiditySeconds(3600)
+//                .refreshTokenValiditySeconds(2592000);
         clients.withClientDetails(clientDetailsService);
     }
 
@@ -96,6 +94,9 @@ public class AuthorizationServerConfiguration extends AuthorizationServerConfigu
         endpoints.authenticationManager(authenticationManager);
         endpoints.accessTokenConverter(accessTokenConverter());
         endpoints.tokenStore(tokenStore());
+        //!!!要使用refresh_token的话，需要额外配置userDetailsService!!!
+        endpoints.userDetailsService(userDetailsService);
+        endpoints.reuseRefreshTokens(true);
     }
 
     @Override

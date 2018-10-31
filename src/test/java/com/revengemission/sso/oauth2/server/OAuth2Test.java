@@ -28,15 +28,17 @@ public class OAuth2Test {
     @Test
     @Ignore
     public void flowTest() throws IOException {
-        String token = getToken();
+        Map<String, String> result = getToken();
 
-        String result = checkToken(token);
+        String isActive = checkToken(result.get("access_token"));
+        System.out.println("isActive = " + isActive);
 
-        System.out.println("result = " + result);
+        String newToken = refreshToken(result.get("refresh_token"));
+        System.out.println("newToken = " + newToken);
     }
 
 
-    public String getToken() throws IOException {
+    public Map<String, String> getToken() throws IOException {
 
         String url = host + "/oauth/token";
         RestTemplate client = new RestTemplate();
@@ -49,9 +51,9 @@ public class OAuth2Test {
         params.add("grant_type", "password");
         params.add("scope", "read");
         params.add("client_id", "SampleClientId");
-        params.add("client_secret", "secret");
+        params.add("client_secret", "tgb.258");
         params.add("username", "zhangsan");
-        params.add("password", "password");
+        params.add("password", "tgb.258");
         HttpEntity<MultiValueMap<String, String>> requestEntity = new HttpEntity<>(params, headers);
 //  执行HTTP请求
         ResponseEntity<String> response = client.exchange(url, HttpMethod.POST, requestEntity, String.class);
@@ -61,7 +63,7 @@ public class OAuth2Test {
         });
 //  输出结果
         System.out.println(result);
-        return result.get("access_token");
+        return result;
     }
 
 
@@ -79,12 +81,37 @@ public class OAuth2Test {
         HttpEntity<MultiValueMap<String, String>> requestEntity = new HttpEntity<>(params, headers);
 //  执行HTTP请求
         ResponseEntity<String> response = client.exchange(url, HttpMethod.POST, requestEntity, String.class);
+        Map<String, Object> result = JSONUtil.JSONStringToObject(response.getBody(), new TypeReference<Map<String, Object>>() {
+        });
+//  输出结果
+        System.out.println(result);
+
+        return String.valueOf(result.get("active"));
+    }
+
+    public String refreshToken(String refresh_token) throws IOException {
+
+        String url = host + "/oauth/token";
+        RestTemplate client = new RestTemplate();
+        HttpHeaders headers = new HttpHeaders();
+//  请勿轻易改变此提交方式，大部分的情况下，提交方式都是表单提交
+        headers.setContentType(MediaType.APPLICATION_FORM_URLENCODED);
+//  封装参数，千万不要替换为Map与HashMap，否则参数无法传递
+        MultiValueMap<String, String> params = new LinkedMultiValueMap<>();
+//  也支持中文
+        params.add("client_id", "SampleClientId");
+        params.add("client_secret", "tgb.258");
+        params.add("grant_type", "refresh_token");
+        params.add("refresh_token", refresh_token);
+        HttpEntity<MultiValueMap<String, String>> requestEntity = new HttpEntity<>(params, headers);
+//  执行HTTP请求
+        ResponseEntity<String> response = client.exchange(url, HttpMethod.POST, requestEntity, String.class);
         Map<String, String> result = JSONUtil.JSONStringToObject(response.getBody(), new TypeReference<Map<String, String>>() {
         });
 //  输出结果
         System.out.println(result);
 
-        return result.get("active");
+        return result.get("access_token");
     }
 
 
