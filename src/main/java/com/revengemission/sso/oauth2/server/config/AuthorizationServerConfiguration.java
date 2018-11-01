@@ -91,6 +91,7 @@ public class AuthorizationServerConfiguration extends AuthorizationServerConfigu
 
     @Override
     public void configure(AuthorizationServerEndpointsConfigurer endpoints) throws Exception {
+        //注入authenticationManager来支持password模式
         endpoints.authenticationManager(authenticationManager);
         endpoints.accessTokenConverter(accessTokenConverter());
         endpoints.tokenStore(tokenStore());
