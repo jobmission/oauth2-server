@@ -4,6 +4,7 @@ import com.revengemission.sso.oauth2.server.domain.UserInfo;
 import com.revengemission.sso.oauth2.server.service.impl.ClientDetailsServiceImpl;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Qualifier;
+import org.springframework.beans.factory.annotation.Value;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.core.io.ClassPathResource;
@@ -39,6 +40,9 @@ public class AuthorizationServerConfiguration extends AuthorizationServerConfigu
     @Autowired
     UserDetailsService userDetailsService;
 
+    @Value("${jwt.jks.keypass:keypass}")
+    private String keypass;
+
 
     @Bean
     public JwtAccessTokenConverter accessTokenConverter() {
@@ -61,11 +65,11 @@ public class AuthorizationServerConfiguration extends AuthorizationServerConfigu
             }
 
         };
-        KeyStoreKeyFactory keyStoreKeyFactory = new KeyStoreKeyFactory(new ClassPathResource("jwt.jks"), "keypass".toCharArray());
+        KeyStoreKeyFactory keyStoreKeyFactory = new KeyStoreKeyFactory(new ClassPathResource("jwt.jks"), keypass.toCharArray());
         accessTokenConverter.setKeyPair(keyStoreKeyFactory.getKeyPair("jwt"));
 
-
-        //accessTokenConverter.setSigningKey("123");// 测试用,资源服务使用相同的字符达到一个对称加密的效果,生产时候使用RSA非对称加密方式
+        // 测试用,资源服务使用相同的字符达到一个对称加密的效果,生产时候使用RSA非对称加密方式
+        //accessTokenConverter.setSigningKey("123");
         return accessTokenConverter;
     }
 
