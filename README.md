@@ -1,4 +1,4 @@
-## SpringBoot 2.x oauth2 Server, SSO 单点登录
+## SpringBoot 2.x oauth2 server, SSO 单点登录
 ## 创建数据库：持久层采用JPA框架，项目启动前必须先创建数据库，启动时数据表会自动创建</br>
 ````
 #默认用Mysql数据库，如需用其他数据库请修改配置文件以及数据库驱动
@@ -15,11 +15,11 @@ grant all privileges on oauth2_server.* to oauth2_server@localhost identified by
 authorization_code,implicit,password,client_credentials;
 ````
 #####
->>**authorization_code模式：用于PC端，页面跳转** 相对复杂，安全性最高，需要两步获取token
+* authorization_code模式：**用于PC端，页面跳转**，安全性最高，需要两步获取token
 ````
 1. Get /oauth/authorize?client_id=SampleClientId&response_type=code&redirect_uri=http://client.sso.com/login
-响应：
-重定向到：http://client.sso.com/login?code=1E37Xk，接收code,然后后端调用步骤2获取token
+用户同意授权后响应：
+浏览器重定向到：http://client.sso.com/login?code=1E37Xk，接收code,然后后端调用步骤2获取token
 2. Post /oauth/token?client_id=SampleClientId&client_secret=tgb.258&grant_type=authorization_code&redirect_uri=http://client.sso.com/login&code=1E37Xk
 响应：
 {
@@ -32,7 +32,7 @@ authorization_code,implicit,password,client_credentials;
     "jti": "823cdd71-4732-4f9d-b949-a37ceb4488a4"
 }
 ````
->>**password模式：用于手机端或者其他无页面跳转场景，应由后台服务端调用，保护client_id和client_secret**
+* password模式：用于手机端或者其他无页面跳转场景，应由后台服务端调用，**保护client_id和client_secret**
 ````
 Post /oauth/token?client_id=SampleClientId&client_secret=tgb.258&grant_type=password&scope=read&username=zhangsan&password=tgb.258
 响应：
@@ -46,19 +46,27 @@ Post /oauth/token?client_id=SampleClientId&client_secret=tgb.258&grant_type=pass
     "jti": "823cdd71-4732-4f9d-b949-a37ceb4488a4"
 }
 ````
-## 非对称密钥生成，用于签名token、在资源端本地验证token</br>
+## RSA密钥生成，用于签名token，客户端、资源端本地验证token</br>
 ````
 使用Java工具包中的keytool制作证书jwt.jks，设置别名为【jwt】，密码为【keypass】,替换位置src/main/resources/jwt.jks
 keytool -genkey -alias jwt -keyalg RSA -keysize 1024 -keystore jwt.jks -validity 3650
 ````
-## 获取token签名公钥，用于本地直接验证token</br>
+## 获取签名token的RSA公钥，用于本地直接验证token</br>
 ````
 Get /oauth/token_key
 ````
-## 验证token是否有效，用于在资源端调用验证token</br>
+## 验证token，用于在资源端调用验证token是否有效</br>
 ````
 Post /oauth/check_token?token=a.b.c
 ````
+
+## 访问受保护资源，请求时携带token</br>
+````
+Get /user/me?access_token=a.b.c
+或者http header中加入Authorization,如下
+Authorization: Bearer a.b.c
+````
+
 ## 刷新token</br>
 ````
 Post /oauth/token?client_id=SampleClientId&client_secret=tgb.258&grant_type=refresh_token&refresh_token=d.e.f
