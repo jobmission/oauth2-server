@@ -18,13 +18,14 @@ import java.util.LinkedHashMap;
 import java.util.Map;
 
 @Controller
+@RequestMapping("/oauth")
 @SessionAttributes("authorizationRequest")
 public class AccessConfirmationController {
 
     @Autowired
     ClientDetailsService clientDetailsService;
 
-    @RequestMapping("/oauth/confirm_access")
+    @RequestMapping("/confirm_access")
     public String getAccessConfirmation(Map<String, Object> model,
                                         Principal principal,
                                         HttpServletRequest request,
@@ -44,7 +45,7 @@ public class AccessConfirmationController {
         return "accessConfirmation";
     }
 
-    @RequestMapping("/oauth/error")
+    @RequestMapping("/error")
     public String handleError(Map<String, Object> model) throws Exception {
         // We can add more stuff to the model here for JSP rendering. If the client was a machine then
         // the JSON will already have been rendered.

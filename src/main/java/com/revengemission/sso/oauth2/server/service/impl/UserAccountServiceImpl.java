@@ -131,7 +131,7 @@ public class UserAccountServiceImpl implements UserAccountService {
 
     @Override
     @Transactional
-    public void loginFailure(String username) throws EntityNotFoundException {
+    public void loginFailure(String username) {
         UserAccountEntity userAccountEntity = userAccountRepository.findByUsername(username);
         if (userAccountEntity != null) {
             if (userAccountEntity.getFailureTime() == null) {
@@ -148,8 +148,6 @@ public class UserAccountServiceImpl implements UserAccountService {
                 userAccountEntity.setRecordStatus(-1);
             }
             userAccountRepository.save(userAccountEntity);
-        } else {
-            throw new EntityNotFoundException(username + " not found!");
         }
     }
 }

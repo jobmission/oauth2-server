@@ -52,7 +52,7 @@ public class ProfileController {
         return result;
     }
 
-    @GetMapping(value = {"/", "/user/profile"})
+    @GetMapping(value = {"", "/", "/user/profile"})
     public String profile(Principal principal,
                           Model model) {
         try {

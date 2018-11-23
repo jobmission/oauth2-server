@@ -14,5 +14,5 @@ public interface UserAccountService extends CommonServiceInterface<UserAccount> 
 
     void loginSuccess(String username) throws EntityNotFoundException;
 
-    void loginFailure(String username) throws EntityNotFoundException;
+    void loginFailure(String username);
 }
