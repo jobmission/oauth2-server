@@ -36,48 +36,49 @@ public class WebRequestLogAspect {
     @Before("wsLog()")
     public void doBefore(JoinPoint joinPoint) throws Throwable {
         // 接收到请求，记录请求内容
+        if (log.isInfoEnabled()) {
+            ServletRequestAttributes attributes = (ServletRequestAttributes) RequestContextHolder.getRequestAttributes();
+            if (attributes != null) {
+                HttpServletRequest request = attributes.getRequest();
+                // 记录下请求内容
+                Map<String, String[]> parameters = request.getParameterMap();
 
-        ServletRequestAttributes attributes = (ServletRequestAttributes) RequestContextHolder.getRequestAttributes();
-        if (attributes != null) {
-            HttpServletRequest request = attributes.getRequest();
-            // 记录下请求内容
-            Map<String, String[]> parameters = request.getParameterMap();
-
-            try {
-                String parametersString = null;
-                String requestBody = null;
-                if (parameters != null) {
-                    parametersString = JSONUtil.multiValueMapToJSONString(parameters);
+                try {
+                    String parametersString = null;
+                    String requestBody = null;
+                    if (parameters != null) {
+                        parametersString = JSONUtil.multiValueMapToJSONString(parameters);
+                    }
+                    MethodSignature signature = (MethodSignature) joinPoint.getSignature();
+                    Method method = signature.getMethod(); //获取被拦截的方法
+                    Object object = getAnnotatedParameterValueRequestBody(method, joinPoint.getArgs());
+                    if (object != null) {
+                        requestBody = JSONUtil.objectToJSONString(object);
+                    }
+                    log.info("\nRequest from " + ClientIPUtils.getIpAddress(request) +
+                            ";\nHeaders =" + JSONUtil.objectToJSONString(getHeadersInfo(request)) +
+                            ";\nuri =" + request.getRequestURL().toString() +
+                            "; \nrequest method=" + request.getMethod() +
+                            "; \ncontent type=" + request.getContentType() +
+                            ";\nrequest parameters=" + parametersString +
+                            ";\nrequest body=" + requestBody);
+                } catch (Exception e) {
+                    log.info("Request Object To Json  Exception: " + e);
                 }
-                MethodSignature signature = (MethodSignature) joinPoint.getSignature();
-                Method method = signature.getMethod(); //获取被拦截的方法
-                Object object = getAnnotatedParameterValueRequestBody(method, joinPoint.getArgs());
-                if (object != null) {
-                    requestBody = JSONUtil.objectToJSONString(object);
-                }
-                log.info("\nRequest from " + ClientIPUtils.getIpAddress(request) +
-                        ";\nHeaders =" + JSONUtil.objectToJSONString(getHeadersInfo(request)) +
-                        ";\nuri =" + request.getRequestURL().toString() +
-                        "; \nrequest method=" + request.getMethod() +
-                        "; \ncontent type=" + request.getContentType() +
-                        ";\nrequest parameters=" + parametersString +
-                        ";\nrequest body=" + requestBody);
-            } catch (Exception e) {
-                log.info("Request Object To Json  Exception: " + e);
             }
         }
-
     }
 
     @AfterReturning(returning = "ret", pointcut = "wsLog()")
     public void doAfterReturning(Object ret) throws Throwable {
         // 处理完请求，返回内容
-        try {
-            log.info("Response from server : \n" + JSONUtil.objectToJSONString(ret));
-        } catch (Exception e) {
-            log.info("Response Object To Json  Exception:\n " + e);
+        if (log.isInfoEnabled()) {
+            try {
+                log.info("Response from server : \n" + JSONUtil.objectToJSONString(ret));
+            } catch (Exception e) {
+                log.info("Response Object To Json  Exception:\n " + e);
+            }
         }
-
     }
 
     private Object getAnnotatedParameterValueRequestBody(Method method, Object[] args) {
