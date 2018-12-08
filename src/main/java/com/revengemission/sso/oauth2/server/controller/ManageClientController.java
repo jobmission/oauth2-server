@@ -56,7 +56,7 @@ public class ManageClientController {
     @ResponseBody
     public ResponseResult handlePost(@RequestParam(value = "id", required = false) long id,
                                      @RequestParam(value = "deleteOperation", required = false, defaultValue = "1") int deleteOperation,
-                                     @RequestParam(value = "clientId") String clientId,
+                                     @RequestParam(value = "clientId", required = false) String clientId,
                                      @RequestParam(value = "clientSecret", required = false) String clientSecret,
                                      @RequestParam(value = "authorities", required = false) String authorities,
                                      @RequestParam(value = "scope", required = false) String scope,
