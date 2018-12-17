@@ -1,21 +1,19 @@
 package com.revengemission.sso.oauth2.server.controller;
 
-import org.apache.commons.lang3.StringUtils;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.security.oauth2.common.util.OAuth2Utils;
 import org.springframework.security.oauth2.provider.AuthorizationRequest;
 import org.springframework.security.oauth2.provider.ClientDetails;
 import org.springframework.security.oauth2.provider.ClientDetailsService;
 import org.springframework.stereotype.Controller;
+import org.springframework.web.bind.annotation.ModelAttribute;
 import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.SessionAttributes;
+import org.springframework.web.servlet.ModelAndView;
 
 import javax.servlet.http.HttpServletRequest;
 import java.net.URI;
-import java.security.Principal;
-import java.util.LinkedHashMap;
 import java.util.Map;
+import java.util.TreeMap;
 
 @Controller
 @RequestMapping("/oauth")
@@ -25,13 +23,14 @@ public class AccessConfirmationController {
     @Autowired
     ClientDetailsService clientDetailsService;
 
-    @RequestMapping("/confirm_access")
-    public String getAccessConfirmation(Map<String, Object> model,
-                                        Principal principal,
-                                        HttpServletRequest request,
-                                        @RequestParam(value = "redirect_uri", required = false) String redirectUri) throws Exception {
-        AuthorizationRequest clientAuth = (AuthorizationRequest) model.remove("authorizationRequest");
+    /*@RequestMapping("/confirm_access")
+    public String getAccessConfirmation(@ModelAttribute AuthorizationRequest clientAuth,
+                                        ModelMap model,
+                                        @RequestParam(value = "redirect_uri", required = false) String redirectUri) {
         ClientDetails client = clientDetailsService.loadClientByClientId(clientAuth.getClientId());
+        model.put("auth_request", clientAuth);
+        model.put("client", client);
+
         model.put("auth_request", clientAuth);
         model.put("client", client);
         if (StringUtils.isNotEmpty(redirectUri)) {
@@ -43,12 +42,22 @@ public class AccessConfirmationController {
         }
         model.put("scopes", scopes);
         return "accessConfirmation";
+    }*/
+
+    @RequestMapping("/confirm_access")
+    public ModelAndView getAccessConfirmation(@ModelAttribute AuthorizationRequest clientAuth) throws Exception {
+        ClientDetails client = clientDetailsService.loadClientByClientId(clientAuth.getClientId());
+        TreeMap<String, Object> model = new TreeMap<>();
+        model.put("auth_request", clientAuth);
+        model.put("client", client);
+        return new ModelAndView("accessConfirmation", model);
     }
 
     @RequestMapping("/error")
-    public String handleError(Map<String, Object> model) throws Exception {
+    public String handleError(Map<String, Object> model, HttpServletRequest request) throws Exception {
         // We can add more stuff to the model here for JSP rendering. If the client was a machine then
         // the JSON will already have been rendered.
+
         model.put("message", "There was a problem with the OAuth2 protocol");
         return "oauthError";
     }

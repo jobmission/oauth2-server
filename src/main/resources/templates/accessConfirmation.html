@@ -29,13 +29,13 @@
                 <div class="form-check form-check-inline">
                     <input class="form-check-input" type="radio" th:name="${scope.key}" value="true"
                            th:id="${scope.key+'_approve'}"
-                           th:checked="${scope.value}"/>
+                           th:checked="${!scope.value}"/>
                     <label class="form-check-label" th:for="${scope.key+'_approve'}">同意</label>
                 </div>
                 <div class="form-check form-check-inline">
                     <input class="form-check-input" type="radio" th:name="${scope.key}" value="false"
                            th:id="${scope.key+'_deny'}"
-                           th:checked="${!scope.value}"/>
+                           th:checked="${scope.value}"/>
                     <label class="form-check-label" th:for="${scope.key+'_deny'}">拒绝</label>
                 </div>
             </li>

@@ -18,6 +18,11 @@ import org.springframework.security.oauth2.config.annotation.web.configuration.E
 import org.springframework.security.oauth2.config.annotation.web.configurers.AuthorizationServerEndpointsConfigurer;
 import org.springframework.security.oauth2.config.annotation.web.configurers.AuthorizationServerSecurityConfigurer;
 import org.springframework.security.oauth2.provider.OAuth2Authentication;
+import org.springframework.security.oauth2.provider.approval.ApprovalStore;
+import org.springframework.security.oauth2.provider.approval.ApprovalStoreUserApprovalHandler;
+import org.springframework.security.oauth2.provider.approval.TokenApprovalStore;
+import org.springframework.security.oauth2.provider.approval.UserApprovalHandler;
+import org.springframework.security.oauth2.provider.request.DefaultOAuth2RequestFactory;
 import org.springframework.security.oauth2.provider.token.TokenStore;
 import org.springframework.security.oauth2.provider.token.store.JwtAccessTokenConverter;
 import org.springframework.security.oauth2.provider.token.store.JwtTokenStore;
@@ -93,6 +98,27 @@ public class AuthorizationServerConfiguration extends AuthorizationServerConfigu
         clients.withClientDetails(clientDetailsService);
     }
 
+    @Bean
+    public ApprovalStore approvalStore() {
+        TokenApprovalStore approvalStore = new TokenApprovalStore();
+        approvalStore.setTokenStore(tokenStore());
+        return approvalStore;
+    }
+
+    @Bean
+    public DefaultOAuth2RequestFactory requestFactory() {
+        return new DefaultOAuth2RequestFactory(clientDetailsService);
+    }
+
+    @Bean
+    public UserApprovalHandler userApprovalHandler() {
+        ApprovalStoreUserApprovalHandler userApprovalHandler = new ApprovalStoreUserApprovalHandler();
+        userApprovalHandler.setApprovalStore(approvalStore());
+        userApprovalHandler.setClientDetailsService(clientDetailsService);
+        userApprovalHandler.setRequestFactory(requestFactory());
+        return userApprovalHandler;
+    }
+
     @Override
     public void configure(AuthorizationServerEndpointsConfigurer endpoints) throws Exception {
         //注入authenticationManager来支持password模式
@@ -102,6 +128,9 @@ public class AuthorizationServerConfiguration extends AuthorizationServerConfigu
         //!!!要使用refresh_token的话，需要额外配置userDetailsService!!!
         endpoints.userDetailsService(userDetailsService);
         endpoints.reuseRefreshTokens(true);
+
+        endpoints.userApprovalHandler(userApprovalHandler());
+
     }
 
     @Override
