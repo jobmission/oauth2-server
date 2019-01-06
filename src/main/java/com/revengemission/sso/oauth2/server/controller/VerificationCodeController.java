@@ -1,8 +1,8 @@
 package com.revengemission.sso.oauth2.server.controller;
 
 import com.google.common.util.concurrent.RateLimiter;
+import com.revengemission.commons.captcha.core.VerificationCodeUtil;
 import com.revengemission.sso.oauth2.server.domain.GlobalConstant;
-import com.revengemission.sso.oauth2.server.utils.VerifyCodeUtils;
 import org.springframework.stereotype.Controller;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestParam;
@@ -48,8 +48,9 @@ public class VerificationCodeController {
         response.setDateHeader("Date", time);
         response.setDateHeader("Expires", time);
         ServletOutputStream stream = response.getOutputStream();
-        String validateCode = VerifyCodeUtils.outputVerifyImage(width, height, stream, length);
+        String validateCode = VerificationCodeUtil.generateVerificationCode(4, null);
         request.getSession().setAttribute(GlobalConstant.VERIFICATION_CODE, validateCode);
+        VerificationCodeUtil.outputImage(width, height, stream, validateCode);
         stream.flush();
         stream.close();
     }
