@@ -56,6 +56,11 @@ keytool -genkey -alias jwt -keyalg RSA -keysize 1024 -keystore jwt.jks -validity
 ````
 Get /oauth/token_key
 ````
+## jwk-set-uri
+````
+Get /.well-known/jwks.json
+````
+
 ## 验证token，用于在资源端调用验证token是否有效</br>
 ````
 Post /oauth/check_token?token=a.b.c
