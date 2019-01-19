@@ -1,5 +1,6 @@
 package com.revengemission.sso.oauth2.server.service.impl;
 
+import com.github.dozermapper.core.Mapper;
 import com.revengemission.sso.oauth2.server.domain.AlreadyExistsException;
 import com.revengemission.sso.oauth2.server.domain.EntityNotFoundException;
 import com.revengemission.sso.oauth2.server.domain.JsonObjects;
@@ -9,7 +10,6 @@ import com.revengemission.sso.oauth2.server.persistence.repository.UserAccountRe
 import com.revengemission.sso.oauth2.server.service.UserAccountService;
 import com.revengemission.sso.oauth2.server.utils.DateUtil;
 import org.apache.commons.lang3.StringUtils;
-import org.dozer.Mapper;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.data.domain.Page;

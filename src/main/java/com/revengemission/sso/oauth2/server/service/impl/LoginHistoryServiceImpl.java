@@ -1,5 +1,6 @@
 package com.revengemission.sso.oauth2.server.service.impl;
 
+import com.github.dozermapper.core.Mapper;
 import com.revengemission.sso.oauth2.server.domain.AlreadyExistsException;
 import com.revengemission.sso.oauth2.server.domain.JsonObjects;
 import com.revengemission.sso.oauth2.server.domain.LoginHistory;
@@ -7,7 +8,6 @@ import com.revengemission.sso.oauth2.server.persistence.entity.LoginHistoryEntit
 import com.revengemission.sso.oauth2.server.persistence.repository.LoginHistoryRepository;
 import com.revengemission.sso.oauth2.server.service.LoginHistoryService;
 import org.apache.commons.lang3.StringUtils;
-import org.dozer.Mapper;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageRequest;

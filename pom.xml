@@ -97,21 +97,9 @@
         </dependency>
 
         <dependency>
-            <groupId>net.sf.dozer</groupId>
-            <artifactId>dozer</artifactId>
-            <version>5.5.1</version>
-            <exclusions>
-                <exclusion>
-                    <groupId>log4j</groupId>
-                    <artifactId>log4j</artifactId>
-                </exclusion>
-            </exclusions>
-        </dependency>
-
-        <dependency>
-            <groupId>net.sf.dozer</groupId>
-            <artifactId>dozer-spring</artifactId>
-            <version>5.5.1</version>
+            <groupId>com.github.dozermapper</groupId>
+            <artifactId>dozer-spring-boot-starter</artifactId>
+            <version>6.4.1</version>
         </dependency>
 
         <dependency>
@@ -123,7 +111,7 @@
         <dependency>
             <groupId>com.revengemission.commons</groupId>
             <artifactId>captcha</artifactId>
-            <version>0.4</version>
+            <version>0.5</version>
         </dependency>
 
         <dependency>
