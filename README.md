@@ -108,3 +108,7 @@ java -jar oauth2-server-0.0.1-SNAPSHOT.jar --spring.config.additional-location=/
 ## 注意！！！
 当Server和Client在一台机器上时，请配置域名代理，避免cookie相互覆盖
 
+[Bcrypt 在线密码生成](https://www.jisuan.mobi/index.php?tag=Bcrypt)
+[ Bcrypt 在线密码生成](https://www.devglan.com/online-tools/bcrypt-hash-generator)
+
+
