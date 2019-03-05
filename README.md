@@ -19,8 +19,7 @@ authorization_code,implicit,password,client_credentials;
 * authorization_code模式：**用于PC端，页面跳转**，安全性最高，需要两步获取token
 ````
 1. Get /oauth/authorize?client_id=SampleClientId&response_type=code&redirect_uri=http://client.sso.com/login
-用户同意授权后响应：
-浏览器重定向到：http://client.sso.com/login?code=1E37Xk，接收code,然后后端调用步骤2获取token
+用户同意授权后服务端响应,浏览器重定向到：http://client.sso.com/login?code=1E37Xk，接收code,然后后端调用步骤2获取token
 2. Post /oauth/token?client_id=SampleClientId&client_secret=tgb.258&grant_type=authorization_code&redirect_uri=http://client.sso.com/login&code=1E37Xk
 响应：
 {
@@ -47,16 +46,16 @@ Post /oauth/token?client_id=SampleClientId&client_secret=tgb.258&grant_type=pass
     "jti": "823cdd71-4732-4f9d-b949-a37ceb4488a4"
 }
 ````
-## RSA密钥生成，用于签名token，客户端、资源端本地验证token</br>
+## RSA密钥生成，用于签名token，客户端、资源端本地验证token
 ````
 使用Java工具包中的keytool制作证书jwt.jks，设置别名为【jwt】，密码为【keypass】,替换位置src/main/resources/jwt.jks
 keytool -genkey -alias jwt -keyalg RSA -keysize 1024 -keystore jwt.jks -validity 3650
 ````
-## 获取签名token的RSA公钥，用于本地直接验证token</br>
+## 获取jwt token签名的RSA公钥，用于本地验证token
 ````
 Get /oauth/token_key
 ````
-## jwk-set-uri
+## jwk-set-uri：resource server 可以得到jwt token签名公钥并缓存，进行本地验证
 ````
 Get /.well-known/jwks.json
 ````
