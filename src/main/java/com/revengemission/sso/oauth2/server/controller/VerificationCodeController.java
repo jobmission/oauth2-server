@@ -1,6 +1,5 @@
 package com.revengemission.sso.oauth2.server.controller;
 
-import com.google.common.util.concurrent.RateLimiter;
 import com.revengemission.commons.captcha.core.VerificationCodeUtil;
 import com.revengemission.sso.oauth2.server.domain.GlobalConstant;
 import org.springframework.stereotype.Controller;
@@ -14,10 +13,6 @@ import java.io.IOException;
 
 @Controller
 public class VerificationCodeController {
-
-
-    //每秒只发出100个令牌
-    RateLimiter rateLimiter = RateLimiter.create(100.0);
 
     /**
      * 验证码
@@ -33,9 +28,6 @@ public class VerificationCodeController {
                         @RequestParam(value = "h", defaultValue = "38") int height,
                         @RequestParam(value = "length", defaultValue = "4") int length) throws IOException {
 
-        if (!rateLimiter.tryAcquire()) {
-            return;
-        }
         if (length < 4) {
             length = 4;
         }
