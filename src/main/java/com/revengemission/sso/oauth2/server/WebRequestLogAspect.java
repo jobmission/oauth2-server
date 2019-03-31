@@ -55,15 +55,30 @@ public class WebRequestLogAspect {
                     if (object != null) {
                         requestBody = JSONUtil.objectToJSONString(object);
                     }
-                    log.info("\nRequest from " + ClientIPUtils.getIpAddress(request) +
-                            ";\nHeaders =" + JSONUtil.objectToJSONString(getHeadersInfo(request)) +
-                            ";\nuri =" + request.getRequestURL().toString() +
-                            "; \nrequest method=" + request.getMethod() +
-                            "; \ncontent type=" + request.getContentType() +
-                            ";\nrequest parameters=" + parametersString +
-                            ";\nrequest body=" + requestBody);
+                    StringBuffer stringBuffer = new StringBuffer();
+                    stringBuffer.append("\nRequest from = ");
+                    stringBuffer.append(ClientIPUtils.getIpAddress(request));
+                    stringBuffer.append(";\n");
+                    stringBuffer.append("uri = ");
+                    stringBuffer.append(request.getRequestURL().toString());
+                    stringBuffer.append(";\n");
+                    stringBuffer.append("request method = ");
+                    stringBuffer.append(request.getMethod());
+                    stringBuffer.append(";\n");
+                    stringBuffer.append("content type = ");
+                    stringBuffer.append(request.getContentType());
+                    stringBuffer.append(";\n");
+                    stringBuffer.append("request parameters = ");
+                    stringBuffer.append(parametersString);
+                    stringBuffer.append(";\n");
+                    stringBuffer.append("request body = ");
+                    stringBuffer.append(requestBody);
+                    stringBuffer.append(";\n");
+
+                    log.info(stringBuffer.toString());
+
                 } catch (Exception e) {
-                    log.info("Request Object To Json  Exception: " + e);
+                    log.info("log http request Exception: ", e);
                 }
             }
         }
@@ -76,7 +91,7 @@ public class WebRequestLogAspect {
             try {
                 log.info("Response from server : \n" + JSONUtil.objectToJSONString(ret));
             } catch (Exception e) {
-                log.info("Response Object To Json  Exception:\n " + e);
+                log.info("log http response Exception:\n ", e);
             }
         }
     }

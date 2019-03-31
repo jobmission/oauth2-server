@@ -10,6 +10,7 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.format.annotation.DateTimeFormat;
+import org.springframework.security.oauth2.provider.OAuth2Authentication;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.GetMapping;
@@ -20,7 +21,9 @@ import org.springframework.web.bind.annotation.ResponseBody;
 import java.security.Principal;
 import java.util.Date;
 import java.util.HashMap;
+import java.util.List;
 import java.util.Map;
+import java.util.stream.Collectors;
 
 @Controller
 public class ProfileController {
@@ -32,20 +35,23 @@ public class ProfileController {
 
     @ResponseBody
     @GetMapping("/user/me")
-    public Map<String, String> info(Principal principal) {
-        Map<String, String> result = new HashMap<>();
+    public Map<String, Object> info(OAuth2Authentication oAuth2Authentication) {
+        Map<String, Object> result = new HashMap<>();
         try {
-            UserAccount userAccount = userAccountService.findByUsername(principal.getName());
-            result.put("username", principal.getName());
+            UserAccount userAccount = userAccountService.findByUsername(oAuth2Authentication.getName());
+            result.put("username", oAuth2Authentication.getName());
             if (StringUtils.isNotEmpty(userAccount.getGender())) {
                 result.put("gender", userAccount.getGender());
             }
             if (StringUtils.isNotEmpty(userAccount.getNickName())) {
                 result.put("nickName", userAccount.getNickName());
             }
-        } catch (EntityNotFoundException e) {
+
+            List<String> authorities = oAuth2Authentication.getAuthorities().stream().map(e -> e.getAuthority()).collect(Collectors.toList());
+            result.put("authorities", StringUtils.join(authorities, ","));
+        } catch (Exception e) {
             if (log.isErrorEnabled()) {
-                log.error("findByUsername exception", e);
+                log.error("/user/me exception", e);
             }
         }
 

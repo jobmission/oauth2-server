@@ -7,9 +7,9 @@ import com.fasterxml.jackson.databind.DeserializationFeature;
 import com.fasterxml.jackson.databind.JavaType;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.fasterxml.jackson.databind.SerializationFeature;
-import org.apache.commons.lang3.StringUtils;
 
 import java.io.IOException;
+import java.util.Arrays;
 import java.util.HashMap;
 import java.util.Map;
 
@@ -35,7 +35,7 @@ public class JSONUtil {
         if (object != null && object.size() > 0) {
             object.forEach((k, v) -> {
                 if (v != null && v.length > 0) {
-                    newMap.put(k, StringUtils.join(v, ","));
+                    newMap.put(k, Arrays.toString(v));
                 }
             });
         }
@@ -55,25 +55,27 @@ public class JSONUtil {
 
     /**
      * string转object
-     * @param str json字符串
+     *
+     * @param str           json字符串
      * @param typeReference 被转对象引用类型
      * @param <T>
      * @return
      */
     public static <T> T JSONStringToObject(String str, TypeReference<T> typeReference) throws IOException {
-        return mapper.readValue(str,typeReference);
+        return mapper.readValue(str, typeReference);
     }
 
     /**
      * string转object 用于转为集合对象
-     * @param str json字符串
+     *
+     * @param str             json字符串
      * @param collectionClass 被转集合class
-     * @param elementClasses 被转集合中对象类型class
+     * @param elementClasses  被转集合中对象类型class
      * @param <T>
      * @return
      */
-    public static <T> T JSONStringToObject(String str,Class<?> collectionClass,Class<?>... elementClasses) throws IOException {
-        JavaType javaType = mapper.getTypeFactory().constructParametricType(collectionClass,elementClasses);
-        return mapper.readValue(str,javaType);
+    public static <T> T JSONStringToObject(String str, Class<?> collectionClass, Class<?>... elementClasses) throws IOException {
+        JavaType javaType = mapper.getTypeFactory().constructParametricType(collectionClass, elementClasses);
+        return mapper.readValue(str, javaType);
     }
 }
