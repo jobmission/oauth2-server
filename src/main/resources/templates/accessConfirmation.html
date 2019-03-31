@@ -10,13 +10,10 @@
 
 <body>
 
-<div class="container">
-    <h2>Please Confirm</h2>
-
+<div class="container mt-5">
+    <h2>访问授权确认?</h2>
     <p>
-        You hereby authorize "
-        <span th:text="${client.clientId}"/>
-        " to access your protected resources.
+        “<span th:text="${applicationName}"/>” 试图获取您的以下信息：
     </p>
 
     <form id="confirmationForm" name="confirmationForm"
@@ -24,23 +21,21 @@
         <input name="user_oauth_approval" value="true" type="hidden"/>
         <ul class="list-unstyled">
             <li th:each="scope,scopeIter:${scopes}">
-                <span th:text="${scope.key}"></span>:
-                <div class="form-check form-check-inline">
+                <span class="bg-danger"><span th:text="${scope.value}"></span>!</span>
+                <div class="form-check form-check-inline d-none">
                     <input class="form-check-input" type="radio" th:name="${scope.key}" value="true"
-                           th:id="${scope.key+'_approve'}"
-                           th:checked="${!scope.value}"/>
+                           th:id="${scope.key+'_approve'}" checked="checked"/>
                     <label class="form-check-label" th:for="${scope.key+'_approve'}">同意</label>
                 </div>
-                <div class="form-check form-check-inline">
+                <div class="form-check form-check-inline d-none">
                     <input class="form-check-input" type="radio" th:name="${scope.key}" value="false"
-                           th:id="${scope.key+'_deny'}"
-                           th:checked="${scope.value}"/>
+                           th:id="${scope.key+'_deny'}"/>
                     <label class="form-check-label" th:for="${scope.key+'_deny'}">拒绝</label>
                 </div>
             </li>
         </ul>
-        <button class="btn btn-primary" type="submit">确认</button>
-        <a class="btn btn-info btn-sm" th:href="@{${from}}">Go back</a>
+        <button class="btn btn-primary btn-sm" type="submit">同意</button>
+        <a class="btn btn-danger btn-sm" th:href="@{${from}}">拒绝</a>
     </form>
 
 </div>

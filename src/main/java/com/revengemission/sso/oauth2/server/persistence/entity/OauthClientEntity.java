@@ -11,6 +11,7 @@ import java.util.Date;
 public class OauthClientEntity extends BaseEntity {
     @Column(nullable = false)
     private String clientId;
+    private String applicationName;
     private String resourceIds;
     @Column(nullable = false)
     private String clientSecret;
@@ -33,6 +34,14 @@ public class OauthClientEntity extends BaseEntity {
 
     public void setClientId(String clientId) {
         this.clientId = clientId;
+    }
+
+    public String getApplicationName() {
+        return applicationName;
+    }
+
+    public void setApplicationName(String applicationName) {
+        this.applicationName = applicationName;
     }
 
     public String getResourceIds() {

@@ -1,19 +1,24 @@
 package com.revengemission.sso.oauth2.server.controller;
 
+import com.revengemission.sso.oauth2.server.domain.OauthClient;
+import com.revengemission.sso.oauth2.server.domain.ScopeDefinition;
+import com.revengemission.sso.oauth2.server.service.OauthClientService;
+import com.revengemission.sso.oauth2.server.service.ScopeDefinitionService;
+import org.apache.commons.lang3.StringUtils;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.security.oauth2.common.util.OAuth2Utils;
 import org.springframework.security.oauth2.provider.AuthorizationRequest;
-import org.springframework.security.oauth2.provider.ClientDetails;
-import org.springframework.security.oauth2.provider.ClientDetailsService;
 import org.springframework.stereotype.Controller;
+import org.springframework.ui.ModelMap;
 import org.springframework.web.bind.annotation.ModelAttribute;
 import org.springframework.web.bind.annotation.RequestMapping;
+import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.SessionAttributes;
-import org.springframework.web.servlet.ModelAndView;
 
 import javax.servlet.http.HttpServletRequest;
 import java.net.URI;
+import java.util.LinkedHashMap;
 import java.util.Map;
-import java.util.TreeMap;
 
 @Controller
 @RequestMapping("/oauth")
@@ -21,37 +26,44 @@ import java.util.TreeMap;
 public class AccessConfirmationController {
 
     @Autowired
-    ClientDetailsService clientDetailsService;
+    OauthClientService oauthClientService;
 
-    /*@RequestMapping("/confirm_access")
+    @Autowired
+    ScopeDefinitionService scopeDefinitionService;
+
+
+    @RequestMapping("/confirm_access")
     public String getAccessConfirmation(@ModelAttribute AuthorizationRequest clientAuth,
                                         ModelMap model,
                                         @RequestParam(value = "redirect_uri", required = false) String redirectUri) {
-        ClientDetails client = clientDetailsService.loadClientByClientId(clientAuth.getClientId());
+        OauthClient client = oauthClientService.findByClientId(clientAuth.getClientId());
         model.put("auth_request", clientAuth);
-        model.put("client", client);
-
-        model.put("auth_request", clientAuth);
-        model.put("client", client);
+        model.put("applicationName", client.getApplicationName());
         if (StringUtils.isNotEmpty(redirectUri)) {
             model.put("from", getHost(redirectUri));
         }
         Map<String, String> scopes = new LinkedHashMap<>();
         for (String scope : clientAuth.getScope()) {
-            scopes.put(OAuth2Utils.SCOPE_PREFIX + scope, "false");
+            ScopeDefinition scopeDefinition = scopeDefinitionService.findByScope(scope);
+            if (scopeDefinition != null) {
+                scopes.put(OAuth2Utils.SCOPE_PREFIX + scope, scopeDefinition.getDefinition());
+            } else {
+                scopes.put(OAuth2Utils.SCOPE_PREFIX + scope, scope);
+            }
         }
         model.put("scopes", scopes);
         return "accessConfirmation";
-    }*/
+    }
 
-    @RequestMapping("/confirm_access")
+    /*@RequestMapping("/confirm_access")
     public ModelAndView getAccessConfirmation(@ModelAttribute AuthorizationRequest clientAuth) throws Exception {
         ClientDetails client = clientDetailsService.loadClientByClientId(clientAuth.getClientId());
         TreeMap<String, Object> model = new TreeMap<>();
         model.put("auth_request", clientAuth);
         model.put("client", client);
-        return new ModelAndView("accessConfirmation", model);
-    }
+        ModelAndView a= new ModelAndView("accessConfirmation", model);
+        return a;
+    }*/
 
     @RequestMapping("/error")
     public String handleError(Map<String, Object> model, HttpServletRequest request) throws Exception {

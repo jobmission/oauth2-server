@@ -13,6 +13,7 @@ import java.util.Date;
 @Data
 public class OauthClient extends BaseDomain {
     private String clientId;
+    private String applicationName;
     private String resourceIds;
     private String clientSecret;
     private String scope;
