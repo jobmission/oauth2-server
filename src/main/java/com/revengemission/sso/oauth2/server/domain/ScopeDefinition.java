@@ -1,7 +1,11 @@
 package com.revengemission.sso.oauth2.server.domain;
 
 public class ScopeDefinition extends BaseDomain {
-    private String scope;
+    /**
+	 * 
+	 */
+	private static final long serialVersionUID = 2862177859444895431L;
+	private String scope;
     /*定义 解释*/
     private String definition;
 

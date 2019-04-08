@@ -7,7 +7,11 @@ import javax.persistence.UniqueConstraint;
 @Entity
 @Table(uniqueConstraints = @UniqueConstraint(columnNames = {"scope"}))
 public class ScopeDefinitionEntity extends BaseEntity {
-    private String scope;
+    /**
+	 * 
+	 */
+	private static final long serialVersionUID = 1522239249392557103L;
+	private String scope;
     /*定义 解释*/
     private String definition;
 

@@ -57,7 +57,7 @@ public class CustomAuthenticationFailureHandler extends SimpleUrlAuthenticationF
         if (isAjax) {
             response.setHeader("Content-Type", "application/json;charset=UTF-8");
             try {
-                ResponseResult responseMessage = new ResponseResult<>();
+                ResponseResult<Object> responseMessage = new ResponseResult<>();
                 responseMessage.setStatus(GlobalConstant.ERROR);
                 responseMessage.setMessage(exception.getMessage());
                 ObjectMapper objectMapper = new ObjectMapper();

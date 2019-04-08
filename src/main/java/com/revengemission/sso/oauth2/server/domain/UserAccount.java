@@ -12,7 +12,11 @@ import java.util.Date;
 @EqualsAndHashCode(callSuper = true)
 @Data
 public class UserAccount extends BaseDomain {
-    private String clientId;
+    /**
+	 * 
+	 */
+	private static final long serialVersionUID = -2355580690719376576L;
+	private String clientId;
     private String username;
     private String password;
     private String role;

@@ -9,7 +9,11 @@ import java.util.Date;
 @Entity
 @Table(uniqueConstraints = @UniqueConstraint(columnNames = {"clientId"}))
 public class OauthClientEntity extends BaseEntity {
-    @Column(nullable = false)
+    /**
+	 * 
+	 */
+	private static final long serialVersionUID = -3042356579574873614L;
+	@Column(nullable = false)
     private String clientId;
     private String applicationName;
     private String resourceIds;

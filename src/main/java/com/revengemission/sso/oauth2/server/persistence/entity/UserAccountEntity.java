@@ -9,7 +9,11 @@ import java.util.Date;
         indexes = {@Index(columnList = "role,username")})
 public class UserAccountEntity extends BaseEntity {
 
-    //用于记录用户在哪个子系统进行的注册
+    /**
+	 * 
+	 */
+	private static final long serialVersionUID = -5519234457588411587L;
+	//用于记录用户在哪个子系统进行的注册
     private String clientId;
     @Column(nullable = false, columnDefinition = "VARCHAR(40)")
     private String username;

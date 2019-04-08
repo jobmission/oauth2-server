@@ -9,7 +9,11 @@ import java.io.Serializable;
 @JsonInclude(JsonInclude.Include.NON_NULL)
 public class ResponseResult<T> implements Serializable {
 
-    private Long id;
+    /**
+	 * 
+	 */
+	private static final long serialVersionUID = 613307369635832439L;
+	private Long id;
     private int status;//请求状态是否成功
     private String error;//错误类型
     private String message;//详细的信息

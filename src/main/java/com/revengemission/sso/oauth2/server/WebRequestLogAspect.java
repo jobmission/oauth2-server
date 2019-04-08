@@ -1,7 +1,11 @@
 package com.revengemission.sso.oauth2.server;
 
-import com.revengemission.sso.oauth2.server.utils.ClientIPUtils;
-import com.revengemission.sso.oauth2.server.utils.JSONUtil;
+import java.lang.annotation.Annotation;
+import java.lang.reflect.Method;
+import java.util.Map;
+
+import javax.servlet.http.HttpServletRequest;
+
 import org.aspectj.lang.JoinPoint;
 import org.aspectj.lang.annotation.AfterReturning;
 import org.aspectj.lang.annotation.Aspect;
@@ -15,13 +19,8 @@ import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.context.request.RequestContextHolder;
 import org.springframework.web.context.request.ServletRequestAttributes;
 
-import javax.servlet.http.HttpServletRequest;
-import java.lang.annotation.Annotation;
-import java.lang.reflect.Method;
-import java.lang.reflect.Parameter;
-import java.util.Enumeration;
-import java.util.HashMap;
-import java.util.Map;
+import com.revengemission.sso.oauth2.server.utils.ClientIPUtils;
+import com.revengemission.sso.oauth2.server.utils.JSONUtil;
 
 @Aspect
 @Component
@@ -98,12 +97,12 @@ public class WebRequestLogAspect {
 
     private Object getAnnotatedParameterValueRequestBody(Method method, Object[] args) {
         Annotation[][] parameterAnnotations = method.getParameterAnnotations();
-        Parameter[] parameters = method.getParameters();
+        //Parameter[] parameters = method.getParameters();
 
         int i = 0;
         for (Annotation[] annotations : parameterAnnotations) {
             Object arg = args[i];
-            String name = parameters[i++].getDeclaringExecutable().getName();
+            //String name = parameters[i++].getDeclaringExecutable().getName();
             for (Annotation annotation : annotations) {
                 if (annotation instanceof RequestBody) {
                     return arg;
@@ -113,19 +112,5 @@ public class WebRequestLogAspect {
         return null;
     }
 
-    //get request headers
-    private Map<String, String> getHeadersInfo(HttpServletRequest request) {
-
-        Map<String, String> map = new HashMap<String, String>();
-
-        Enumeration headerNames = request.getHeaderNames();
-        while (headerNames.hasMoreElements()) {
-            String key = (String) headerNames.nextElement();
-            String value = request.getHeader(key);
-            map.put(key, value);
-        }
-
-        return map;
-    }
 
 }

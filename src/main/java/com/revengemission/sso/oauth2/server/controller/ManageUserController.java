@@ -1,16 +1,25 @@
 package com.revengemission.sso.oauth2.server.controller;
 
-import com.revengemission.sso.oauth2.server.domain.*;
-import com.revengemission.sso.oauth2.server.service.UserAccountService;
+import java.security.Principal;
+
 import org.apache.commons.lang3.StringUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Controller;
-import org.springframework.web.bind.annotation.*;
+import org.springframework.web.bind.annotation.GetMapping;
+import org.springframework.web.bind.annotation.PostMapping;
+import org.springframework.web.bind.annotation.RequestMapping;
+import org.springframework.web.bind.annotation.RequestParam;
+import org.springframework.web.bind.annotation.ResponseBody;
 
-import java.security.Principal;
+import com.revengemission.sso.oauth2.server.domain.GlobalConstant;
+import com.revengemission.sso.oauth2.server.domain.JsonObjects;
+import com.revengemission.sso.oauth2.server.domain.ResponseResult;
+import com.revengemission.sso.oauth2.server.domain.RoleEnum;
+import com.revengemission.sso.oauth2.server.domain.UserAccount;
+import com.revengemission.sso.oauth2.server.service.UserAccountService;
 
 @Controller
 @RequestMapping(value = "/management/user")
@@ -55,13 +64,13 @@ public class ManageUserController {
 
     @PostMapping(value = "/details")
     @ResponseBody
-    public ResponseResult handlePost(@RequestParam(value = "id", required = false) long id,
+    public ResponseResult<Object> handlePost(@RequestParam(value = "id", required = false) long id,
                                      @RequestParam(value = "deleteOperation", required = false, defaultValue = "1") int deleteOperation,
                                      @RequestParam(value = "nickName", required = false) String nickName,
                                      @RequestParam(value = "address", required = false) String address,
                                      @RequestParam(value = "password", required = false) String password) {
 
-        ResponseResult responseResult = new ResponseResult();
+        ResponseResult<Object> responseResult = new ResponseResult<>();
 
         if (deleteOperation == -2 && id > 0) {
             userAccountService.updateRecordStatus(id, 0);

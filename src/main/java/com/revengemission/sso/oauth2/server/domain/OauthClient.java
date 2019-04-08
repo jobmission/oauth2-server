@@ -12,7 +12,11 @@ import java.util.Date;
 @EqualsAndHashCode(callSuper = true)
 @Data
 public class OauthClient extends BaseDomain {
-    private String clientId;
+    /**
+	 * 
+	 */
+	private static final long serialVersionUID = 8626957691648832578L;
+	private String clientId;
     private String applicationName;
     private String resourceIds;
     private String clientSecret;

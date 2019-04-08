@@ -44,7 +44,7 @@ public class CustomAccessDeniedHandler implements AccessDeniedHandler {
         if (isAjax) {
             response.setHeader("Content-Type", "application/json;charset=UTF-8");
             try {
-                ResponseResult responseMessage = new ResponseResult<>();
+                ResponseResult<Object> responseMessage = new ResponseResult<>();
                 responseMessage.setStatus(GlobalConstant.ERROR_DENIED);
                 responseMessage.setMessage(toUrl);
                 ObjectMapper objectMapper = new ObjectMapper();

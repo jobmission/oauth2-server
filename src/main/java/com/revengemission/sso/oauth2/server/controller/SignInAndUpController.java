@@ -1,8 +1,9 @@
 package com.revengemission.sso.oauth2.server.controller;
 
-import com.revengemission.sso.oauth2.server.domain.*;
-import com.revengemission.sso.oauth2.server.service.UserAccountService;
-import com.revengemission.sso.oauth2.server.utils.CheckPasswordStrength;
+import java.security.Principal;
+
+import javax.servlet.http.HttpServletRequest;
+
 import org.apache.commons.lang3.StringUtils;
 import org.apache.commons.text.StringEscapeUtils;
 import org.slf4j.Logger;
@@ -13,10 +14,19 @@ import org.springframework.security.oauth2.provider.ClientDetails;
 import org.springframework.security.oauth2.provider.ClientDetailsService;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
-import org.springframework.web.bind.annotation.*;
+import org.springframework.web.bind.annotation.CrossOrigin;
+import org.springframework.web.bind.annotation.GetMapping;
+import org.springframework.web.bind.annotation.PostMapping;
+import org.springframework.web.bind.annotation.RequestParam;
+import org.springframework.web.bind.annotation.ResponseBody;
 
-import javax.servlet.http.HttpServletRequest;
-import java.security.Principal;
+import com.revengemission.sso.oauth2.server.domain.AlreadyExistsException;
+import com.revengemission.sso.oauth2.server.domain.GlobalConstant;
+import com.revengemission.sso.oauth2.server.domain.ResponseResult;
+import com.revengemission.sso.oauth2.server.domain.RoleEnum;
+import com.revengemission.sso.oauth2.server.domain.UserAccount;
+import com.revengemission.sso.oauth2.server.service.UserAccountService;
+import com.revengemission.sso.oauth2.server.utils.CheckPasswordStrength;
 
 @Controller
 public class SignInAndUpController {
@@ -52,13 +62,13 @@ public class SignInAndUpController {
 
     @ResponseBody
     @PostMapping("/signUp")
-    public ResponseResult handleSignUp(HttpServletRequest request,
+    public ResponseResult<Object> handleSignUp(HttpServletRequest request,
                                        @RequestParam(value = "verificationCode") String verificationCode,
                                        @RequestParam(value = "username") String username,
                                        @RequestParam(value = "password") String password,
                                        @RequestParam(value = "confirmPassword") String confirmPassword) {
 
-        ResponseResult responseResult = new ResponseResult();
+        ResponseResult<Object> responseResult = new ResponseResult<>();
         if (StringUtils.isAnyBlank(verificationCode, username, password, confirmPassword) || !StringUtils.equals(password, confirmPassword)) {
             responseResult.setStatus(GlobalConstant.ERROR);
             responseResult.setMessage("请检查输入");
@@ -119,14 +129,14 @@ public class SignInAndUpController {
     @CrossOrigin
     @ResponseBody
     @PostMapping("/oauth/signUp")
-    public ResponseResult handleOauthSignUp(HttpServletRequest request,
+    public ResponseResult<Object> handleOauthSignUp(HttpServletRequest request,
                                             Principal principal,
                                             @RequestParam(value = "client_id") String clientId,
                                             @RequestParam(value = "client_secret") String clientSecret,
                                             @RequestParam(value = "username") String username,
                                             @RequestParam(value = "password") String password) {
 
-        ResponseResult responseResult = new ResponseResult();
+        ResponseResult<Object> responseResult = new ResponseResult<>();
 
         if (StringUtils.isAnyBlank(clientId, clientSecret, username, password)) {
             responseResult.setStatus(GlobalConstant.ERROR);

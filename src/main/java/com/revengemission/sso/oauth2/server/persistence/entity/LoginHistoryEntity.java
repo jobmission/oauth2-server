@@ -10,7 +10,11 @@ import javax.persistence.Table;
 @Table(indexes = {@Index(name = "index_username", columnList = "username")})
 public class LoginHistoryEntity extends BaseEntity {
 
-    //用于记录用户在哪个子系统进行的登陆
+    /**
+	 * 
+	 */
+	private static final long serialVersionUID = -7088423724470075317L;
+	//用于记录用户在哪个子系统进行的登陆
     private String clientId;
     @Column(nullable = false, columnDefinition = "VARCHAR(40)")
     private String username;
