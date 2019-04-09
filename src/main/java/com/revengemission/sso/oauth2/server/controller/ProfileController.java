@@ -13,10 +13,7 @@ import org.springframework.format.annotation.DateTimeFormat;
 import org.springframework.security.oauth2.provider.OAuth2Authentication;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
-import org.springframework.web.bind.annotation.GetMapping;
-import org.springframework.web.bind.annotation.PostMapping;
-import org.springframework.web.bind.annotation.RequestParam;
-import org.springframework.web.bind.annotation.ResponseBody;
+import org.springframework.web.bind.annotation.*;
 
 import java.security.Principal;
 import java.util.Date;
@@ -34,7 +31,7 @@ public class ProfileController {
     UserAccountService userAccountService;
 
     @ResponseBody
-    @GetMapping("/user/me")
+    @RequestMapping("/user/me")
     public Map<String, Object> info(OAuth2Authentication oAuth2Authentication) {
         Map<String, Object> result = new HashMap<>();
         try {
