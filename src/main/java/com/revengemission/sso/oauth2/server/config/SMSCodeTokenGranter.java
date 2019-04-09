@@ -37,7 +37,7 @@ public class SMSCodeTokenGranter extends AbstractTokenGranter {
 
 		Map<String, String> parameters = new LinkedHashMap<String, String>(tokenRequest.getRequestParameters());
 		String userMobileNo = parameters.get("username"); // 客户端提交的用户名
-		String smscode = parameters.get("smscode"); // 客户端提交的验证码
+		String smscode = parameters.get("sms_code"); // 客户端提交的验证码
 
 		// 从库里查用户
 		UserDetails user = userDetailsService.loadUserByUsername(userMobileNo);
@@ -45,7 +45,8 @@ public class SMSCodeTokenGranter extends AbstractTokenGranter {
 			throw new InvalidGrantException("用户不存在");
 		}
 
-		// 验证用户状态(是否警用等),代码略
+		//todo 待续
+		// 验证用户状态(是否禁用等),代码略
 		// 验证验证码
 		String smsCodeCached = "abcd";
 		if (StringUtils.isBlank(smsCodeCached)) {
