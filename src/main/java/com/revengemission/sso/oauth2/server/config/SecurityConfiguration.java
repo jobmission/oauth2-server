@@ -71,9 +71,9 @@ public class SecurityConfiguration extends WebSecurityConfigurerAdapter {
         //http.sessionManagement().sessionCreationPolicy(SessionCreationPolicy.IF_REQUIRED);
         http
                 .authorizeRequests()
-                .antMatchers("/signIn", "/signUp", "/security_check", "/404", "/captcha").permitAll()
-                .antMatchers("/oauth/signUp").permitAll()
-                .antMatchers("/management/**").hasAnyAuthority(RoleEnum.ROLE_ADMIN.name(), RoleEnum.ROLE_SUPER.name())
+                .mvcMatchers("/signIn", "/signUp", "/security_check", "/404", "/captcha/**").permitAll()
+                .mvcMatchers("/oauth/signUp").permitAll()
+                .mvcMatchers("/management/**").hasAnyAuthority(RoleEnum.ROLE_ADMIN.name(), RoleEnum.ROLE_SUPER.name())
                 .anyRequest().authenticated()
                 .and()
                 .csrf().disable()

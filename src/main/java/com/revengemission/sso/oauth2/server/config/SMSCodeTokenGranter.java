@@ -19,17 +19,23 @@ import org.springframework.security.oauth2.provider.TokenRequest;
 import org.springframework.security.oauth2.provider.token.AbstractTokenGranter;
 import org.springframework.security.oauth2.provider.token.AuthorizationServerTokenServices;
 
+import com.revengemission.sso.oauth2.server.service.CaptchaService;
+
 public class SMSCodeTokenGranter extends AbstractTokenGranter {
 
 	private static final String GRANT_TYPE = "sms_code";
 
 	UserDetailsService userDetailsService;
 
+	CaptchaService captchaService;
+
 	public SMSCodeTokenGranter(UserDetailsService userDetailsService,
 			AuthorizationServerTokenServices authorizationServerTokenServices,
-			ClientDetailsService clientDetailsService, OAuth2RequestFactory requestFactory) {
+			ClientDetailsService clientDetailsService, OAuth2RequestFactory requestFactory,
+			CaptchaService captchaService) {
 		super(authorizationServerTokenServices, clientDetailsService, requestFactory, GRANT_TYPE);
 		this.userDetailsService = userDetailsService;
+		this.captchaService = captchaService;
 	}
 
 	@Override
@@ -37,7 +43,8 @@ public class SMSCodeTokenGranter extends AbstractTokenGranter {
 
 		Map<String, String> parameters = new LinkedHashMap<String, String>(tokenRequest.getRequestParameters());
 		String userMobileNo = parameters.get("username"); // 客户端提交的用户名
-		String smscode = parameters.get("sms_code"); // 客户端提交的验证码
+		String smsCodeInput = parameters.get("smsCode"); // 客户端提交的验证码
+		String smsId = parameters.get("smsId"); // 客户端提交的验证码编号
 
 		// 从库里查用户
 		UserDetails user = userDetailsService.loadUserByUsername(userMobileNo);
@@ -45,17 +52,14 @@ public class SMSCodeTokenGranter extends AbstractTokenGranter {
 			throw new InvalidGrantException("用户不存在");
 		}
 
-		//todo 待续
 		// 验证用户状态(是否禁用等),代码略
 		// 验证验证码
-		String smsCodeCached = "abcd";
-		if (StringUtils.isBlank(smsCodeCached)) {
-			throw new InvalidGrantException("用户没有发送验证码");
-		}
-		if (!smscode.equals(smsCodeCached)) {
+		String smsCodeCached = captchaService.getSmsCaptcha(smsId);
+
+		if (!StringUtils.equalsIgnoreCase(smsCodeCached, userMobileNo + "_" + smsCodeInput)) {
 			throw new InvalidGrantException("验证码不正确");
 		} else {
-			// 验证通过后从缓存中移除验证码,代码略
+			captchaService.removeSmsCaptcha(smsId);
 		}
 
 		Authentication userAuth = new UsernamePasswordAuthenticationToken(user, null, user.getAuthorities());

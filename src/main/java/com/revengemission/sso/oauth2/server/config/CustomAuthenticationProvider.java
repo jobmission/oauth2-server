@@ -1,9 +1,12 @@
 package com.revengemission.sso.oauth2.server.config;
 
-import com.revengemission.sso.oauth2.server.domain.UserAccount;
-import com.revengemission.sso.oauth2.server.domain.VerificationCodeException;
+import java.util.Collection;
+import java.util.LinkedHashMap;
+import java.util.Map;
+
 import org.apache.commons.lang3.StringUtils;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.beans.factory.annotation.Value;
 import org.springframework.security.authentication.BadCredentialsException;
 import org.springframework.security.authentication.InternalAuthenticationServiceException;
 import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
@@ -17,17 +20,24 @@ import org.springframework.security.core.userdetails.UsernameNotFoundException;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Component;
 
-import java.util.Collection;
-import java.util.LinkedHashMap;
+import com.revengemission.sso.oauth2.server.domain.UserAccount;
+import com.revengemission.sso.oauth2.server.domain.VerificationCodeException;
+import com.revengemission.sso.oauth2.server.service.CaptchaService;
 
 @Component
 public class CustomAuthenticationProvider extends AbstractUserDetailsAuthenticationProvider {
+
+	@Value("${oauth2.granttype.password.captcha:false}")
+	private boolean passwordCaptcha;
 
 	@Autowired
 	UserDetailsService userService;
 
 	@Autowired
 	PasswordEncoder passwordEncoder;
+
+	@Autowired
+	CaptchaService captchaService;
 
 	@Override
 	protected void additionalAuthenticationChecks(UserDetails userDetails,
@@ -54,14 +64,32 @@ public class CustomAuthenticationProvider extends AbstractUserDetailsAuthenticat
 		Object details = authentication.getDetails();
 		if (details instanceof CustomWebAuthenticationDetails) {
 			CustomWebAuthenticationDetails customWebAuthenticationDetails = (CustomWebAuthenticationDetails) details;
-			if (!StringUtils.equalsIgnoreCase(customWebAuthenticationDetails.getInputVerificationCode(),
-					customWebAuthenticationDetails.getSessionVerificationCode())) {
+			String captcha = captchaService.getGraphCaptcha(customWebAuthenticationDetails.getGraphId());
+			if (!StringUtils.equalsIgnoreCase(customWebAuthenticationDetails.getInputVerificationCode(), captcha)) {
 				throw new VerificationCodeException("验证码错误！");
 			}
+			captchaService.removeGraphCaptcha(customWebAuthenticationDetails.getGraphId());
 		} else if (details instanceof LinkedHashMap<?, ?>) {
-			@SuppressWarnings("unchecked")
-			LinkedHashMap<String, String> map = (LinkedHashMap<String, String>) details;
-			System.out.println(map);
+
+			if (passwordCaptcha) {
+				@SuppressWarnings("unchecked")
+				Map<String, String> map = (Map<String, String>) details;
+				if (map.containsKey("grant_type") && StringUtils.equals("password", map.get("grant_type"))) {
+
+					if (map.containsKey("graphId") && map.containsKey("inputVerificationCode")) {
+						String graphId = map.get("graphId");
+						String captcha = captchaService.getGraphCaptcha(graphId);
+						if (!StringUtils.equalsIgnoreCase(map.get("inputVerificationCode"), captcha)) {
+							throw new VerificationCodeException("验证码错误！");
+						}
+						captchaService.removeGraphCaptcha(graphId);
+
+					} else {
+						throw new VerificationCodeException("验证码错误！");
+					}
+				}
+			}
+
 		}
 
 		try {

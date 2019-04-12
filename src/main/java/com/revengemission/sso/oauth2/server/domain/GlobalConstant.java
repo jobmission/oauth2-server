@@ -36,4 +36,5 @@ public class GlobalConstant {
     public final static int RECORD_DEFAULT = 0;//默认初始值
 
     public final static String VERIFICATION_CODE = "verificationCode";//验证码key
+    public final static String GRAPH_ID = "graphId";//验证码Id
 }
