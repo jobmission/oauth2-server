@@ -4,6 +4,8 @@ import java.security.Principal;
 
 import javax.servlet.http.HttpServletRequest;
 
+import com.revengemission.sso.oauth2.server.config.CachesEnum;
+import com.revengemission.sso.oauth2.server.service.CaptchaService;
 import org.apache.commons.lang3.StringUtils;
 import org.apache.commons.text.StringEscapeUtils;
 import org.slf4j.Logger;
@@ -41,6 +43,9 @@ public class SignInAndUpController {
     @Autowired
     PasswordEncoder passwordEncoder;
 
+    @Autowired
+    CaptchaService captchaService;
+
     @GetMapping("/signIn")
     public String signIn(@RequestParam(value = "error", required = false) String error,
                          Model model) {
@@ -63,13 +68,14 @@ public class SignInAndUpController {
     @ResponseBody
     @PostMapping("/signUp")
     public ResponseResult<Object> handleSignUp(HttpServletRequest request,
-                                       @RequestParam(value = "verificationCode") String verificationCode,
-                                       @RequestParam(value = "username") String username,
-                                       @RequestParam(value = "password") String password,
-                                       @RequestParam(value = "confirmPassword") String confirmPassword) {
+                                               @RequestParam(value = GlobalConstant.VERIFICATION_CODE) String verificationCode,
+                                               @RequestParam(value = "graphId") String graphId,
+                                               @RequestParam(value = "username") String username,
+                                               @RequestParam(value = "password") String password,
+                                               @RequestParam(value = "confirmPassword") String confirmPassword) {
 
         ResponseResult<Object> responseResult = new ResponseResult<>();
-        if (StringUtils.isAnyBlank(verificationCode, username, password, confirmPassword) || !StringUtils.equals(password, confirmPassword)) {
+        if (StringUtils.isAnyBlank(graphId, username, password, confirmPassword) || !StringUtils.equals(password, confirmPassword)) {
             responseResult.setStatus(GlobalConstant.ERROR);
             responseResult.setMessage("请检查输入");
             return responseResult;
@@ -96,8 +102,8 @@ public class SignInAndUpController {
             return responseResult;
         }
 
-        String sessionVerificationCode = String.valueOf(request.getSession().getAttribute(GlobalConstant.VERIFICATION_CODE));
-        if (!StringUtils.equalsIgnoreCase(verificationCode, sessionVerificationCode)) {
+        String captcha = captchaService.getCaptcha(CachesEnum.GraphCaptchaCache, graphId);
+        if (!StringUtils.equalsIgnoreCase(verificationCode, captcha)) {
             responseResult.setStatus(GlobalConstant.ERROR);
             responseResult.setMessage("验证码错误");
             return responseResult;
@@ -109,7 +115,7 @@ public class SignInAndUpController {
         try {
             userAccountService.create(userAccount);
             //移除验证码
-            request.getSession().removeAttribute(GlobalConstant.VERIFICATION_CODE);
+            captchaService.removeCaptcha(CachesEnum.GraphCaptchaCache, graphId);
         } catch (AlreadyExistsException e) {
             if (log.isErrorEnabled()) {
                 log.error("create user exception", e);
@@ -130,11 +136,11 @@ public class SignInAndUpController {
     @ResponseBody
     @PostMapping("/oauth/signUp")
     public ResponseResult<Object> handleOauthSignUp(HttpServletRequest request,
-                                            Principal principal,
-                                            @RequestParam(value = "client_id") String clientId,
-                                            @RequestParam(value = "client_secret") String clientSecret,
-                                            @RequestParam(value = "username") String username,
-                                            @RequestParam(value = "password") String password) {
+                                                    Principal principal,
+                                                    @RequestParam(value = "client_id") String clientId,
+                                                    @RequestParam(value = "client_secret") String clientSecret,
+                                                    @RequestParam(value = "username") String username,
+                                                    @RequestParam(value = "password") String password) {
 
         ResponseResult<Object> responseResult = new ResponseResult<>();
 

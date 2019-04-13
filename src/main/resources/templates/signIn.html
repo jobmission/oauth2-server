@@ -103,7 +103,7 @@
         
         function refreshCaptha(){
         	$.ajax({
-                url: "/captcha/graphId",
+                url: "/captcha/graph",
                 method: 'get',
                 success: function (result) {
                     if (result.status < 1) {

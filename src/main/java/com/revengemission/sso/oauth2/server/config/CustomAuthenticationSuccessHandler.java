@@ -49,9 +49,6 @@ public class CustomAuthenticationSuccessHandler extends SavedRequestAwareAuthent
             redirectUrl = savedRequest.getRedirectUrl();
         }
 
-        //移除验证码
-        request.getSession().removeAttribute(GlobalConstant.VERIFICATION_CODE);
-
         LoginHistory loginHistory = new LoginHistory();
         loginHistory.setUsername(authentication.getName());
         loginHistory.setIp(ClientIPUtils.getIpAddress(request));

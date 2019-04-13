@@ -1,15 +1,13 @@
 package com.revengemission.sso.oauth2.server.service;
 
+import com.revengemission.sso.oauth2.server.config.CachesEnum;
+
 public interface CaptchaService {
-	public boolean saveGraphCaptcha(String key, Object value);
+    boolean saveCaptcha(CachesEnum cachesEnum, String key, Object value);
 
-	public String getGraphCaptcha(String key);
+    String getCaptcha(CachesEnum cachesEnum, String key);
 
-	public void removeGraphCaptcha(String key);
+    void removeCaptcha(CachesEnum cachesEnum, String key);
 
-	public boolean saveSmsCaptcha(String key, Object value);
-
-	public String getSmsCaptcha(String key);
-
-	public void removeSmsCaptcha(String key);
+    boolean checkCaptchaTimes(CachesEnum cachesEnum, String key);
 }

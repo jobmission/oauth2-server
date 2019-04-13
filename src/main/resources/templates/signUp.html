@@ -25,6 +25,7 @@
             </div>
             <div class="col-sm-6">
                 <form id="signUpForm" action="/signUp" method="post">
+                    <input type="hidden" name="graphId" id="graphId" />
                     <h3 class="text-center">注册</h3>
                     <p class="text-center alert alert-danger" th:classappend="${error==null || error==''?'invisible':''}" th:text="${error}"></p>
                     <div class="form-group row">
@@ -94,9 +95,25 @@
             return str.replace(/(^\s*)|(\s*$)/g, '')
         }
 
+        function refreshCaptha(){
+            $.ajax({
+                url: "/captcha/graph",
+                method: 'get',
+                success: function (result) {
+                    if (result.status < 1) {
+                        Swal('Oops...', result.message, 'error');
+                    } else {
+                        $("#graphId").val(result.graphId);
+                        $("#captchaImg").attr("src", result.graphUrl);
+                    }
+                }
+            })
+        }
+
+        refreshCaptha();
+
         $("#captchaImg").on("click", function () {
-            var timestamp = (new Date()).valueOf();
-            $("#captchaImg").attr("src", "/captcha?ts=" + timestamp);
+            refreshCaptha();
         })
 
         $("#signUpForm").on("submit", function (e) {
