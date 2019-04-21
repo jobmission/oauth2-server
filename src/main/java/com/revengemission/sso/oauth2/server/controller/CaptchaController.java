@@ -48,6 +48,7 @@ public class CaptchaController {
         String captcha = VerificationCodeUtil.generateVerificationCode(4, null);
 
         resultMap.put("status", 1);
+        resultMap.put("ttl", CachesEnum.GraphCaptchaCache.getTtl());
         resultMap.put("graphId", uuid);
         resultMap.put("graphUrl", "/captcha/graph/print?graphId=" + uuid);
 
@@ -78,11 +79,12 @@ public class CaptchaController {
 
             captchaService.saveCaptcha(CachesEnum.SmsCaptchaCache, uuid, phone + "_" + smsCaptcha);
 
-            log.debug("smsCaptcha=" + smsCaptcha);
+            log.info("smsCaptcha=" + smsCaptcha);
             // TODO send sms smsCaptcha
 
             resultMap.put("status", 1);
             resultMap.put("smsId", uuid);
+            resultMap.put("ttl", CachesEnum.SmsCaptchaCache.getTtl());
             captchaService.removeCaptcha(CachesEnum.GraphCaptchaCache, graphId);
         } else {
             resultMap.put("status", 0);
