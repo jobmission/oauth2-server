@@ -2,7 +2,6 @@ package com.revengemission.sso.oauth2.server.controller;
 
 import com.revengemission.commons.captcha.core.VerificationCodeUtil;
 import com.revengemission.sso.oauth2.server.config.CachesEnum;
-import com.revengemission.sso.oauth2.server.domain.GlobalConstant;
 import com.revengemission.sso.oauth2.server.service.CaptchaService;
 import org.apache.commons.lang3.RandomStringUtils;
 import org.apache.commons.lang3.StringUtils;
@@ -10,6 +9,7 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Controller;
+import org.springframework.util.Assert;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.ResponseBody;
@@ -27,8 +27,13 @@ public class CaptchaController {
 
     private Logger log = LoggerFactory.getLogger(this.getClass());
 
+    private CaptchaService captchaService;
+
     @Autowired
-    CaptchaService captchaService;
+    public CaptchaController(CaptchaService captchaService) {
+        Assert.notNull(captchaService, "captchaService must not be null!");
+        this.captchaService = captchaService;
+    }
 
     /**
      * 图形验证码
@@ -69,7 +74,7 @@ public class CaptchaController {
 
         if (StringUtils.equalsIgnoreCase(inputCaptcha, captcha)) {
             String uuid = UUID.randomUUID().toString();
-            String smsCaptcha = RandomStringUtils.randomAlphanumeric(4);
+            String smsCaptcha = RandomStringUtils.randomNumeric(4);
 
             captchaService.saveCaptcha(CachesEnum.SmsCaptchaCache, uuid, phone + "_" + smsCaptcha);
 
@@ -79,7 +84,6 @@ public class CaptchaController {
             resultMap.put("status", 1);
             resultMap.put("smsId", uuid);
             captchaService.removeCaptcha(CachesEnum.GraphCaptchaCache, graphId);
-
         } else {
             resultMap.put("status", 0);
             resultMap.put("message", "验证码错误！");

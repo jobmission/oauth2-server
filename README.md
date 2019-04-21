@@ -27,21 +27,21 @@ authorization_code,implicit,password,client_credentials;
     "token_type": "bearer",
     "refresh_token": "d.e.f",
     "expires_in": 43199,
-    "scope": "read",
+    "scope": "user_info",
     "userId": "1",
     "jti": "823cdd71-4732-4f9d-b949-a37ceb4488a4"
 }
 ````
 * password模式：用于手机端或者其他无页面跳转场景，应由后台服务端调用，**保护client_id和client_secret**
 ````
-Post /oauth/token?client_id=SampleClientId&client_secret=tgb.258&grant_type=password&scope=read&username=zhangsan&password=tgb.258
+Post /oauth/token?client_id=SampleClientId&client_secret=tgb.258&grant_type=password&scope=user_info&username=zhangsan&password=tgb.258
 响应：
 {
     "access_token": "a.b.c",
     "token_type": "bearer",
     "refresh_token": "d.e.f",
     "expires_in": 43199,
-    "scope": "read",
+    "scope": "user_info",
     "userId": "1",
     "jti": "823cdd71-4732-4f9d-b949-a37ceb4488a4"
 }
@@ -82,6 +82,9 @@ Post /oauth/token?client_id=SampleClientId&client_secret=tgb.258&grant_type=refr
 Post /oauth/signUp?username=lisi&password=yourpass&client_id=SampleClientId&client_secret=tgb.258
 ````
 
+##  扩展grant_type,參照SMSCodeTokenGranter
+
+
 ## 启动方法</br>
 ````
 java -jar oauth2-server-0.0.1-SNAPSHOT.jar
@@ -101,7 +104,6 @@ java -jar oauth2-server-0.0.1-SNAPSHOT.jar --spring.config.additional-location=/
 [api 资源接口端DEMO](https://github.com/jobmission/oauth2-resource.git)
 
 ### TODO LIST
-* 扩展grant_type待续
 * 分布式支持
 
 ## 注意！！！

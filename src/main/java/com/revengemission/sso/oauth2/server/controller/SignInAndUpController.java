@@ -81,7 +81,7 @@ public class SignInAndUpController {
             return responseResult;
         }
 
-        username = StringUtils.trimToEmpty(username);
+        username = StringUtils.trimToEmpty(username).toLowerCase();
         password = StringUtils.trimToEmpty(password);
 
         if (username.length() < 6) {
@@ -135,9 +135,7 @@ public class SignInAndUpController {
     @CrossOrigin
     @ResponseBody
     @PostMapping("/oauth/signUp")
-    public ResponseResult<Object> handleOauthSignUp(HttpServletRequest request,
-                                                    Principal principal,
-                                                    @RequestParam(value = "client_id") String clientId,
+    public ResponseResult<Object> handleOauthSignUp(@RequestParam(value = "client_id") String clientId,
                                                     @RequestParam(value = "client_secret") String clientSecret,
                                                     @RequestParam(value = "username") String username,
                                                     @RequestParam(value = "password") String password) {
@@ -149,7 +147,7 @@ public class SignInAndUpController {
             responseResult.setMessage(GlobalConstant.ERROR_MESSAGE_ILLEGAL_PARAMETER);
             return responseResult;
         }
-        username = StringUtils.trimToEmpty(username);
+        username = StringUtils.trimToEmpty(username).toLowerCase();
         password = StringUtils.trimToEmpty(password);
 
         if (username.length() < 6) {
