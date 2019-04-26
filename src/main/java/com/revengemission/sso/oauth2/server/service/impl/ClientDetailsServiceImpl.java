@@ -1,10 +1,13 @@
 package com.revengemission.sso.oauth2.server.service.impl;
 
+import com.revengemission.sso.oauth2.server.config.CachesEnum;
 import com.revengemission.sso.oauth2.server.domain.AlreadyExpiredException;
 import com.revengemission.sso.oauth2.server.domain.InvalidClientException;
 import com.revengemission.sso.oauth2.server.persistence.entity.OauthClientEntity;
 import com.revengemission.sso.oauth2.server.persistence.repository.OauthClientRepository;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.cache.Cache;
+import org.springframework.cache.CacheManager;
 import org.springframework.security.core.authority.SimpleGrantedAuthority;
 import org.springframework.security.oauth2.provider.ClientDetails;
 import org.springframework.security.oauth2.provider.ClientDetailsService;
@@ -24,8 +27,17 @@ public class ClientDetailsServiceImpl implements ClientDetailsService {
     @Autowired
     OauthClientRepository oauthClientRepository;
 
+    @Autowired
+    CacheManager cacheManager;
+
     @Override
     public ClientDetails loadClientByClientId(String clientId) throws ClientRegistrationException {
+
+        Cache.ValueWrapper valueWrapper = cacheManager.getCache(CachesEnum.Oauth2ClientCache.name()).get(clientId);
+
+        if (valueWrapper != null) {
+            return (ClientDetails) valueWrapper.get();
+        }
 
         OauthClientEntity oauthClientEntity = oauthClientRepository.findByClientId(clientId);
         if (oauthClientEntity != null) {
@@ -69,6 +81,7 @@ public class ClientDetailsServiceImpl implements ClientDetailsService {
             if (!StringUtils.isEmpty(oauthClientEntity.getAutoApprove())) {
                 baseClientDetails.setAutoApproveScopes(StringUtils.commaDelimitedListToSet(oauthClientEntity.getAutoApprove()));
             }
+            cacheManager.getCache(CachesEnum.Oauth2ClientCache.name()).put(clientId, baseClientDetails);
             return baseClientDetails;
         } else {
             throw new NoSuchClientException("No client with requested id: " + clientId);
