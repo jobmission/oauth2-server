@@ -32,7 +32,7 @@ public class UserDetailsServiceImpl implements UserDetailsService {
                     grantedAuthorities.add(grantedAuthority);
                 }
             }
-            return new UserInfo(String.valueOf(userAccountEntity.getId()), userAccountEntity.getUsername(), userAccountEntity.getPassword(),
+            return new UserInfo(userAccountEntity.getId(), userAccountEntity.getUsername(), userAccountEntity.getPassword(),
                     userAccountEntity.getRecordStatus() >= 0, true, true, userAccountEntity.getRecordStatus() != -2, grantedAuthorities);
         } else {
             throw new UsernameNotFoundException(username + " not found!");
