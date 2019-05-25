@@ -10,19 +10,26 @@ import org.springframework.security.oauth2.provider.token.TokenEnhancer;
 
 import com.revengemission.sso.oauth2.server.domain.UserInfo;
 
-public class CustomTokenEnhancer implements TokenEnhancer{
-	
-	@Override
-	public OAuth2AccessToken enhance(OAuth2AccessToken accessToken, OAuth2Authentication authentication) {
-		/** 自定义一些token属性 ***/
-		final Map<String, Object> additionalInformation = new HashMap<>();
-		// Important !,client_credentials mode ,no user!
-		if (authentication.getUserAuthentication() != null) {
-			UserInfo user = (UserInfo) authentication.getUserAuthentication().getPrincipal();// 与登录时候放进去的UserDetail实现类一致
-			additionalInformation.put("userId", user.getUserId());
-		}
-		 ((DefaultOAuth2AccessToken) accessToken).setAdditionalInformation(additionalInformation);
-		 return accessToken;
-	}
-	
+public class CustomTokenEnhancer implements TokenEnhancer {
+
+    /**
+     * 自定义一些token属性
+     *
+     * @param accessToken
+     * @param authentication
+     * @return
+     */
+    @Override
+    public OAuth2AccessToken enhance(OAuth2AccessToken accessToken, OAuth2Authentication authentication) {
+        final Map<String, Object> additionalInformation = new HashMap<>();
+        // Important !,client_credentials mode ,no user!
+        if (authentication.getUserAuthentication() != null) {
+            UserInfo user = (UserInfo) authentication.getUserAuthentication().getPrincipal();// 与登录时候放进去的UserDetail实现类一致
+            additionalInformation.put("userId", user.getUserId());
+            additionalInformation.put("sub", user.getUsername());
+        }
+        ((DefaultOAuth2AccessToken) accessToken).setAdditionalInformation(additionalInformation);
+        return accessToken;
+    }
+
 }
