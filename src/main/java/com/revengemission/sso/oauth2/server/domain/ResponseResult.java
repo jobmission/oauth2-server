@@ -9,20 +9,17 @@ import java.io.Serializable;
 @JsonInclude(JsonInclude.Include.NON_NULL)
 public class ResponseResult<T> implements Serializable {
 
-    /**
-	 * 
-	 */
-	private static final long serialVersionUID = 613307369635832439L;
-	private Long id;
+    private static final long serialVersionUID = 613307369635832439L;
+    private Long id;
     private int status;//请求状态是否成功
     private String error;//错误类型
     private String message;//详细的信息
+    private String path;
     private Long timestamp;//时间戳
-    private String token;//token
-    private String refreshToken;//refreshToken
-    private String reserve1;//预留字段1
-    private String reserve2;//预留字段2
-    private T object;//返回对象
+    private T data;//返回对象
+    private Long total;
+    private Integer ack;
+    private Object additional;
 
     public ResponseResult() {
         this.status = GlobalConstant.SUCCESS;
@@ -60,6 +57,14 @@ public class ResponseResult<T> implements Serializable {
         this.message = message;
     }
 
+    public String getPath() {
+        return path;
+    }
+
+    public void setPath(String path) {
+        this.path = path;
+    }
+
     public Long getTimestamp() {
         if (timestamp == null) {
             timestamp = System.currentTimeMillis();
@@ -71,44 +76,36 @@ public class ResponseResult<T> implements Serializable {
         this.timestamp = timestamp;
     }
 
-    public String getToken() {
-        return token;
+    public Long getTotal() {
+        return total;
     }
 
-    public void setToken(String token) {
-        this.token = token;
+    public void setTotal(Long total) {
+        this.total = total;
     }
 
-    public String getRefreshToken() {
-        return refreshToken;
+    public Integer getAck() {
+        return ack;
     }
 
-    public void setRefreshToken(String refreshToken) {
-        this.refreshToken = refreshToken;
+    public void setAck(Integer ack) {
+        this.ack = ack;
     }
 
-    public String getReserve1() {
-        return reserve1;
+    public Object getAdditional() {
+        return additional;
     }
 
-    public void setReserve1(String reserve1) {
-        this.reserve1 = reserve1;
+    public void setAdditional(Object additional) {
+        this.additional = additional;
     }
 
-    public String getReserve2() {
-        return reserve2;
+    public T getData() {
+        return data;
     }
 
-    public void setReserve2(String reserve2) {
-        this.reserve2 = reserve2;
-    }
-
-    public T getObject() {
-        return object;
-    }
-
-    public void setObject(T object) {
-        this.object = object;
+    public void setData(T data) {
+        this.data = data;
     }
 
     public String getIdString() {
@@ -123,9 +120,9 @@ public class ResponseResult<T> implements Serializable {
         this.message = message;
     }
 
-    public ResponseResult(int status, String message, T object) {
+    public ResponseResult(int status, String message, T data) {
         this.status = status;
         this.message = message;
-        this.object = object;
+        this.data = data;
     }
 }

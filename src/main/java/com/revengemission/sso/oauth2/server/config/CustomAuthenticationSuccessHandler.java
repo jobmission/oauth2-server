@@ -68,7 +68,7 @@ public class CustomAuthenticationSuccessHandler extends SavedRequestAwareAuthent
 
                 ResponseResult<Object> responseMessage = new ResponseResult<>();
                 responseMessage.setStatus(GlobalConstant.SUCCESS);
-                responseMessage.setReserve2(redirectUrl);
+                responseMessage.setAdditional(redirectUrl);
                 ObjectMapper objectMapper = new ObjectMapper();
                 JsonGenerator jsonGenerator = objectMapper.getFactory().createGenerator(response.getOutputStream(),
                         JsonEncoding.UTF8);
