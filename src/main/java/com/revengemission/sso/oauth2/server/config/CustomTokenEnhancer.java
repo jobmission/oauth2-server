@@ -27,6 +27,7 @@ public class CustomTokenEnhancer implements TokenEnhancer {
             UserInfo user = (UserInfo) authentication.getUserAuthentication().getPrincipal();// 与登录时候放进去的UserDetail实现类一致
             additionalInformation.put("userId", user.getUserId());
             additionalInformation.put("sub", user.getUsername());
+            additionalInformation.put("status", 1);
         }
         ((DefaultOAuth2AccessToken) accessToken).setAdditionalInformation(additionalInformation);
         return accessToken;

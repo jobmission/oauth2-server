@@ -48,8 +48,8 @@ Post /oauth/token?client_id=SampleClientId&client_secret=tgb.258&grant_type=pass
 ````
 ## RSA密钥生成，用于签名token，客户端、资源端本地验证token
 ````
-使用Java工具包中的keytool制作证书jwt.jks，设置别名为【jwt】，密码为【keypass】,替换位置src/main/resources/jwt.jks
-keytool -genkey -alias jwt -keyalg RSA -keysize 1024 -keystore jwt.jks -validity 3650
+使用Java工具包中的keytool制作证书jwt.jks，重要参数:设置别名为【jwt】，有效天数为【36500】，密码为【keypass】，替换位置src/main/resources/jwt.jks
+keytool -genkey -alias jwt -keyalg RSA -keysize 1024 -keystore /your/path/to/jwt.jks -validity 36500
 ````
 ## 获取jwt token签名的RSA公钥，用于本地验证token
 ````
