@@ -5,7 +5,9 @@ import com.revengemission.sso.oauth2.server.domain.AlreadyExistsException;
 import com.revengemission.sso.oauth2.server.domain.EntityNotFoundException;
 import com.revengemission.sso.oauth2.server.domain.JsonObjects;
 import com.revengemission.sso.oauth2.server.domain.UserAccount;
+import com.revengemission.sso.oauth2.server.persistence.entity.RoleEntity;
 import com.revengemission.sso.oauth2.server.persistence.entity.UserAccountEntity;
+import com.revengemission.sso.oauth2.server.persistence.repository.RoleRepository;
 import com.revengemission.sso.oauth2.server.persistence.repository.UserAccountRepository;
 import com.revengemission.sso.oauth2.server.service.UserAccountService;
 import com.revengemission.sso.oauth2.server.utils.DateUtil;
@@ -30,13 +32,16 @@ public class UserAccountServiceImpl implements UserAccountService {
     UserAccountRepository userAccountRepository;
 
     @Autowired
+    RoleRepository roleRepository;
+
+    @Autowired
     Mapper dozerMapper;
 
     @Value("${signin.failure.max:5}")
     private int failureMax;
 
     @Override
-    public JsonObjects<UserAccount> listByRole(String role, String username, int pageNum, int pageSize, String sortField, String sortOrder) {
+    public JsonObjects<UserAccount> listByUsername(String username, int pageNum, int pageSize, String sortField, String sortOrder) {
         JsonObjects<UserAccount> jsonObjects = new JsonObjects<>();
         Sort sort = null;
         if (StringUtils.equalsIgnoreCase(sortOrder, "asc")) {
@@ -45,7 +50,12 @@ public class UserAccountServiceImpl implements UserAccountService {
             sort = new Sort(Sort.Direction.DESC, sortField);
         }
         Pageable pageable = PageRequest.of(pageNum - 1, pageSize, sort);
-        Page<UserAccountEntity> page = userAccountRepository.findByRoleAndUsernameLike(role, username + "%", pageable);
+        Page<UserAccountEntity> page = null;
+        if (StringUtils.isBlank(username)) {
+            page = userAccountRepository.findAll(pageable);
+        } else {
+            page = userAccountRepository.findByUsernameLike(username + "%", pageable);
+        }
         if (page.getContent() != null && page.getContent().size() > 0) {
             jsonObjects.setRecordsTotal(page.getTotalElements());
             jsonObjects.setRecordsFiltered(page.getTotalElements());
@@ -65,6 +75,15 @@ public class UserAccountServiceImpl implements UserAccountService {
             throw new AlreadyExistsException(userAccount.getUsername() + " already exists!");
         }
         UserAccountEntity userAccountEntity = dozerMapper.map(userAccount, UserAccountEntity.class);
+        userAccountEntity.getRoles().clear();
+        if (userAccount.getRoles() != null && userAccount.getRoles().size() > 0) {
+            userAccount.getRoles().forEach(e -> {
+                RoleEntity roleEntity = roleRepository.findByRoleName(e.getRoleName());
+                if (roleEntity != null) {
+                    userAccountEntity.getRoles().add(roleEntity);
+                }
+            });
+        }
         userAccountRepository.save(userAccountEntity);
         return dozerMapper.map(userAccountEntity, UserAccount.class);
     }

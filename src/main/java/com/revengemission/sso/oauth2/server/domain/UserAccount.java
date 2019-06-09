@@ -5,7 +5,9 @@ import lombok.Data;
 import lombok.EqualsAndHashCode;
 import lombok.ToString;
 
+import java.util.ArrayList;
 import java.util.Date;
+import java.util.List;
 
 @JsonInclude(JsonInclude.Include.NON_NULL)
 @ToString(callSuper = true)
@@ -13,13 +15,12 @@ import java.util.Date;
 @Data
 public class UserAccount extends BaseDomain {
     /**
-	 * 
-	 */
-	private static final long serialVersionUID = -2355580690719376576L;
-	private String clientId;
+     *
+     */
+    private static final long serialVersionUID = -2355580690719376576L;
+    private String clientId;
     private String username;
     private String password;
-    private String role;
     private String nickName;
     private String avatarUrl;
     private String email;
@@ -31,4 +32,5 @@ public class UserAccount extends BaseDomain {
     private String gender;
     private Date failureTime;
     private int failureCount;
+    private List<Role> roles = new ArrayList<>();
 }

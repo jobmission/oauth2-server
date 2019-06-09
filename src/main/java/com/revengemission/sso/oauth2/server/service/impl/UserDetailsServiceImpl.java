@@ -1,6 +1,7 @@
 package com.revengemission.sso.oauth2.server.service.impl;
 
 import com.revengemission.sso.oauth2.server.domain.UserInfo;
+import com.revengemission.sso.oauth2.server.persistence.entity.RoleEntity;
 import com.revengemission.sso.oauth2.server.persistence.entity.UserAccountEntity;
 import com.revengemission.sso.oauth2.server.persistence.repository.UserAccountRepository;
 import org.apache.commons.lang3.StringUtils;
@@ -25,10 +26,9 @@ public class UserDetailsServiceImpl implements UserDetailsService {
         UserAccountEntity userAccountEntity = userAccountRepository.findByUsername(username);
         if (userAccountEntity != null) {
             List<GrantedAuthority> grantedAuthorities = new ArrayList<>();
-            if (StringUtils.isNotEmpty(userAccountEntity.getRole())) {
-                String[] roles = StringUtils.split(userAccountEntity.getRole());
-                for (String temp : roles) {
-                    GrantedAuthority grantedAuthority = new SimpleGrantedAuthority(temp);
+            if (userAccountEntity.getRoles() != null && userAccountEntity.getRoles().size() > 0) {
+                for (RoleEntity temp : userAccountEntity.getRoles()) {
+                    GrantedAuthority grantedAuthority = new SimpleGrantedAuthority(temp.getRoleName());
                     grantedAuthorities.add(grantedAuthority);
                 }
             }

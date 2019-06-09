@@ -1,11 +1,11 @@
 package com.revengemission.sso.oauth2.server.controller;
 
-import java.security.Principal;
-
-import javax.servlet.http.HttpServletRequest;
-
 import com.revengemission.sso.oauth2.server.config.CachesEnum;
+import com.revengemission.sso.oauth2.server.domain.*;
 import com.revengemission.sso.oauth2.server.service.CaptchaService;
+import com.revengemission.sso.oauth2.server.service.RoleService;
+import com.revengemission.sso.oauth2.server.service.UserAccountService;
+import com.revengemission.sso.oauth2.server.utils.CheckPasswordStrength;
 import org.apache.commons.lang3.StringUtils;
 import org.apache.commons.text.StringEscapeUtils;
 import org.slf4j.Logger;
@@ -16,19 +16,9 @@ import org.springframework.security.oauth2.provider.ClientDetails;
 import org.springframework.security.oauth2.provider.ClientDetailsService;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
-import org.springframework.web.bind.annotation.CrossOrigin;
-import org.springframework.web.bind.annotation.GetMapping;
-import org.springframework.web.bind.annotation.PostMapping;
-import org.springframework.web.bind.annotation.RequestParam;
-import org.springframework.web.bind.annotation.ResponseBody;
+import org.springframework.web.bind.annotation.*;
 
-import com.revengemission.sso.oauth2.server.domain.AlreadyExistsException;
-import com.revengemission.sso.oauth2.server.domain.GlobalConstant;
-import com.revengemission.sso.oauth2.server.domain.ResponseResult;
-import com.revengemission.sso.oauth2.server.domain.RoleEnum;
-import com.revengemission.sso.oauth2.server.domain.UserAccount;
-import com.revengemission.sso.oauth2.server.service.UserAccountService;
-import com.revengemission.sso.oauth2.server.utils.CheckPasswordStrength;
+import javax.servlet.http.HttpServletRequest;
 
 @Controller
 public class SignInAndUpController {
@@ -45,6 +35,9 @@ public class SignInAndUpController {
 
     @Autowired
     CaptchaService captchaService;
+
+    @Autowired
+    RoleService roleService;
 
     @GetMapping("/signIn")
     public String signIn(@RequestParam(value = "error", required = false) String error,
@@ -109,7 +102,8 @@ public class SignInAndUpController {
             return responseResult;
         }
         UserAccount userAccount = new UserAccount();
-        userAccount.setRole(RoleEnum.ROLE_USER.name());
+        Role userRole = roleService.findByRoleName(RoleEnum.ROLE_USER.name());
+        userAccount.getRoles().add(userRole);
         userAccount.setUsername(StringEscapeUtils.escapeHtml4(username));
         userAccount.setPassword(passwordEncoder.encode(password));
         try {
@@ -171,7 +165,9 @@ public class SignInAndUpController {
 
         UserAccount userAccount = new UserAccount();
         userAccount.setClientId(clientId);
-        userAccount.setRole(RoleEnum.ROLE_USER.name());
+        Role userRole = roleService.findByRoleName(RoleEnum.ROLE_USER.name());
+        userAccount.getRoles().add(userRole);
+        userAccount.getRoles().add(userRole);
         userAccount.setUsername(username);
         userAccount.setPassword(passwordEncoder.encode(password));
         try {

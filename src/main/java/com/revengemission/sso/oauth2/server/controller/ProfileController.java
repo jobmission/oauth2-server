@@ -10,7 +10,8 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.format.annotation.DateTimeFormat;
-import org.springframework.security.oauth2.provider.OAuth2Authentication;
+import org.springframework.security.oauth2.common.OAuth2AccessToken;
+import org.springframework.security.oauth2.provider.token.TokenStore;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.*;
@@ -18,42 +19,84 @@ import org.springframework.web.bind.annotation.*;
 import java.security.Principal;
 import java.util.Date;
 import java.util.HashMap;
-import java.util.List;
 import java.util.Map;
-import java.util.stream.Collectors;
+import java.util.regex.Matcher;
+import java.util.regex.Pattern;
 
 @Controller
 public class ProfileController {
 
     private Logger log = LoggerFactory.getLogger(this.getClass());
 
+    private static final Pattern authorizationPattern = Pattern.compile("^Bearer (?<token>[a-zA-Z0-9-._~+/]+)=*$");
+
     @Autowired
     UserAccountService userAccountService;
 
+    @Autowired
+    TokenStore tokenStore;
+
     @ResponseBody
     @RequestMapping("/user/me")
-    public Map<String, Object> info(OAuth2Authentication oAuth2Authentication) {
+    public Map<String, Object> info(@RequestParam(value = "access_token", required = false) String paramToken,
+                                    @RequestHeader(value = "Authorization", required = false) String headerToken,
+                                    @CookieValue(value = "access_token", required = false) String cookieToken) {
         Map<String, Object> result = new HashMap<>();
         try {
-            UserAccount userAccount = userAccountService.findByUsername(oAuth2Authentication.getName());
-            result.put("username", oAuth2Authentication.getName());
-            if (StringUtils.isNotEmpty(userAccount.getGender())) {
-                result.put("gender", userAccount.getGender());
-            }
-            if (StringUtils.isNotEmpty(userAccount.getNickName())) {
-                result.put("nickName", userAccount.getNickName());
+            String token = null;
+            if (StringUtils.isNoneBlank(headerToken)) {
+                Matcher matcher = authorizationPattern.matcher(headerToken);
+                if (matcher.matches()) {
+                    token = matcher.group("token");
+                }
             }
 
-            List<String> authorities = oAuth2Authentication.getAuthorities().stream().map(e -> e.getAuthority()).collect(Collectors.toList());
-            result.put("authorities", StringUtils.join(authorities, ","));
-        } catch (Exception e) {
-            if (log.isErrorEnabled()) {
-                log.error("/user/me exception", e);
+            if (token == null && StringUtils.isNoneBlank(paramToken)) {
+                token = paramToken;
             }
+
+            if (token == null && StringUtils.isNoneBlank(cookieToken)) {
+                token = cookieToken;
+            }
+
+            if (token != null) {
+                OAuth2AccessToken auth2AccessToken = tokenStore.readAccessToken(token);
+                if (auth2AccessToken.isExpired()) {
+                    result.put("status", 0);
+                    result.put("message", "access_token无效");
+                    return result;
+                }
+
+                String username = auth2AccessToken.getAdditionalInformation().get("sub").toString();
+                UserAccount userAccount = userAccountService.findByUsername(username);
+                result.put("username", username);
+                if (StringUtils.isNotEmpty(userAccount.getGender())) {
+                    result.put("gender", userAccount.getGender());
+                }
+                if (StringUtils.isNotEmpty(userAccount.getNickName())) {
+                    result.put("nickName", userAccount.getNickName());
+                }
+                result.put("grantType", auth2AccessToken.getAdditionalInformation().get("grantType"));
+                result.put("accountOpenCode", "" + userAccount.getId());
+                result.put("authorities", auth2AccessToken.getAdditionalInformation().get("authorities"));
+                result.put("status", 1);
+            } else {
+                result.put("status", 0);
+                result.put("message", "未检测到access_token");
+            }
+
+
+        } catch (Exception e) {
+            if (log.isInfoEnabled()) {
+                log.info("/user/me exception", e);
+            }
+            result.put("status", 0);
+            result.put("message", "access_token无效");
         }
 
         return result;
     }
+
 
     @GetMapping(value = {"", "/", "/user/profile"})
     public String profile(Principal principal,

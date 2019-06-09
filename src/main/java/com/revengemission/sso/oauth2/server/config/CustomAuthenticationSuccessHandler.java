@@ -1,11 +1,15 @@
 package com.revengemission.sso.oauth2.server.config;
 
-import java.io.IOException;
-
-import javax.servlet.ServletException;
-import javax.servlet.http.HttpServletRequest;
-import javax.servlet.http.HttpServletResponse;
-
+import com.fasterxml.jackson.core.JsonEncoding;
+import com.fasterxml.jackson.core.JsonGenerator;
+import com.fasterxml.jackson.databind.ObjectMapper;
+import com.revengemission.sso.oauth2.server.domain.GlobalConstant;
+import com.revengemission.sso.oauth2.server.domain.LoginHistory;
+import com.revengemission.sso.oauth2.server.domain.ResponseResult;
+import com.revengemission.sso.oauth2.server.domain.RoleEnum;
+import com.revengemission.sso.oauth2.server.service.LoginHistoryService;
+import com.revengemission.sso.oauth2.server.service.UserAccountService;
+import com.revengemission.sso.oauth2.server.utils.ClientIPUtils;
 import org.apache.commons.lang3.StringUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.converter.HttpMessageNotWritableException;
@@ -17,16 +21,10 @@ import org.springframework.security.web.savedrequest.RequestCache;
 import org.springframework.security.web.savedrequest.SavedRequest;
 import org.springframework.stereotype.Component;
 
-import com.fasterxml.jackson.core.JsonEncoding;
-import com.fasterxml.jackson.core.JsonGenerator;
-import com.fasterxml.jackson.databind.ObjectMapper;
-import com.revengemission.sso.oauth2.server.domain.GlobalConstant;
-import com.revengemission.sso.oauth2.server.domain.LoginHistory;
-import com.revengemission.sso.oauth2.server.domain.ResponseResult;
-import com.revengemission.sso.oauth2.server.domain.RoleEnum;
-import com.revengemission.sso.oauth2.server.service.LoginHistoryService;
-import com.revengemission.sso.oauth2.server.service.UserAccountService;
-import com.revengemission.sso.oauth2.server.utils.ClientIPUtils;
+import javax.servlet.ServletException;
+import javax.servlet.http.HttpServletRequest;
+import javax.servlet.http.HttpServletResponse;
+import java.io.IOException;
 
 @Component
 public class CustomAuthenticationSuccessHandler extends SavedRequestAwareAuthenticationSuccessHandler {
@@ -82,15 +80,16 @@ public class CustomAuthenticationSuccessHandler extends SavedRequestAwareAuthent
         } else {
             //Call the parent method to manage the successful authentication
             //setDefaultTargetUrl("/");
-            if (StringUtils.isNotEmpty(redirectUrl)) {
+            if (authentication.getAuthorities().contains(new SimpleGrantedAuthority(RoleEnum.ROLE_USER.toString()))) {
+                response.sendRedirect("/");
+            } else {
+                response.sendRedirect("/management/user");
+            }
+            /*if (StringUtils.isNotEmpty(redirectUrl)) {
                 super.onAuthenticationSuccess(request, response, authentication);
             } else {
-                if (authentication.getAuthorities().contains(new SimpleGrantedAuthority(RoleEnum.ROLE_USER.toString()))) {
-                    response.sendRedirect("/");
-                } else {
-                    response.sendRedirect("/management/user");
-                }
-            }
+
+            }*/
         }
 
     }

@@ -1,7 +1,6 @@
 package com.revengemission.sso.oauth2.server.config;
 
 import com.revengemission.sso.oauth2.server.domain.GlobalConstant;
-import com.revengemission.sso.oauth2.server.domain.UserAccount;
 import com.revengemission.sso.oauth2.server.domain.VerificationCodeException;
 import com.revengemission.sso.oauth2.server.service.CaptchaService;
 import org.apache.commons.lang3.StringUtils;
@@ -114,7 +113,7 @@ public class CustomAuthenticationProvider extends AbstractUserDetailsAuthenticat
         return true;
     }
 
-    public Collection<? extends GrantedAuthority> getAuthorities(UserAccount user) {
-        return AuthorityUtils.commaSeparatedStringToAuthorityList(user.getRole());
+    private Collection<? extends GrantedAuthority> getAuthorities(String roles) {
+        return AuthorityUtils.commaSeparatedStringToAuthorityList(roles);
     }
 }

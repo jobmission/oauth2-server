@@ -186,7 +186,17 @@
                         data: 'username',
                         render: $.fn.dataTable.render.text()
                     },
-                    {data: 'role', bSortable: false},
+                    {
+                        data: 'roles',
+                        bSortable: false,
+                        render: function (data, type, row) {
+                            var result = "";
+                            for (j = 0; j < data.length; j++) {
+                                result = result + data[j].roleName + "\n";
+                            }
+                            return result;
+                        }
+                    },
                     {
                         data: 'nickName',
                         defaultContent: '',

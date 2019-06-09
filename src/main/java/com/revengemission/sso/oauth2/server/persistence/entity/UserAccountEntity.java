@@ -1,26 +1,25 @@
 package com.revengemission.sso.oauth2.server.persistence.entity;
 
 import javax.persistence.*;
+import java.util.ArrayList;
 import java.util.Date;
+import java.util.List;
 
 
 @Entity
-@Table(uniqueConstraints = @UniqueConstraint(columnNames = {"username"}),
-        indexes = {@Index(columnList = "role,username")})
+@Table(uniqueConstraints = @UniqueConstraint(columnNames = {"username"}))
 public class UserAccountEntity extends BaseEntity {
 
     /**
-	 * 
-	 */
-	private static final long serialVersionUID = -5519234457588411587L;
-	//用于记录用户在哪个子系统进行的注册
+     *
+     */
+    private static final long serialVersionUID = -5519234457588411587L;
+    //用于记录用户在哪个子系统进行的注册
     private String clientId;
     @Column(nullable = false, columnDefinition = "VARCHAR(40)")
     private String username;
     @Column(nullable = false)
     private String password;
-    @Column(nullable = false, columnDefinition = "VARCHAR(20)")
-    private String role;
     private String nickName;
     private String avatarUrl;
     private String email;
@@ -33,6 +32,10 @@ public class UserAccountEntity extends BaseEntity {
     private Date failureTime;
     @Column(name = "failure_count", columnDefinition = "int default 0")
     private int failureCount;
+
+    @ManyToMany(cascade = CascadeType.REMOVE, fetch = FetchType.EAGER)
+    @JoinTable(joinColumns = @JoinColumn(name = "user_id", referencedColumnName = "id"), foreignKey = @ForeignKey(ConstraintMode.NO_CONSTRAINT), inverseJoinColumns = @JoinColumn(name = "role_id", referencedColumnName = "id"), inverseForeignKey = @ForeignKey(ConstraintMode.NO_CONSTRAINT))
+    List<RoleEntity> roles = new ArrayList<>();
 
     public String getClientId() {
         return clientId;
@@ -56,14 +59,6 @@ public class UserAccountEntity extends BaseEntity {
 
     public void setPassword(String password) {
         this.password = password;
-    }
-
-    public String getRole() {
-        return role;
-    }
-
-    public void setRole(String role) {
-        this.role = role;
     }
 
     public String getNickName() {
@@ -152,5 +147,13 @@ public class UserAccountEntity extends BaseEntity {
 
     public void setFailureCount(int failureCount) {
         this.failureCount = failureCount;
+    }
+
+    public List<RoleEntity> getRoles() {
+        return roles;
+    }
+
+    public void setRoles(List<RoleEntity> roles) {
+        this.roles = roles;
     }
 }
