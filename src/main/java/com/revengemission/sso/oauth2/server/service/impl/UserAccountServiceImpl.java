@@ -112,7 +112,7 @@ public class UserAccountServiceImpl implements UserAccountService {
         e.setEmail(userAccount.getEmail());
 
         userAccountRepository.save(e);
-        return userAccount;
+        return dozerMapper.map(e, UserAccount.class);
     }
 
     @Override
@@ -132,6 +132,11 @@ public class UserAccountServiceImpl implements UserAccountService {
         } else {
             throw new EntityNotFoundException(username + " not found!");
         }
+    }
+
+    @Override
+    public boolean existsByUsername(String username) {
+        return userAccountRepository.existsByUsername(username);
     }
 
     @Override

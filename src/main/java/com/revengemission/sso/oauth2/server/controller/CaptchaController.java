@@ -3,19 +3,18 @@ package com.revengemission.sso.oauth2.server.controller;
 import com.revengemission.commons.captcha.core.VerificationCodeUtil;
 import com.revengemission.sso.oauth2.server.config.CachesEnum;
 import com.revengemission.sso.oauth2.server.service.CaptchaService;
+import com.revengemission.sso.oauth2.server.service.UserAccountService;
 import org.apache.commons.lang3.RandomStringUtils;
 import org.apache.commons.lang3.StringUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Controller;
-import org.springframework.util.Assert;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.ResponseBody;
 
 import javax.servlet.ServletOutputStream;
-import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 import java.io.IOException;
 import java.util.HashMap;
@@ -29,10 +28,12 @@ public class CaptchaController {
 
     private CaptchaService captchaService;
 
+    private UserAccountService userAccountService;
+
     @Autowired
-    public CaptchaController(CaptchaService captchaService) {
-        Assert.notNull(captchaService, "captchaService must not be null!");
+    public CaptchaController(CaptchaService captchaService, UserAccountService userAccountService) {
         this.captchaService = captchaService;
+        this.userAccountService = userAccountService;
     }
 
     /**
@@ -67,13 +68,21 @@ public class CaptchaController {
      */
     @ResponseBody
     @RequestMapping(value = "/captcha/sms")
-    public Map<String, Object> captchaSms(@RequestParam(value = "phone") String phone,
+    public Map<String, Object> captchaSms(@RequestParam(value = "signType", required = false, defaultValue = "signIn") String signType,
+                                          @RequestParam(value = "phone") String phone,
                                           @RequestParam(value = "captcha") String inputCaptcha, @RequestParam(value = "graphId") String graphId) {
         Map<String, Object> resultMap = new HashMap<>();
 
         String captcha = captchaService.getCaptcha(CachesEnum.GraphCaptchaCache, graphId);
 
         if (StringUtils.equalsIgnoreCase(inputCaptcha, captcha)) {
+
+            if (StringUtils.equalsIgnoreCase(signType, "signIn") && !userAccountService.existsByUsername(phone)) {
+                resultMap.put("status", 0);
+                resultMap.put("message", "账号不存在");
+                return resultMap;
+            }
+
             String uuid = UUID.randomUUID().toString();
             String smsCaptcha = RandomStringUtils.randomNumeric(4);
 
@@ -102,25 +111,26 @@ public class CaptchaController {
      * @param height  图片高度
      */
     @RequestMapping(value = "/captcha/graph/print")
-    public void captchaGraphPrint(HttpServletRequest request, HttpServletResponse response,
-                                  @RequestParam(value = "graphId") String graphId, @RequestParam(value = "w", defaultValue = "150") int width,
+    public void captchaGraphPrint(HttpServletResponse response,
+                                  @RequestParam(value = "graphId") String graphId,
+                                  @RequestParam(value = "w", defaultValue = "150") int width,
                                   @RequestParam(value = "h", defaultValue = "38") int height) throws IOException {
 
         String captcha = captchaService.getCaptcha(CachesEnum.GraphCaptchaCache, graphId);
-        if (captcha != null) {
-            request.getSession(true);
-            response.setContentType("image/png");
-            response.setHeader("Cache-Control", "no-cache, no-store");
-            response.setHeader("Pragma", "no-cache");
-            long time = System.currentTimeMillis();
-            response.setDateHeader("Last-Modified", time);
-            response.setDateHeader("Date", time);
-            response.setDateHeader("Expires", time);
-            ServletOutputStream stream = response.getOutputStream();
-            VerificationCodeUtil.outputImage(width, height, stream, captcha);
-            stream.flush();
-            stream.close();
+        if (StringUtils.isBlank(captcha)) {
+            captcha = "0000";
         }
+        response.setContentType("image/png");
+        response.setHeader("Cache-Control", "no-cache, no-store");
+        response.setHeader("Pragma", "no-cache");
+        long time = System.currentTimeMillis();
+        response.setDateHeader("Last-Modified", time);
+        response.setDateHeader("Date", time);
+        response.setDateHeader("Expires", time);
+        ServletOutputStream stream = response.getOutputStream();
+        VerificationCodeUtil.outputImage(width, height, stream, captcha);
+        stream.flush();
+        stream.close();
 
     }
 

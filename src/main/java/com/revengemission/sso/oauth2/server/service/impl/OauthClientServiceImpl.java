@@ -29,12 +29,12 @@ public class OauthClientServiceImpl implements OauthClientService {
     Mapper dozerMapper;
 
     @Override
-    public OauthClient findByClientId(String clientId) throws EntityNotFoundException {
+    public OauthClient findByClientId(String clientId) {
         OauthClientEntity oauthClientEntity = oauthClientRepository.findByClientId(clientId);
         if (oauthClientEntity != null) {
             return dozerMapper.map(oauthClientEntity, OauthClient.class);
         } else {
-            throw new EntityNotFoundException(clientId + " not found!");
+            return null;
         }
     }
 

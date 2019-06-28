@@ -136,13 +136,15 @@ public class ProfileController {
             userAccount.setCity(StringEscapeUtils.escapeHtml4(city));
             userAccount.setAddress(StringEscapeUtils.escapeHtml4(address));
             userAccount.setBirthday(birthday);
-            userAccountService.updateById(userAccount);
+            userAccount = userAccountService.updateById(userAccount);
+            model.addAttribute("userAccount", userAccount);
+            model.addAttribute("updated", true);
         } catch (EntityNotFoundException e) {
             if (log.isErrorEnabled()) {
                 log.error("findByUsername exception", e);
             }
         }
 
-        return "redirect:/user/profile?success=update";
+        return "profile";
     }
 }

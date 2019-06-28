@@ -1,5 +1,6 @@
 package com.revengemission.sso.oauth2.server.domain;
 
+import com.fasterxml.jackson.annotation.JsonIgnore;
 import com.fasterxml.jackson.annotation.JsonInclude;
 import lombok.Data;
 import lombok.EqualsAndHashCode;
@@ -20,6 +21,7 @@ public class UserAccount extends BaseDomain {
     private static final long serialVersionUID = -2355580690719376576L;
     private String clientId;
     private String username;
+    @JsonIgnore
     private String password;
     private String nickName;
     private String avatarUrl;

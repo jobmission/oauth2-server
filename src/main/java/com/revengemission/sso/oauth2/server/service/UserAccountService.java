@@ -13,6 +13,8 @@ public interface UserAccountService extends CommonServiceInterface<UserAccount> 
 
     UserAccount findByUsername(String username) throws EntityNotFoundException;
 
+    boolean existsByUsername(String username);
+
     void loginSuccess(String username) throws EntityNotFoundException;
 
     void loginFailure(String username);

@@ -95,7 +95,7 @@
             return str.replace(/(^\s*)|(\s*$)/g, '')
         }
 
-        function refreshCaptha(){
+        function refreshCaptcha(){
             $.ajax({
                 url: "/captcha/graph",
                 method: 'get',
@@ -110,10 +110,10 @@
             })
         }
 
-        refreshCaptha();
+        refreshCaptcha();
 
         $("#captchaImg").on("click", function () {
-            refreshCaptha();
+            refreshCaptcha();
         })
 
         $("#signUpForm").on("submit", function (e) {
@@ -143,7 +143,7 @@
             }
 
             $.ajax({
-                url: "/signUp",
+                url: "/oauth/signUp",
                 method: 'post',
                 data: $('#signUpForm').serialize(),
                 success: function (result) {

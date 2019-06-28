@@ -79,9 +79,29 @@ Authorization: Bearer a.b.c
 Post /oauth/token?client_id=SampleClientId&client_secret=tgb.258&grant_type=refresh_token&refresh_token=d.e.f
 ````
 
-## 注册新用户接口，应由后台服务端调用，保护client_id和client_secret</br>
+## 注册新用户接口</br>
 ````
-Post /oauth/signUp?username=lisi&password=yourpass&client_id=SampleClientId&client_secret=tgb.258
+1、获取验证码序号
+ Get /captcha/graph
+ 响应：
+ {
+   "graphUrl": "/captcha/graph/print?graphId=32a41c71-d74a-4aa6-b73c-af3627e82485",
+   "graphId": "32a41c71-d74a-4aa6-b73c-af3627e82485",
+   "ttl": 300,
+   "status": 1
+ }
+2、显示验证码
+ Get /captcha/graph/print?graphId=a32a41c71-d74a-4aa6-b73c-af3627e82485
+ 响应：
+ 图片流
+3、调用注册接口 
+ Post /oauth/signUp?username=lisi&password=yourpass0!&graphId=a32a41c71-d74a-4aa6-b73c-af3627e82485&verificationCode=1324
+ 响应：
+ {
+     "status": 1,
+     "timestamp": 1561729652797
+ }
+ 
 ````
 
 ##  扩展grant_type,參照SMSCodeTokenGranter
