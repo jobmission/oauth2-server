@@ -1,11 +1,7 @@
 package com.revengemission.sso.oauth2.server;
 
-import java.lang.annotation.Annotation;
-import java.lang.reflect.Method;
-import java.util.Map;
-
-import javax.servlet.http.HttpServletRequest;
-
+import com.revengemission.sso.oauth2.server.utils.ClientIPUtils;
+import com.revengemission.sso.oauth2.server.utils.JSONUtil;
 import org.aspectj.lang.JoinPoint;
 import org.aspectj.lang.annotation.AfterReturning;
 import org.aspectj.lang.annotation.Aspect;
@@ -19,8 +15,10 @@ import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.context.request.RequestContextHolder;
 import org.springframework.web.context.request.ServletRequestAttributes;
 
-import com.revengemission.sso.oauth2.server.utils.ClientIPUtils;
-import com.revengemission.sso.oauth2.server.utils.JSONUtil;
+import javax.servlet.http.HttpServletRequest;
+import java.lang.annotation.Annotation;
+import java.lang.reflect.Method;
+import java.util.Map;
 
 @Aspect
 @Component
@@ -32,14 +30,18 @@ public class WebRequestLogAspect {
     public void wsLog() {
     }
 
+    /**
+     * 接收到请求，记录请求内容
+     *
+     * @param joinPoint
+     * @throws Throwable
+     */
     @Before("wsLog()")
     public void doBefore(JoinPoint joinPoint) throws Throwable {
-        // 接收到请求，记录请求内容
         if (log.isInfoEnabled()) {
             ServletRequestAttributes attributes = (ServletRequestAttributes) RequestContextHolder.getRequestAttributes();
             if (attributes != null) {
                 HttpServletRequest request = attributes.getRequest();
-                // 记录下请求内容
                 Map<String, String[]> parameters = request.getParameterMap();
 
                 try {
@@ -49,7 +51,8 @@ public class WebRequestLogAspect {
                         parametersString = JSONUtil.multiValueMapToJSONString(parameters);
                     }
                     MethodSignature signature = (MethodSignature) joinPoint.getSignature();
-                    Method method = signature.getMethod(); //获取被拦截的方法
+                    //获取被拦截的方法
+                    Method method = signature.getMethod();
                     Object object = getAnnotatedParameterValueRequestBody(method, joinPoint.getArgs());
                     if (object != null) {
                         requestBody = JSONUtil.objectToJSONString(object);
@@ -97,12 +100,12 @@ public class WebRequestLogAspect {
 
     private Object getAnnotatedParameterValueRequestBody(Method method, Object[] args) {
         Annotation[][] parameterAnnotations = method.getParameterAnnotations();
-        //Parameter[] parameters = method.getParameters();
+        ///Parameter[] parameters = method.getParameters();
 
         int i = 0;
         for (Annotation[] annotations : parameterAnnotations) {
             Object arg = args[i];
-            //String name = parameters[i++].getDeclaringExecutable().getName();
+            ///String name = parameters[i++].getDeclaringExecutable().getName();
             for (Annotation annotation : annotations) {
                 if (annotation instanceof RequestBody) {
                     return arg;

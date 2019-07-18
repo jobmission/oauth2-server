@@ -1,22 +1,15 @@
 package com.revengemission.sso.oauth2.server.controller;
 
-import java.security.Principal;
-
-import org.apache.commons.lang3.StringUtils;
-import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.security.crypto.password.PasswordEncoder;
-import org.springframework.stereotype.Controller;
-import org.springframework.web.bind.annotation.GetMapping;
-import org.springframework.web.bind.annotation.PostMapping;
-import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RequestParam;
-import org.springframework.web.bind.annotation.ResponseBody;
-
 import com.revengemission.sso.oauth2.server.domain.GlobalConstant;
 import com.revengemission.sso.oauth2.server.domain.JsonObjects;
 import com.revengemission.sso.oauth2.server.domain.OauthClient;
 import com.revengemission.sso.oauth2.server.domain.ResponseResult;
 import com.revengemission.sso.oauth2.server.service.OauthClientService;
+import org.apache.commons.lang3.StringUtils;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.security.crypto.password.PasswordEncoder;
+import org.springframework.stereotype.Controller;
+import org.springframework.web.bind.annotation.*;
 
 @Controller
 @RequestMapping(value = "/management/client")
@@ -29,7 +22,7 @@ public class ManageClientController {
     OauthClientService oauthClientService;
 
     @GetMapping(value = {"/", "", "/master"})
-    public String master(Principal principal) {
+    public String master() {
 
         return "client/master";
     }
@@ -60,14 +53,14 @@ public class ManageClientController {
     @PostMapping(value = "/details")
     @ResponseBody
     public ResponseResult<Object> handlePost(@RequestParam(value = "id", required = false) long id,
-                                     @RequestParam(value = "deleteOperation", required = false, defaultValue = "1") int deleteOperation,
-                                     @RequestParam(value = "clientId", required = false) String clientId,
-                                     @RequestParam(value = "clientSecret", required = false) String clientSecret,
-                                     @RequestParam(value = "authorities", required = false) String authorities,
-                                     @RequestParam(value = "scope", required = false) String scope,
-                                     @RequestParam(value = "authorizedGrantTypes", required = false) String authorizedGrantTypes,
-                                     @RequestParam(value = "webServerRedirectUri", required = false) String webServerRedirectUri,
-                                     @RequestParam(value = "remarks", required = false) String remarks) {
+                                             @RequestParam(value = "deleteOperation", required = false, defaultValue = "1") int deleteOperation,
+                                             @RequestParam(value = "clientId", required = false) String clientId,
+                                             @RequestParam(value = "clientSecret", required = false) String clientSecret,
+                                             @RequestParam(value = "authorities", required = false) String authorities,
+                                             @RequestParam(value = "scope", required = false) String scope,
+                                             @RequestParam(value = "authorizedGrantTypes", required = false) String authorizedGrantTypes,
+                                             @RequestParam(value = "webServerRedirectUri", required = false) String webServerRedirectUri,
+                                             @RequestParam(value = "remarks", required = false) String remarks) {
 
         ResponseResult<Object> responseResult = new ResponseResult<>();
 

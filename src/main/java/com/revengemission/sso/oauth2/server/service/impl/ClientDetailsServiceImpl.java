@@ -66,9 +66,7 @@ public class ClientDetailsServiceImpl implements ClientDetailsService {
             }
             if (!StringUtils.isEmpty(oauthClientEntity.getAuthorities())) {
                 List<SimpleGrantedAuthority> authorities = new ArrayList<>();
-                StringUtils.commaDelimitedListToSet(oauthClientEntity.getAuthorities()).forEach(s -> {
-                    authorities.add(new SimpleGrantedAuthority(s));
-                });
+                StringUtils.commaDelimitedListToSet(oauthClientEntity.getAuthorities()).forEach(s -> authorities.add(new SimpleGrantedAuthority(s)));
                 baseClientDetails.setAuthorities(authorities);
             }
             if (oauthClientEntity.getAccessTokenValidity() != null && oauthClientEntity.getAccessTokenValidity() > 0) {
@@ -77,7 +75,7 @@ public class ClientDetailsServiceImpl implements ClientDetailsService {
             if (oauthClientEntity.getRefreshTokenValidity() != null && oauthClientEntity.getRefreshTokenValidity() > 0) {
                 baseClientDetails.setRefreshTokenValiditySeconds(oauthClientEntity.getRefreshTokenValidity());
             }
-            //baseClientDetails.setAdditionalInformation(oauthClientEntity.getAdditionalInformation());
+///            baseClientDetails.setAdditionalInformation(oauthClientEntity.getAdditionalInformation());
             if (!StringUtils.isEmpty(oauthClientEntity.getAutoApprove())) {
                 baseClientDetails.setAutoApproveScopes(StringUtils.commaDelimitedListToSet(oauthClientEntity.getAutoApprove()));
             }

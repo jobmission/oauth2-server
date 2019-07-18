@@ -11,12 +11,24 @@ public class ResponseResult<T> implements Serializable {
 
     private static final long serialVersionUID = 613307369635832439L;
     private Long id;
-    private int status;//请求状态是否成功
-    private String error;//错误类型
-    private String message;//详细的信息
+    /**
+     * 请求状态是否成功
+     */
+    private int status;
+    private String error;
+    /**
+     * 详细的信息
+     */
+    private String message;
     private String path;
-    private Long timestamp;//时间戳
-    private T data;//返回对象
+    /**
+     * 时间戳
+     */
+    private Long timestamp;
+    /**
+     * 返回对象
+     */
+    private T data;
     private Long total;
     private Integer ack;
     private Object additional;

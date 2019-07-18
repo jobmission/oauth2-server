@@ -28,7 +28,7 @@ public class ProfileController {
 
     private Logger log = LoggerFactory.getLogger(this.getClass());
 
-    private static final Pattern authorizationPattern = Pattern.compile("^Bearer (?<token>[a-zA-Z0-9-._~+/]+)=*$");
+    private static final Pattern AUTHORIZATION_PATTERN = Pattern.compile("^Bearer (?<token>[a-zA-Z0-9-._~+/]+)=*$");
 
     @Autowired
     UserAccountService userAccountService;
@@ -41,11 +41,11 @@ public class ProfileController {
     public Map<String, Object> info(@RequestParam(value = "access_token", required = false) String paramToken,
                                     @RequestHeader(value = "Authorization", required = false) String headerToken,
                                     @CookieValue(value = "access_token", required = false) String cookieToken) {
-        Map<String, Object> result = new HashMap<>();
+        Map<String, Object> result = new HashMap<>(16);
         try {
             String token = null;
             if (StringUtils.isNoneBlank(headerToken)) {
-                Matcher matcher = authorizationPattern.matcher(headerToken);
+                Matcher matcher = AUTHORIZATION_PATTERN.matcher(headerToken);
                 if (matcher.matches()) {
                     token = matcher.group("token");
                 }

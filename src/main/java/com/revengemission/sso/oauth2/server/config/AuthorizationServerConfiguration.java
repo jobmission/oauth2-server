@@ -1,5 +1,7 @@
 package com.revengemission.sso.oauth2.server.config;
 
+import com.revengemission.sso.oauth2.server.persistence.repository.RoleRepository;
+import com.revengemission.sso.oauth2.server.persistence.repository.ThirdPartyAccountRepository;
 import com.revengemission.sso.oauth2.server.service.CaptchaService;
 import com.revengemission.sso.oauth2.server.service.impl.ClientDetailsServiceImpl;
 import org.springframework.beans.factory.InitializingBean;
@@ -62,13 +64,25 @@ public class AuthorizationServerConfiguration extends AuthorizationServerConfigu
     @Autowired
     CaptchaService captchaService;
 
+    @Autowired
+    ThirdPartyAccountRepository thirdPartyAccountRepository;
+
+    @Autowired
+    RoleRepository roleRepository;
+
     @Value("${jwt.jks.keypass:keypass}")
     private String keypass;
+
+    @Value("${thirdparty.weixin.mini.appid:1}")
+    private String appId;
+
+    @Value("${thirdparty.weixin.mini.secret:1}")
+    private String secret;
 
     @Bean
     public KeyPair keyPair() {
         KeyStoreKeyFactory keyStoreKeyFactory = new KeyStoreKeyFactory(new ClassPathResource("jwt.jks"),
-                "keypass".toCharArray());
+            "keypass".toCharArray());
         return keyStoreKeyFactory.getKeyPair("jwt");
     }
 
@@ -78,15 +92,15 @@ public class AuthorizationServerConfiguration extends AuthorizationServerConfigu
         accessTokenConverter.setKeyPair(keyPair());
 
         // 测试用,资源服务使用相同的字符达到一个对称加密的效果,生产时候使用RSA非对称加密方式
-        // accessTokenConverter.setSigningKey("123");
+        /// accessTokenConverter.setSigningKey("123");
         return accessTokenConverter;
     }
 
     @Bean
     public TokenEnhancer tokenEnhancer() {
         TokenEnhancerChain tokenEnhancerChain = new TokenEnhancerChain();
-        tokenEnhancerChain.setTokenEnhancers(Arrays.asList(new CustomTokenEnhancer(), accessTokenConverter())); // CustomTokenEnhancer
-        // 是我自定义一些数据放到token里用的
+        // CustomTokenEnhancer 是我自定义一些数据放到token里用的
+        tokenEnhancerChain.setTokenEnhancers(Arrays.asList(new CustomTokenEnhancer(), accessTokenConverter()));
         return tokenEnhancerChain;
     }
 
@@ -97,19 +111,14 @@ public class AuthorizationServerConfiguration extends AuthorizationServerConfigu
 
     @Override
     public void configure(ClientDetailsServiceConfigurer clients) throws Exception {
-//      import!,client和user的加密方式须一致
-//        clients.inMemory()
-//                .withClient("SampleClientId")
-//                .authorizedGrantTypes("implicit", "authorization_code", "refresh_token", "password", "client_credentials")
-//                .authorities("ROLE_CLIENT", "ROLE_TRUSTED_CLIENT")
-//                .scopes("read", "write", "trust")
-//                .secret("secret")
-//                .accessTokenValiditySeconds(3600)
-//                .refreshTokenValiditySeconds(2592000);
         clients.withClientDetails(clientDetailsService);
     }
 
-    //可以用redis等存储
+    /**
+     * 可以用redis等存储
+     *
+     * @return ApprovalStore
+     */
     @Bean
     public ApprovalStore approvalStore() {
         TokenApprovalStore approvalStore = new TokenApprovalStore();
@@ -132,7 +141,7 @@ public class AuthorizationServerConfiguration extends AuthorizationServerConfigu
     }
 
     @Override
-    public void configure(AuthorizationServerEndpointsConfigurer endpoints) throws Exception {
+    public void configure(AuthorizationServerEndpointsConfigurer endpoints) {
         // 注入authenticationManager来支持password模式
         endpoints.authenticationManager(authenticationManager);
         endpoints.accessTokenConverter(accessTokenConverter());
@@ -142,21 +151,23 @@ public class AuthorizationServerConfiguration extends AuthorizationServerConfigu
         endpoints.reuseRefreshTokens(true);
         endpoints.tokenGranter(tokenGranter());
         endpoints.authorizationCodeServices(authorizationCodeServices());
-//      endpoints.tokenEnhancer(tokenEnhancerChain);  // 设了 tokenGranter 后该配制失效,需要在 tokenServices() 中设置
+        // 设了 tokenGranter 后该配制失效,需要在 tokenServices() 中设置
+///        endpoints.tokenEnhancer(tokenEnhancerChain);
         endpoints.userApprovalHandler(userApprovalHandler());
 
     }
 
     @Override
-    public void configure(AuthorizationServerSecurityConfigurer oauthServer) throws Exception {
+    public void configure(AuthorizationServerSecurityConfigurer oauthServer) {
         oauthServer.tokenKeyAccess("isAnonymous() || hasAuthority('ROLE_TRUSTED_CLIENT')")
-                .checkTokenAccess("isAnonymous() || hasAuthority('ROLE_TRUSTED_CLIENT')")
-                .allowFormAuthenticationForClients();
+            .checkTokenAccess("isAnonymous() || hasAuthority('ROLE_TRUSTED_CLIENT')")
+            .allowFormAuthenticationForClients();
     }
 
     @Bean
     public AuthorizationCodeServices authorizationCodeServices() {
-        return new InMemoryAuthorizationCodeServices(); // 使用默认
+        // 使用默认
+        return new InMemoryAuthorizationCodeServices();
     }
 
     @Bean
@@ -164,15 +175,17 @@ public class AuthorizationServerConfiguration extends AuthorizationServerConfigu
         DefaultTokenServices defaultTokenServices = new DefaultTokenServices();
         defaultTokenServices.setTokenStore(tokenStore());
         defaultTokenServices.setSupportRefreshToken(true);
-        defaultTokenServices.setClientDetailsService(clientDetailsService);//token 有效时间,默认12h
-        defaultTokenServices.setTokenEnhancer(tokenEnhancer());// 如果没有设置它,JWT就失效了.
+        //token 有效时间,默认12h
+        defaultTokenServices.setClientDetailsService(clientDetailsService);
+        // 如果没有设置它,JWT就失效了.
+        defaultTokenServices.setTokenEnhancer(tokenEnhancer());
         return defaultTokenServices;
     }
 
     /**
      * 通过 tokenGranter 塞进去的就是它了
      */
-    public TokenGranter tokenGranter() {
+    private TokenGranter tokenGranter() {
         return new TokenGranter() {
             private CompositeTokenGranter delegate;
 
@@ -190,26 +203,29 @@ public class AuthorizationServerConfiguration extends AuthorizationServerConfigu
 
         List<TokenGranter> tokenGranters = new ArrayList<>();
         tokenGranters.add(new AuthorizationCodeTokenGranter(authorizationServerTokenServices(),
-                authorizationCodeServices(), clientDetailsService, oAuth2RequestFactory()));
+            authorizationCodeServices(), clientDetailsService, oAuth2RequestFactory()));
         tokenGranters.add(new RefreshTokenGranter(authorizationServerTokenServices(), clientDetailsService,
-                oAuth2RequestFactory()));
+            oAuth2RequestFactory()));
         ImplicitTokenGranter implicit = new ImplicitTokenGranter(authorizationServerTokenServices(),
-                clientDetailsService, oAuth2RequestFactory());
+            clientDetailsService, oAuth2RequestFactory());
         tokenGranters.add(implicit);
         tokenGranters.add(new ClientCredentialsTokenGranter(authorizationServerTokenServices(), clientDetailsService,
-                oAuth2RequestFactory()));
+            oAuth2RequestFactory()));
         if (authenticationManager != null) {
             tokenGranters.add(new ResourceOwnerPasswordTokenGranter(authenticationManager,
-                    authorizationServerTokenServices(), clientDetailsService, oAuth2RequestFactory()));
+                authorizationServerTokenServices(), clientDetailsService, oAuth2RequestFactory()));
         }
 
         tokenGranters.add(new SMSCodeTokenGranter(userDetailsService, authorizationServerTokenServices(),
-                clientDetailsService, oAuth2RequestFactory(), captchaService));
+            clientDetailsService, oAuth2RequestFactory(), captchaService));
+
+        tokenGranters.add(new WeChatMiniProgramTokenGranter(thirdPartyAccountRepository, roleRepository, authorizationServerTokenServices(),
+            clientDetailsService, oAuth2RequestFactory(), appId, secret));
         return tokenGranters;
     }
 
     @Override
-    public void afterPropertiesSet() throws Exception {
+    public void afterPropertiesSet() {
 
     }
 

@@ -3,16 +3,15 @@ package com.revengemission.sso.oauth2.server.config;
 import com.fasterxml.jackson.core.type.TypeReference;
 import com.revengemission.sso.oauth2.server.domain.RoleEnum;
 import com.revengemission.sso.oauth2.server.domain.UserInfo;
+import com.revengemission.sso.oauth2.server.persistence.entity.RoleEntity;
 import com.revengemission.sso.oauth2.server.persistence.entity.ThirdPartyAccountEntity;
+import com.revengemission.sso.oauth2.server.persistence.repository.RoleRepository;
 import com.revengemission.sso.oauth2.server.persistence.repository.ThirdPartyAccountRepository;
 import com.revengemission.sso.oauth2.server.utils.JSONUtil;
-import org.apache.commons.lang3.StringUtils;
 import org.springframework.security.authentication.AbstractAuthenticationToken;
 import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
-import org.springframework.security.core.Authentication;
 import org.springframework.security.core.GrantedAuthority;
-import org.springframework.security.core.authority.AuthorityUtils;
-import org.springframework.security.core.userdetails.UserDetailsService;
+import org.springframework.security.core.authority.SimpleGrantedAuthority;
 import org.springframework.security.oauth2.common.exceptions.InvalidGrantException;
 import org.springframework.security.oauth2.provider.*;
 import org.springframework.security.oauth2.provider.token.AbstractTokenGranter;
@@ -32,35 +31,32 @@ public class WeChatMiniProgramTokenGranter extends AbstractTokenGranter {
     private String appId;
     private String secret;
 
-    ThirdPartyAccountRepository thirdPartyAccountRepository;
-    UserDetailsService userDetailsService;
+    private ThirdPartyAccountRepository thirdPartyAccountRepository;
 
-    RestTemplate restTemplate = new RestTemplate();
+    private RoleRepository roleRepository;
 
-    public WeChatMiniProgramTokenGranter(UserDetailsService userDetailsService,
-                                         ThirdPartyAccountRepository thirdPartyAccountRepository,
+    private RestTemplate restTemplate = new RestTemplate();
+
+    public WeChatMiniProgramTokenGranter(ThirdPartyAccountRepository thirdPartyAccountRepository,
+                                         RoleRepository roleRepository,
                                          AuthorizationServerTokenServices authorizationServerTokenServices,
                                          ClientDetailsService clientDetailsService, OAuth2RequestFactory requestFactory,
                                          String appId,
-                                         String secret,
-                                         String weChatCodeUrl) {
+                                         String secret) {
         super(authorizationServerTokenServices, clientDetailsService, requestFactory, GRANT_TYPE);
-        this.userDetailsService = userDetailsService;
         this.thirdPartyAccountRepository = thirdPartyAccountRepository;
+        this.roleRepository = roleRepository;
         this.appId = appId;
         this.secret = secret;
-        if (StringUtils.isNoneBlank(weChatCodeUrl)) {
-            this.weChatCodeUrl = weChatCodeUrl;
-        }
     }
 
     @Override
     protected OAuth2Authentication getOAuth2Authentication(ClientDetails client, TokenRequest tokenRequest) {
 
-        Map<String, String> parameters = new LinkedHashMap<String, String>(tokenRequest.getRequestParameters());
+        Map<String, String> parameters = tokenRequest.getRequestParameters();
         String code = parameters.get("code"); // 客户端提交的用户名
 
-        Map<String, Object> params = new HashMap<>();
+        Map<String, Object> params = new HashMap<>(16);
         params.put("appId", appId);
         params.put("secret", secret);
         params.put("code", code);
@@ -74,23 +70,25 @@ public class WeChatMiniProgramTokenGranter extends AbstractTokenGranter {
                 ThirdPartyAccountEntity thirdPartyAccountEntity = thirdPartyAccountRepository.findByThirdPartyAndThirdPartyAccountId(GRANT_TYPE, openId);
                 if (thirdPartyAccountEntity == null) {
                     thirdPartyAccountEntity = new ThirdPartyAccountEntity();
-                    thirdPartyAccountEntity.setClientId(client.getClientId());
                     thirdPartyAccountEntity.setThirdParty(GRANT_TYPE);
                     thirdPartyAccountEntity.setThirdPartyAccountId(openId);
                     thirdPartyAccountEntity.setAccountOpenCode(UUID.randomUUID().toString());
+
+                    RoleEntity roleEntity = roleRepository.findByRoleName(RoleEnum.ROLE_USER.name());
+                    thirdPartyAccountEntity.getRoles().add(roleEntity);
                     thirdPartyAccountRepository.save(thirdPartyAccountEntity);
                 }
 
-                UserInfo user = new UserInfo(1, openId, "123", getAuthorities(RoleEnum.ROLE_USER.name()));
-                Authentication userAuth = new UsernamePasswordAuthenticationToken(user, null, user.getAuthorities());
+                UserInfo user = new UserInfo(thirdPartyAccountEntity.getAccountOpenCode(), openId, "", getAuthorities(thirdPartyAccountEntity.getRoles()));
+                AbstractAuthenticationToken userAuth = new UsernamePasswordAuthenticationToken(user, null, user.getAuthorities());
                 // 关于user.getAuthorities(): 我们的自定义用户实体是实现了
                 // org.springframework.security.core.userdetails.UserDetails 接口的, 所以有
                 // user.getAuthorities()
                 // 当然该参数传null也行
-                ((AbstractAuthenticationToken) userAuth).setDetails(parameters);
+                userAuth.setDetails(parameters);
 
-                OAuth2Request storedOAuth2Request = getRequestFactory().createOAuth2Request(client, tokenRequest);
-                return new OAuth2Authentication(storedOAuth2Request, userAuth);
+                OAuth2Request auth2Request = getRequestFactory().createOAuth2Request(client, tokenRequest);
+                return new OAuth2Authentication(auth2Request, userAuth);
             } else {
                 throw new InvalidGrantException("获取openid失败");
             }
@@ -102,8 +100,15 @@ public class WeChatMiniProgramTokenGranter extends AbstractTokenGranter {
 
     }
 
-    private Collection<? extends GrantedAuthority> getAuthorities(String roles) {
-        return AuthorityUtils.commaSeparatedStringToAuthorityList(roles);
+    private Collection<? extends GrantedAuthority> getAuthorities(List<RoleEntity> roles) {
+        List<GrantedAuthority> grantedAuthorities = new ArrayList<>();
+        if (roles != null && roles.size() > 0) {
+            for (RoleEntity temp : roles) {
+                GrantedAuthority grantedAuthority = new SimpleGrantedAuthority(temp.getRoleName());
+                grantedAuthorities.add(grantedAuthority);
+            }
+        }
+        return grantedAuthorities;
     }
 
 

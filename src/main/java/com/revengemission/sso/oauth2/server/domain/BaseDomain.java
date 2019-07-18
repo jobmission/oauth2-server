@@ -12,14 +12,23 @@ import java.util.Date;
 public class BaseDomain implements Serializable {
 
     /**
-	 * 
-	 */
-	private static final long serialVersionUID = 1L;
-	private String id;
-    private Date dateCreated;//创建时间
-    private Date lastModified;//修改时间
-    private Integer recordStatus;//状态
-    private Integer version;//更改次数/每次修改+1
+     *
+     */
+    private static final long serialVersionUID = 1L;
+    private String id;
+    /**
+     * 创建时间
+     */
+    private Date dateCreated;
+    /**
+     * 修改时间
+     */
+    private Date lastModified;
+    private Integer recordStatus;
+    /**
+     * 更改次数/每次修改+1
+     */
+    private Integer version;
     private String remarks;
     private String additionalData;
 }

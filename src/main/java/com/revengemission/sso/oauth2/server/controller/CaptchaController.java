@@ -43,7 +43,7 @@ public class CaptchaController {
     @RequestMapping(value = "/captcha/graph")
     public Map<String, Object> captchaGraph() {
 
-        Map<String, Object> resultMap = new HashMap<>();
+        Map<String, Object> resultMap = new HashMap<>(16);
 
         String uuid = UUID.randomUUID().toString();
         String captcha = VerificationCodeUtil.generateVerificationCode(4, null);
@@ -71,7 +71,7 @@ public class CaptchaController {
     public Map<String, Object> captchaSms(@RequestParam(value = "signType", required = false, defaultValue = "signIn") String signType,
                                           @RequestParam(value = "phone") String phone,
                                           @RequestParam(value = "captcha") String inputCaptcha, @RequestParam(value = "graphId") String graphId) {
-        Map<String, Object> resultMap = new HashMap<>();
+        Map<String, Object> resultMap = new HashMap<>(16);
 
         String captcha = captchaService.getCaptcha(CachesEnum.GraphCaptchaCache, graphId);
 
@@ -146,7 +146,7 @@ public class CaptchaController {
     public Map<String, Object> captchaGraphBase64(@RequestParam(value = "graphId") String graphId, @RequestParam(value = "w", defaultValue = "150") int width,
                                                   @RequestParam(value = "h", defaultValue = "38") int height) throws IOException {
 
-        Map<String, Object> resultMap = new HashMap<>();
+        Map<String, Object> resultMap = new HashMap<>(16);
         String captcha = captchaService.getCaptcha(CachesEnum.GraphCaptchaCache, graphId);
         if (captcha != null) {
             String base64EncodedGraph = VerificationCodeUtil.outputImage(width, height, captcha);

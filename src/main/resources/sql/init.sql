@@ -12,9 +12,9 @@ values (1, 'ROLE_SUPER'),
        (2, 'ROLE_ADMIN'),
        (3, 'ROLE_USER');
 
-INSERT INTO user_account_entity (id, username, password, nick_name, remarks)
-VALUES (1, 'zhangsan', '$2a$10$gcrWom7ubcRaVD1.6ZIrIeJP0mtPLH5J9V/.8Qth59lZ4B/5HMq96', '张三', '测试明文:tgb.258'),
-       (3, 'lisi', '$2a$10$gcrWom7ubcRaVD1.6ZIrIeJP0mtPLH5J9V/.8Qth59lZ4B/5HMq96', '李四', '测试明文:tgb.258');
+INSERT INTO user_account_entity (id, username, password, account_open_code, nick_name, remarks)
+VALUES (1, 'zhangsan', '$2a$10$gcrWom7ubcRaVD1.6ZIrIeJP0mtPLH5J9V/.8Qth59lZ4B/5HMq96', '1', '张三', '测试明文:tgb.258'),
+       (3, 'lisi', '$2a$10$gcrWom7ubcRaVD1.6ZIrIeJP0mtPLH5J9V/.8Qth59lZ4B/5HMq96', '3', '李四', '测试明文:tgb.258');
 
 insert into user_account_entity_roles(user_id, role_id)
 values (1, 1),

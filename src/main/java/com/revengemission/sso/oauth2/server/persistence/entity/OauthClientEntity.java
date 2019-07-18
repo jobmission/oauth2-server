@@ -10,10 +10,10 @@ import java.util.Date;
 @Table(uniqueConstraints = @UniqueConstraint(columnNames = {"clientId"}))
 public class OauthClientEntity extends BaseEntity {
     /**
-	 * 
-	 */
-	private static final long serialVersionUID = -3042356579574873614L;
-	@Column(nullable = false)
+     *
+     */
+    private static final long serialVersionUID = -3042356579574873614L;
+    @Column(nullable = false)
     private String clientId;
     private String applicationName;
     private String resourceIds;
@@ -29,7 +29,10 @@ public class OauthClientEntity extends BaseEntity {
     private Integer refreshTokenValidity;
     private String additionalInformation;
     private String autoApprove;
-    private Date expirationDate;//客户端过期时间，比如应用于多店系统
+    /**
+     * 客户端过期时间，比如应用于多店系统
+     */
+    private Date expirationDate;
 
 
     public String getClientId() {

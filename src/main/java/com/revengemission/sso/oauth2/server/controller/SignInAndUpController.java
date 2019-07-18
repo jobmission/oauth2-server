@@ -20,6 +20,8 @@ import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.ResponseBody;
 
+import java.util.UUID;
+
 @Controller
 public class SignInAndUpController {
     private Logger log = LoggerFactory.getLogger(this.getClass());
@@ -104,6 +106,7 @@ public class SignInAndUpController {
         userAccount.getRoles().add(userRole);
         userAccount.setUsername(StringEscapeUtils.escapeHtml4(username));
         userAccount.setPassword(passwordEncoder.encode(password));
+        userAccount.setAccountOpenCode(UUID.randomUUID().toString());
         try {
             userAccountService.create(userAccount);
             //移除验证码

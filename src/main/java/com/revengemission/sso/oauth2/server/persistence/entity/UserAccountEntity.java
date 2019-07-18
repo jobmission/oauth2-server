@@ -10,16 +10,15 @@ import java.util.List;
 @Table(uniqueConstraints = @UniqueConstraint(columnNames = {"username"}))
 public class UserAccountEntity extends BaseEntity {
 
-    /**
-     *
-     */
     private static final long serialVersionUID = -5519234457588411587L;
-    //用于记录用户在哪个子系统进行的注册
-    private String clientId;
     @Column(nullable = false, columnDefinition = "VARCHAR(40)")
     private String username;
     @Column(nullable = false)
     private String password;
+    /**
+     * 多种登陆方式合并账号使用
+     */
+    private String accountOpenCode;
     private String nickName;
     private String avatarUrl;
     private String email;
@@ -37,14 +36,6 @@ public class UserAccountEntity extends BaseEntity {
     @JoinTable(joinColumns = @JoinColumn(name = "user_id", referencedColumnName = "id"), foreignKey = @ForeignKey(ConstraintMode.NO_CONSTRAINT), inverseJoinColumns = @JoinColumn(name = "role_id", referencedColumnName = "id"), inverseForeignKey = @ForeignKey(ConstraintMode.NO_CONSTRAINT))
     List<RoleEntity> roles = new ArrayList<>();
 
-    public String getClientId() {
-        return clientId;
-    }
-
-    public void setClientId(String clientId) {
-        this.clientId = clientId;
-    }
-
     public String getUsername() {
         return username;
     }
@@ -59,6 +50,14 @@ public class UserAccountEntity extends BaseEntity {
 
     public void setPassword(String password) {
         this.password = password;
+    }
+
+    public String getAccountOpenCode() {
+        return accountOpenCode;
+    }
+
+    public void setAccountOpenCode(String accountOpenCode) {
+        this.accountOpenCode = accountOpenCode;
     }
 
     public String getNickName() {
@@ -156,4 +155,6 @@ public class UserAccountEntity extends BaseEntity {
     public void setRoles(List<RoleEntity> roles) {
         this.roles = roles;
     }
+
+
 }

@@ -24,7 +24,7 @@ public class ServerExceptionHandler {
 
 
     @ExceptionHandler({
-            NoHandlerFoundException.class
+        NoHandlerFoundException.class
     })
     public ResponseEntity<Object> handleNoHandlerFoundException(Exception ex, HttpServletRequest request) {
         HttpStatus httpStatus = HttpStatus.NOT_FOUND;
@@ -38,7 +38,7 @@ public class ServerExceptionHandler {
     }
 
     @ExceptionHandler({
-            AccessControlException.class, AccessDeniedException.class
+        AccessControlException.class, AccessDeniedException.class
     })
     @ResponseBody
     ResponseEntity<Object> handleDeniedException(Exception ex, HttpServletRequest request) {
@@ -56,7 +56,13 @@ public class ServerExceptionHandler {
     }
 
 
-    //  捕获全局异常，处理所有不可知的异常
+    /**
+     * 捕获全局异常，处理所有不可知的异常
+     *
+     * @param ex
+     * @param request
+     * @return
+     */
     @ExceptionHandler(Exception.class)
     @ResponseBody
     ResponseEntity<Object> handleException(Exception ex, HttpServletRequest request) {
@@ -73,17 +79,23 @@ public class ServerExceptionHandler {
         return new ResponseEntity<>(responseResult, headers, httpStatus);
     }
 
+    /**
+     * 记录下请求内容
+     *
+     * @param ex
+     * @param status
+     * @param request
+     */
     private void logRequest(Exception ex, HttpStatus status, HttpServletRequest request) {
-        // 记录下请求内容
         Map<String, String[]> parameters = request.getParameterMap();
         try {
             String uri = request.getRequestURI();
             log.error("User Agent =" + request.getHeader("User-Agent") +
-                    ";\nstatus =" + status.toString() + ",reason " + status.getReasonPhrase() +
-                    ";\nexception =" + ex.getMessage() +
-                    ";\nuri =" + uri +
-                    ";\ncontent Type =" + request.getHeader("content-type") +
-                    ";\nrequest parameters =" + JSONUtil.multiValueMapToJSONString(parameters), ex);
+                ";\nstatus =" + status.toString() + ",reason " + status.getReasonPhrase() +
+                ";\nexception =" + ex.getMessage() +
+                ";\nuri =" + uri +
+                ";\ncontent Type =" + request.getHeader("content-type") +
+                ";\nrequest parameters =" + JSONUtil.multiValueMapToJSONString(parameters), ex);
         } catch (Exception e) {
             log.error("ControllerAdvice log  Exception", e);
         }

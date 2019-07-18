@@ -99,9 +99,7 @@ public class CustomAuthenticationProvider extends AbstractUserDetailsAuthenticat
             }
 
             return loadedUser;
-        } catch (UsernameNotFoundException ex) {
-            throw ex;
-        } catch (InternalAuthenticationServiceException ex) {
+        } catch (UsernameNotFoundException | InternalAuthenticationServiceException ex) {
             throw ex;
         } catch (Exception ex) {
             throw new InternalAuthenticationServiceException(ex.getMessage(), ex);
@@ -113,7 +111,4 @@ public class CustomAuthenticationProvider extends AbstractUserDetailsAuthenticat
         return true;
     }
 
-    private Collection<? extends GrantedAuthority> getAuthorities(String roles) {
-        return AuthorityUtils.commaSeparatedStringToAuthorityList(roles);
-    }
 }

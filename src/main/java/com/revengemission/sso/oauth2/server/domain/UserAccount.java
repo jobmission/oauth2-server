@@ -19,10 +19,13 @@ public class UserAccount extends BaseDomain {
      *
      */
     private static final long serialVersionUID = -2355580690719376576L;
-    private String clientId;
     private String username;
     @JsonIgnore
     private String password;
+    /**
+     * 多种登陆方式合并账号使用
+     */
+    private String accountOpenCode;
     private String nickName;
     private String avatarUrl;
     private String email;

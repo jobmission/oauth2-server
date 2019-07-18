@@ -79,7 +79,7 @@ public class CustomAuthenticationSuccessHandler extends SavedRequestAwareAuthent
             }
         } else {
             //Call the parent method to manage the successful authentication
-            //setDefaultTargetUrl("/");
+///            setDefaultTargetUrl("/");
             if (StringUtils.isNotEmpty(redirectUrl)) {
                 super.onAuthenticationSuccess(request, response, authentication);
             } else {

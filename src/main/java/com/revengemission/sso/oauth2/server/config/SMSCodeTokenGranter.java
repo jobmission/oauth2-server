@@ -4,7 +4,6 @@ import com.revengemission.sso.oauth2.server.service.CaptchaService;
 import org.apache.commons.lang3.StringUtils;
 import org.springframework.security.authentication.AbstractAuthenticationToken;
 import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
-import org.springframework.security.core.Authentication;
 import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.security.core.userdetails.UserDetailsService;
 import org.springframework.security.oauth2.common.exceptions.InvalidGrantException;
@@ -12,16 +11,15 @@ import org.springframework.security.oauth2.provider.*;
 import org.springframework.security.oauth2.provider.token.AbstractTokenGranter;
 import org.springframework.security.oauth2.provider.token.AuthorizationServerTokenServices;
 
-import java.util.LinkedHashMap;
 import java.util.Map;
 
 public class SMSCodeTokenGranter extends AbstractTokenGranter {
 
     private static final String GRANT_TYPE = "sms_code";
 
-    UserDetailsService userDetailsService;
+    private UserDetailsService userDetailsService;
 
-    CaptchaService captchaService;
+    private CaptchaService captchaService;
 
     public SMSCodeTokenGranter(UserDetailsService userDetailsService,
                                AuthorizationServerTokenServices authorizationServerTokenServices,
@@ -35,10 +33,13 @@ public class SMSCodeTokenGranter extends AbstractTokenGranter {
     @Override
     protected OAuth2Authentication getOAuth2Authentication(ClientDetails client, TokenRequest tokenRequest) {
 
-        Map<String, String> parameters = new LinkedHashMap<String, String>(tokenRequest.getRequestParameters());
-        String userMobileNo = parameters.get("username"); // 客户端提交的用户名
-        String smsCodeInput = parameters.get("smsCode"); // 客户端提交的验证码
-        String smsId = parameters.get("smsId"); // 客户端提交的验证码编号
+        Map<String, String> parameters = tokenRequest.getRequestParameters();
+        // 客户端提交的用户名
+        String userMobileNo = parameters.get("username");
+        // 客户端提交的验证码
+        String smsCodeInput = parameters.get("smsCode");
+        // 客户端提交的验证码编号
+        String smsId = parameters.get("smsId");
 
         // 从库里查用户
         UserDetails user = userDetailsService.loadUserByUsername(userMobileNo);
@@ -56,15 +57,15 @@ public class SMSCodeTokenGranter extends AbstractTokenGranter {
             captchaService.removeCaptcha(CachesEnum.SmsCaptchaCache, smsId);
         }
 
-        Authentication userAuth = new UsernamePasswordAuthenticationToken(user, null, user.getAuthorities());
+        AbstractAuthenticationToken userAuth = new UsernamePasswordAuthenticationToken(user, null, user.getAuthorities());
         // 关于user.getAuthorities(): 我们的自定义用户实体是实现了
         // org.springframework.security.core.userdetails.UserDetails 接口的, 所以有
         // user.getAuthorities()
         // 当然该参数传null也行
-        ((AbstractAuthenticationToken) userAuth).setDetails(parameters);
+        userAuth.setDetails(parameters);
 
-        OAuth2Request storedOAuth2Request = getRequestFactory().createOAuth2Request(client, tokenRequest);
-        return new OAuth2Authentication(storedOAuth2Request, userAuth);
+        OAuth2Request auth2Request = getRequestFactory().createOAuth2Request(client, tokenRequest);
+        return new OAuth2Authentication(auth2Request, userAuth);
     }
 
 }

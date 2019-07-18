@@ -6,7 +6,9 @@ import org.springframework.web.cors.CorsConfiguration;
 import org.springframework.web.cors.UrlBasedCorsConfigurationSource;
 import org.springframework.web.filter.CorsFilter;
 
-/*部分接口需要跨域支持*/
+/**
+ * 部分接口需要跨域支持
+ */
 @Configuration
 public class CustomCorsConfiguration {
 
@@ -19,8 +21,8 @@ public class CustomCorsConfiguration {
         corsConfiguration.addAllowedMethod("GET");
         corsConfiguration.addAllowedMethod("POST");
         corsConfiguration.addAllowedMethod("OPTIONS");
-        //corsConfiguration.addExposedHeader("head1");
-        //corsConfiguration.addExposedHeader("Location");
+///        corsConfiguration.addExposedHeader("head1");
+///        corsConfiguration.addExposedHeader("Location");
         UrlBasedCorsConfigurationSource urlBasedCorsConfigurationSource = new UrlBasedCorsConfigurationSource();
         urlBasedCorsConfigurationSource.registerCorsConfiguration("/oauth/**", corsConfiguration);
         urlBasedCorsConfigurationSource.registerCorsConfiguration("/user/me", corsConfiguration);

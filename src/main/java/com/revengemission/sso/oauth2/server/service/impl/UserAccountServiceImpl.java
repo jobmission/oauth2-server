@@ -43,14 +43,14 @@ public class UserAccountServiceImpl implements UserAccountService {
     @Override
     public JsonObjects<UserAccount> listByUsername(String username, int pageNum, int pageSize, String sortField, String sortOrder) {
         JsonObjects<UserAccount> jsonObjects = new JsonObjects<>();
-        Sort sort = null;
+        Sort sort;
         if (StringUtils.equalsIgnoreCase(sortOrder, "asc")) {
             sort = new Sort(Sort.Direction.ASC, sortField);
         } else {
             sort = new Sort(Sort.Direction.DESC, sortField);
         }
         Pageable pageable = PageRequest.of(pageNum - 1, pageSize, sort);
-        Page<UserAccountEntity> page = null;
+        Page<UserAccountEntity> page;
         if (StringUtils.isBlank(username)) {
             page = userAccountRepository.findAll(pageable);
         } else {
@@ -59,16 +59,14 @@ public class UserAccountServiceImpl implements UserAccountService {
         if (page.getContent() != null && page.getContent().size() > 0) {
             jsonObjects.setRecordsTotal(page.getTotalElements());
             jsonObjects.setRecordsFiltered(page.getTotalElements());
-            page.getContent().forEach(u -> {
-                jsonObjects.getData().add(dozerMapper.map(u, UserAccount.class));
-            });
+            page.getContent().forEach(u -> jsonObjects.getData().add(dozerMapper.map(u, UserAccount.class)));
         }
         return jsonObjects;
 
     }
 
     @Override
-    @Transactional
+    @Transactional(rollbackFor = Exception.class)
     public UserAccount create(UserAccount userAccount) throws AlreadyExistsException {
         UserAccountEntity exist = userAccountRepository.findByUsername(userAccount.getUsername());
         if (exist != null) {
@@ -95,7 +93,7 @@ public class UserAccountServiceImpl implements UserAccountService {
     }
 
     @Override
-    @Transactional
+    @Transactional(rollbackFor = Exception.class)
     public UserAccount updateById(UserAccount userAccount) throws EntityNotFoundException {
         Optional<UserAccountEntity> entityOptional = userAccountRepository.findById(Long.parseLong(userAccount.getId()));
         UserAccountEntity e = entityOptional.orElseThrow(EntityNotFoundException::new);
@@ -116,7 +114,7 @@ public class UserAccountServiceImpl implements UserAccountService {
     }
 
     @Override
-    @Transactional
+    @Transactional(rollbackFor = Exception.class)
     public void updateRecordStatus(long id, int recordStatus) {
         Optional<UserAccountEntity> entityOptional = userAccountRepository.findById(id);
         UserAccountEntity e = entityOptional.orElseThrow(EntityNotFoundException::new);
@@ -140,7 +138,7 @@ public class UserAccountServiceImpl implements UserAccountService {
     }
 
     @Override
-    @Transactional
+    @Transactional(rollbackFor = Exception.class)
     @Async
     public void loginSuccess(String username) throws EntityNotFoundException {
         UserAccountEntity userAccountEntity = userAccountRepository.findByUsername(username);
@@ -154,7 +152,7 @@ public class UserAccountServiceImpl implements UserAccountService {
     }
 
     @Override
-    @Transactional
+    @Transactional(rollbackFor = Exception.class)
     public void loginFailure(String username) {
         UserAccountEntity userAccountEntity = userAccountRepository.findByUsername(username);
         if (userAccountEntity != null) {

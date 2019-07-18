@@ -19,14 +19,14 @@ public class JSONUtil {
 
     static {
         // 美化输出
-        //mapper.enable(SerializationFeature.INDENT_OUTPUT);
+        ///mapper.enable(SerializationFeature.INDENT_OUTPUT);
         mapper.setSerializationInclusion(JsonInclude.Include.NON_NULL);
         mapper.disable(DeserializationFeature.FAIL_ON_UNKNOWN_PROPERTIES);
         mapper.enable(SerializationFeature.WRITE_DATES_AS_TIMESTAMPS);
     }
 
     public static String objectToJSONString(Object object) throws JsonProcessingException {
-//Object to JSON in String
+        //Object to JSON in String
         return mapper.writeValueAsString(object);
     }
 
@@ -41,15 +41,14 @@ public class JSONUtil {
         }
         mapper.setSerializationInclusion(JsonInclude.Include.NON_NULL);
 
-//Object to JSON in String
+        //Object to JSON in String
         return mapper.writeValueAsString(newMap);
     }
 
     public static <T> T JSONStringToObject(String jsonString, Class<T> t) throws IOException {
         mapper.disable(DeserializationFeature.FAIL_ON_UNKNOWN_PROPERTIES);
 
-
-//JSON from String to Object
+        //JSON from String to Object
         return mapper.readValue(jsonString, t);
     }
 

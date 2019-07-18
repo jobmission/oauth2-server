@@ -28,7 +28,7 @@ public class LoginHistoryServiceImpl implements LoginHistoryService {
     @Override
     public JsonObjects<LoginHistory> listByUsername(String username, int pageNum, int pageSize, String sortField, String sortOrder) {
         JsonObjects<LoginHistory> jsonObjects = new JsonObjects<>();
-        Sort sort = null;
+        Sort sort;
         if (StringUtils.equalsIgnoreCase(sortOrder, "asc")) {
             sort = new Sort(Sort.Direction.ASC, sortField);
         } else {
@@ -39,15 +39,13 @@ public class LoginHistoryServiceImpl implements LoginHistoryService {
         if (page.getContent() != null && page.getContent().size() > 0) {
             jsonObjects.setRecordsTotal(page.getTotalElements());
             jsonObjects.setRecordsFiltered(page.getTotalElements());
-            page.getContent().forEach(u -> {
-                jsonObjects.getData().add(dozerMapper.map(u, LoginHistory.class));
-            });
+            page.getContent().forEach(u -> jsonObjects.getData().add(dozerMapper.map(u, LoginHistory.class)));
         }
         return jsonObjects;
     }
 
     @Override
-    @Transactional
+    @Transactional(rollbackFor = Exception.class)
     @Async
     public void asyncCreate(LoginHistory loginHistory) throws AlreadyExistsException {
         LoginHistoryEntity entity = dozerMapper.map(loginHistory, LoginHistoryEntity.class);

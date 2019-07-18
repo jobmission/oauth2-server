@@ -41,7 +41,7 @@ public class OauthClientServiceImpl implements OauthClientService {
     @Override
     public JsonObjects<OauthClient> list(int pageNum, int pageSize, String sortField, String sortOrder) {
         JsonObjects<OauthClient> jsonObjects = new JsonObjects<>();
-        Sort sort = null;
+        Sort sort;
         if (StringUtils.equalsIgnoreCase(sortOrder, "asc")) {
             sort = new Sort(Sort.Direction.ASC, sortField);
         } else {
@@ -52,15 +52,12 @@ public class OauthClientServiceImpl implements OauthClientService {
         if (page.getContent() != null && page.getContent().size() > 0) {
             jsonObjects.setRecordsTotal(page.getTotalElements());
             jsonObjects.setRecordsFiltered(page.getTotalElements());
-            page.getContent().forEach(u -> {
-                jsonObjects.getData().add(dozerMapper.map(u, OauthClient.class));
-            });
+            page.getContent().forEach(u -> jsonObjects.getData().add(dozerMapper.map(u, OauthClient.class)));
         }
         return jsonObjects;
     }
 
     @Override
-    @Transactional
     public OauthClient create(OauthClient oauthClient) throws AlreadyExistsException {
         OauthClientEntity exist = oauthClientRepository.findByClientId(oauthClient.getClientId());
         if (exist != null) {
@@ -78,7 +75,6 @@ public class OauthClientServiceImpl implements OauthClientService {
     }
 
     @Override
-    @Transactional
     public OauthClient updateById(OauthClient oauthClient) throws EntityNotFoundException {
         Optional<OauthClientEntity> entityOptional = oauthClientRepository.findById(Long.parseLong(oauthClient.getId()));
         OauthClientEntity e = entityOptional.orElseThrow(EntityNotFoundException::new);
