@@ -1,7 +1,7 @@
 package com.revengemission.sso.oauth2.server;
 
 import com.fasterxml.jackson.core.type.TypeReference;
-import com.revengemission.sso.oauth2.server.utils.JSONUtil;
+import com.revengemission.sso.oauth2.server.utils.JsonUtil;
 import org.junit.Ignore;
 import org.junit.Test;
 import org.springframework.http.*;
@@ -59,7 +59,7 @@ public class OAuth2Test {
         ResponseEntity<String> response = client.exchange(url, HttpMethod.POST, requestEntity, String.class);
 
         String jsonString = response.getBody();
-        Map<String, String> result = JSONUtil.JSONStringToObject(jsonString, new TypeReference<Map<String, String>>() {
+        Map<String, String> result = JsonUtil.jsonStringToObject(jsonString, new TypeReference<Map<String, String>>() {
         });
 //  输出结果
         System.out.println(result);
@@ -81,7 +81,7 @@ public class OAuth2Test {
         HttpEntity<MultiValueMap<String, String>> requestEntity = new HttpEntity<>(params, headers);
 //  执行HTTP请求
         ResponseEntity<String> response = client.exchange(url, HttpMethod.POST, requestEntity, String.class);
-        Map<String, Object> result = JSONUtil.JSONStringToObject(response.getBody(), new TypeReference<Map<String, Object>>() {
+        Map<String, Object> result = JsonUtil.jsonStringToObject(response.getBody(), new TypeReference<Map<String, Object>>() {
         });
 //  输出结果
         System.out.println(result);
@@ -106,7 +106,7 @@ public class OAuth2Test {
         HttpEntity<MultiValueMap<String, String>> requestEntity = new HttpEntity<>(params, headers);
 //  执行HTTP请求
         ResponseEntity<String> response = client.exchange(url, HttpMethod.POST, requestEntity, String.class);
-        Map<String, String> result = JSONUtil.JSONStringToObject(response.getBody(), new TypeReference<Map<String, String>>() {
+        Map<String, String> result = JsonUtil.jsonStringToObject(response.getBody(), new TypeReference<Map<String, String>>() {
         });
 //  输出结果
         System.out.println(result);

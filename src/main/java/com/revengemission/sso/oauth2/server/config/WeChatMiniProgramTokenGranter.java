@@ -7,7 +7,7 @@ import com.revengemission.sso.oauth2.server.persistence.entity.RoleEntity;
 import com.revengemission.sso.oauth2.server.persistence.entity.ThirdPartyAccountEntity;
 import com.revengemission.sso.oauth2.server.persistence.repository.RoleRepository;
 import com.revengemission.sso.oauth2.server.persistence.repository.ThirdPartyAccountRepository;
-import com.revengemission.sso.oauth2.server.utils.JSONUtil;
+import com.revengemission.sso.oauth2.server.utils.JsonUtil;
 import org.springframework.security.authentication.AbstractAuthenticationToken;
 import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
 import org.springframework.security.core.GrantedAuthority;
@@ -54,7 +54,8 @@ public class WeChatMiniProgramTokenGranter extends AbstractTokenGranter {
     protected OAuth2Authentication getOAuth2Authentication(ClientDetails client, TokenRequest tokenRequest) {
 
         Map<String, String> parameters = tokenRequest.getRequestParameters();
-        String code = parameters.get("code"); // 客户端提交的用户名
+        //客户端提交的用户名
+        String code = parameters.get("code");
 
         Map<String, Object> params = new HashMap<>(16);
         params.put("appId", appId);
@@ -63,7 +64,7 @@ public class WeChatMiniProgramTokenGranter extends AbstractTokenGranter {
         String result = restTemplate.getForObject(weChatCodeUrl, String.class, params);
 
         try {
-            Map<String, String> openIdMap = JSONUtil.JSONStringToObject(result, new TypeReference<Map<String, String>>() {
+            Map<String, String> openIdMap = JsonUtil.jsonStringToObject(result, new TypeReference<Map<String, String>>() {
             });
             if (openIdMap.containsKey("openid")) {
                 String openId = openIdMap.get("openid");

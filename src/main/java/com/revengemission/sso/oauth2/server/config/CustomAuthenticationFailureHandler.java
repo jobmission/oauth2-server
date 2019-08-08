@@ -8,7 +8,7 @@ import com.revengemission.sso.oauth2.server.domain.LoginHistory;
 import com.revengemission.sso.oauth2.server.domain.ResponseResult;
 import com.revengemission.sso.oauth2.server.service.LoginHistoryService;
 import com.revengemission.sso.oauth2.server.service.UserAccountService;
-import com.revengemission.sso.oauth2.server.utils.ClientIPUtils;
+import com.revengemission.sso.oauth2.server.utils.ClientIpUtil;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -43,7 +43,7 @@ public class CustomAuthenticationFailureHandler extends SimpleUrlAuthenticationF
 
         LoginHistory loginHistory = new LoginHistory();
         loginHistory.setUsername(username);
-        loginHistory.setIp(ClientIPUtils.getIpAddress(request));
+        loginHistory.setIp(ClientIpUtil.getIpAddress(request));
         loginHistory.setDevice(request.getHeader("User-Agent"));
         loginHistory.setRecordStatus(0);
         loginHistory.setRemarks(exception.getMessage());

@@ -1,7 +1,7 @@
 package com.revengemission.sso.oauth2.server;
 
-import com.revengemission.sso.oauth2.server.utils.ClientIPUtils;
-import com.revengemission.sso.oauth2.server.utils.JSONUtil;
+import com.revengemission.sso.oauth2.server.utils.ClientIpUtil;
+import com.revengemission.sso.oauth2.server.utils.JsonUtil;
 import org.aspectj.lang.JoinPoint;
 import org.aspectj.lang.annotation.AfterReturning;
 import org.aspectj.lang.annotation.Aspect;
@@ -48,18 +48,18 @@ public class WebRequestLogAspect {
                     String parametersString = null;
                     String requestBody = null;
                     if (parameters != null) {
-                        parametersString = JSONUtil.multiValueMapToJSONString(parameters);
+                        parametersString = JsonUtil.multiValueMapToJsonString(parameters);
                     }
                     MethodSignature signature = (MethodSignature) joinPoint.getSignature();
                     //获取被拦截的方法
                     Method method = signature.getMethod();
                     Object object = getAnnotatedParameterValueRequestBody(method, joinPoint.getArgs());
                     if (object != null) {
-                        requestBody = JSONUtil.objectToJSONString(object);
+                        requestBody = JsonUtil.objectToJsonString(object);
                     }
                     StringBuffer stringBuffer = new StringBuffer();
                     stringBuffer.append("\nRequest from = ");
-                    stringBuffer.append(ClientIPUtils.getIpAddress(request));
+                    stringBuffer.append(ClientIpUtil.getIpAddress(request));
                     stringBuffer.append(";\n");
                     stringBuffer.append("uri = ");
                     stringBuffer.append(request.getRequestURL().toString());
@@ -91,7 +91,7 @@ public class WebRequestLogAspect {
         // 处理完请求，返回内容
         if (log.isInfoEnabled()) {
             try {
-                log.info("Response from server : \n" + JSONUtil.objectToJSONString(ret));
+                log.info("Response from server : \n" + JsonUtil.objectToJsonString(ret));
             } catch (Exception e) {
                 log.info("log http response Exception:\n ", e);
             }

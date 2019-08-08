@@ -216,7 +216,7 @@ public class AuthorizationServerConfiguration extends AuthorizationServerConfigu
                 authorizationServerTokenServices(), clientDetailsService, oAuth2RequestFactory()));
         }
 
-        tokenGranters.add(new SMSCodeTokenGranter(userDetailsService, authorizationServerTokenServices(),
+        tokenGranters.add(new SmsCodeTokenGranter(userDetailsService, authorizationServerTokenServices(),
             clientDetailsService, oAuth2RequestFactory(), captchaService));
 
         tokenGranters.add(new WeChatMiniProgramTokenGranter(thirdPartyAccountRepository, roleRepository, authorizationServerTokenServices(),

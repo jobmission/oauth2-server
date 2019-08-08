@@ -67,7 +67,7 @@ public class SecurityConfiguration extends WebSecurityConfigurerAdapter {
             .logoutSuccessUrl("/signIn?out")
             .and()
             .formLogin()
-            .authenticationDetailsSource(authenticationDetailsSource) //重点
+            .authenticationDetailsSource(authenticationDetailsSource)
             .failureHandler(customAuthenticationFailureHandler)
             .successHandler(customAuthenticationSuccessHandler)
             .loginPage("/signIn").loginProcessingUrl("/security_check").permitAll();

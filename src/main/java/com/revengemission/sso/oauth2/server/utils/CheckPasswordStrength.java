@@ -4,11 +4,8 @@ import org.apache.commons.lang3.StringUtils;
 
 /**
  * 检测密码强度
- * <p>
  * refer
  * https://github.com/venshine/CheckPasswordStrength
- * <p>
- * <p>
  * Level（级别）
  * 0-3 : [easy]
  * 4-6 : [medium]
@@ -19,7 +16,26 @@ import org.apache.commons.lang3.StringUtils;
 public class CheckPasswordStrength {
 
     public enum LEVEL {
-        EASY, MEDIUM, STRONG, VERY_STRONG, EXTREMELY_STRONG
+        /**
+         * 0-3
+         */
+        EASY,
+        /**
+         * 4-6
+         */
+        MEDIUM,
+        /**
+         * 7-9
+         */
+        STRONG,
+        /**
+         * 10-12
+         */
+        VERY_STRONG,
+        /**
+         * >12
+         */
+        EXTREMELY_STRONG
     }
 
     private static final int NUM = 1;
@@ -30,8 +46,13 @@ public class CheckPasswordStrength {
     /**
      * Simple password dictionary
      */
-    private final static String[] DICTIONARY = {"password", "123456", "abc123", "iloveyou", "adobe123", "123123", "sunshine",
-            "1314520", "a1b2c3", "123qwe", "aaa111", "qweasd", "admin", "passwd", "abcdefghijklmnopqrstuvwxyz"};
+    private final static String[] DICTIONARY = {"123456", "password", "123456789", "12345678",
+        "12345", "111111", "1234567", "sunshine", "qwerty",
+        "iloveyou", "princess", "admin", "welcome", "666666", "abc123",
+        "football", "123123", "monkey", "654321", "！@#$%^&*", "charlie",
+        "aa123456", "aa123456", "donald", "password1", "qwerty123", "147258369",
+        "987654321", "1qaz2wsx", "asdfghjkl", "1q2w3e4r", "1234abcd", "3.1415926"
+    };
 
     /**
      * Check character's type, includes num, capital letter, small letter and other character.
@@ -103,48 +124,48 @@ public class CheckPasswordStrength {
         }
 
         if (len > 4 && countLetter(passwd, NUM) > 0 && countLetter(passwd, SMALL_LETTER) > 0
-                || countLetter(passwd, NUM) > 0 && countLetter(passwd, CAPITAL_LETTER) > 0
-                || countLetter(passwd, NUM) > 0 && countLetter(passwd, OTHER_CHAR) > 0
-                || countLetter(passwd, SMALL_LETTER) > 0 && countLetter(passwd, CAPITAL_LETTER) > 0
-                || countLetter(passwd, SMALL_LETTER) > 0 && countLetter(passwd, OTHER_CHAR) > 0
-                || countLetter(passwd, CAPITAL_LETTER) > 0 && countLetter(passwd, OTHER_CHAR) > 0) {
+            || countLetter(passwd, NUM) > 0 && countLetter(passwd, CAPITAL_LETTER) > 0
+            || countLetter(passwd, NUM) > 0 && countLetter(passwd, OTHER_CHAR) > 0
+            || countLetter(passwd, SMALL_LETTER) > 0 && countLetter(passwd, CAPITAL_LETTER) > 0
+            || countLetter(passwd, SMALL_LETTER) > 0 && countLetter(passwd, OTHER_CHAR) > 0
+            || countLetter(passwd, CAPITAL_LETTER) > 0 && countLetter(passwd, OTHER_CHAR) > 0) {
             level++;
         }
 
         if (len > 6 && countLetter(passwd, NUM) > 0 && countLetter(passwd, SMALL_LETTER) > 0
-                && countLetter(passwd, CAPITAL_LETTER) > 0 || countLetter(passwd, NUM) > 0
-                && countLetter(passwd, SMALL_LETTER) > 0 && countLetter(passwd, OTHER_CHAR) > 0
-                || countLetter(passwd, NUM) > 0 && countLetter(passwd, CAPITAL_LETTER) > 0
-                && countLetter(passwd, OTHER_CHAR) > 0 || countLetter(passwd, SMALL_LETTER) > 0
-                && countLetter(passwd, CAPITAL_LETTER) > 0 && countLetter(passwd, OTHER_CHAR) > 0) {
+            && countLetter(passwd, CAPITAL_LETTER) > 0 || countLetter(passwd, NUM) > 0
+            && countLetter(passwd, SMALL_LETTER) > 0 && countLetter(passwd, OTHER_CHAR) > 0
+            || countLetter(passwd, NUM) > 0 && countLetter(passwd, CAPITAL_LETTER) > 0
+            && countLetter(passwd, OTHER_CHAR) > 0 || countLetter(passwd, SMALL_LETTER) > 0
+            && countLetter(passwd, CAPITAL_LETTER) > 0 && countLetter(passwd, OTHER_CHAR) > 0) {
             level++;
         }
 
         if (len > 8 && countLetter(passwd, NUM) > 0 && countLetter(passwd, SMALL_LETTER) > 0
-                && countLetter(passwd, CAPITAL_LETTER) > 0 && countLetter(passwd, OTHER_CHAR) > 0) {
+            && countLetter(passwd, CAPITAL_LETTER) > 0 && countLetter(passwd, OTHER_CHAR) > 0) {
             level++;
         }
 
         if (len > 6 && countLetter(passwd, NUM) >= 3 && countLetter(passwd, SMALL_LETTER) >= 3
-                || countLetter(passwd, NUM) >= 3 && countLetter(passwd, CAPITAL_LETTER) >= 3
-                || countLetter(passwd, NUM) >= 3 && countLetter(passwd, OTHER_CHAR) >= 2
-                || countLetter(passwd, SMALL_LETTER) >= 3 && countLetter(passwd, CAPITAL_LETTER) >= 3
-                || countLetter(passwd, SMALL_LETTER) >= 3 && countLetter(passwd, OTHER_CHAR) >= 2
-                || countLetter(passwd, CAPITAL_LETTER) >= 3 && countLetter(passwd, OTHER_CHAR) >= 2) {
+            || countLetter(passwd, NUM) >= 3 && countLetter(passwd, CAPITAL_LETTER) >= 3
+            || countLetter(passwd, NUM) >= 3 && countLetter(passwd, OTHER_CHAR) >= 2
+            || countLetter(passwd, SMALL_LETTER) >= 3 && countLetter(passwd, CAPITAL_LETTER) >= 3
+            || countLetter(passwd, SMALL_LETTER) >= 3 && countLetter(passwd, OTHER_CHAR) >= 2
+            || countLetter(passwd, CAPITAL_LETTER) >= 3 && countLetter(passwd, OTHER_CHAR) >= 2) {
             level++;
         }
 
         if (len > 8 && countLetter(passwd, NUM) >= 2 && countLetter(passwd, SMALL_LETTER) >= 2
-                && countLetter(passwd, CAPITAL_LETTER) >= 2 || countLetter(passwd, NUM) >= 2
-                && countLetter(passwd, SMALL_LETTER) >= 2 && countLetter(passwd, OTHER_CHAR) >= 2
-                || countLetter(passwd, NUM) >= 2 && countLetter(passwd, CAPITAL_LETTER) >= 2
-                && countLetter(passwd, OTHER_CHAR) >= 2 || countLetter(passwd, SMALL_LETTER) >= 2
-                && countLetter(passwd, CAPITAL_LETTER) >= 2 && countLetter(passwd, OTHER_CHAR) >= 2) {
+            && countLetter(passwd, CAPITAL_LETTER) >= 2 || countLetter(passwd, NUM) >= 2
+            && countLetter(passwd, SMALL_LETTER) >= 2 && countLetter(passwd, OTHER_CHAR) >= 2
+            || countLetter(passwd, NUM) >= 2 && countLetter(passwd, CAPITAL_LETTER) >= 2
+            && countLetter(passwd, OTHER_CHAR) >= 2 || countLetter(passwd, SMALL_LETTER) >= 2
+            && countLetter(passwd, CAPITAL_LETTER) >= 2 && countLetter(passwd, OTHER_CHAR) >= 2) {
             level++;
         }
 
         if (len > 10 && countLetter(passwd, NUM) >= 2 && countLetter(passwd, SMALL_LETTER) >= 2
-                && countLetter(passwd, CAPITAL_LETTER) >= 2 && countLetter(passwd, OTHER_CHAR) >= 2) {
+            && countLetter(passwd, CAPITAL_LETTER) >= 2 && countLetter(passwd, OTHER_CHAR) >= 2) {
             level++;
         }
 
@@ -164,11 +185,12 @@ public class CheckPasswordStrength {
 
         // decrease points
         if (countLetter(passwd, NUM) == len || countLetter(passwd, SMALL_LETTER) == len
-                || countLetter(passwd, CAPITAL_LETTER) == len) {
+            || countLetter(passwd, CAPITAL_LETTER) == len) {
             level--;
         }
 
-        if (len % 3 == 0) { // ababab
+        // ababab
+        if (len % 3 == 0) {
             String part1 = passwd.substring(0, len / 3);
             String part2 = passwd.substring(len / 3, len / 3 * 2);
             String part3 = passwd.substring(len / 3 * 2);
@@ -177,8 +199,8 @@ public class CheckPasswordStrength {
             }
         }
 
-
-        if (null != DICTIONARY && DICTIONARY.length > 0) {// dictionary
+        // dictionary
+        if (null != DICTIONARY && DICTIONARY.length > 0) {
             for (int i = 0; i < DICTIONARY.length; i++) {
                 if (DICTIONARY[i].indexOf(passwd.toLowerCase()) >= 0) {
                     level--;

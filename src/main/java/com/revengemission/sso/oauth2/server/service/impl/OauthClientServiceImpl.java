@@ -95,7 +95,7 @@ public class OauthClientServiceImpl implements OauthClientService {
     }
 
     @Override
-    @Transactional
+    @Transactional(rollbackFor = Exception.class)
     public void updateRecordStatus(long id, int recordStatus) {
         Optional<OauthClientEntity> entityOptional = oauthClientRepository.findById(id);
         OauthClientEntity e = entityOptional.orElseThrow(EntityNotFoundException::new);

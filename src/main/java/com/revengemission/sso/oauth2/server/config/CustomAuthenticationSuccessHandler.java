@@ -9,7 +9,7 @@ import com.revengemission.sso.oauth2.server.domain.ResponseResult;
 import com.revengemission.sso.oauth2.server.domain.RoleEnum;
 import com.revengemission.sso.oauth2.server.service.LoginHistoryService;
 import com.revengemission.sso.oauth2.server.service.UserAccountService;
-import com.revengemission.sso.oauth2.server.utils.ClientIPUtils;
+import com.revengemission.sso.oauth2.server.utils.ClientIpUtil;
 import org.apache.commons.lang3.StringUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.converter.HttpMessageNotWritableException;
@@ -49,7 +49,7 @@ public class CustomAuthenticationSuccessHandler extends SavedRequestAwareAuthent
 
         LoginHistory loginHistory = new LoginHistory();
         loginHistory.setUsername(authentication.getName());
-        loginHistory.setIp(ClientIPUtils.getIpAddress(request));
+        loginHistory.setIp(ClientIpUtil.getIpAddress(request));
         loginHistory.setDevice(request.getHeader("User-Agent"));
         loginHistory.setRecordStatus(1);
         loginHistoryService.asyncCreate(loginHistory);

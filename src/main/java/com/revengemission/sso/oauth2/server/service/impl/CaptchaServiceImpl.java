@@ -10,10 +10,9 @@ import org.springframework.cache.Cache.ValueWrapper;
 import org.springframework.cache.CacheManager;
 import org.springframework.stereotype.Service;
 
-/*
+/**
  * 保存到缓存中
- *
- * */
+ */
 @Service
 public class CaptchaServiceImpl implements CaptchaService {
 

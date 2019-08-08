@@ -13,7 +13,7 @@ import org.springframework.security.oauth2.provider.token.AuthorizationServerTok
 
 import java.util.Map;
 
-public class SMSCodeTokenGranter extends AbstractTokenGranter {
+public class SmsCodeTokenGranter extends AbstractTokenGranter {
 
     private static final String GRANT_TYPE = "sms_code";
 
@@ -21,7 +21,7 @@ public class SMSCodeTokenGranter extends AbstractTokenGranter {
 
     private CaptchaService captchaService;
 
-    public SMSCodeTokenGranter(UserDetailsService userDetailsService,
+    public SmsCodeTokenGranter(UserDetailsService userDetailsService,
                                AuthorizationServerTokenServices authorizationServerTokenServices,
                                ClientDetailsService clientDetailsService, OAuth2RequestFactory requestFactory,
                                CaptchaService captchaService) {

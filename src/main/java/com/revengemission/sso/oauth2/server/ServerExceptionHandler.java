@@ -1,6 +1,6 @@
 package com.revengemission.sso.oauth2.server;
 
-import com.revengemission.sso.oauth2.server.utils.JSONUtil;
+import com.revengemission.sso.oauth2.server.utils.JsonUtil;
 import org.slf4j.LoggerFactory;
 import org.springframework.http.HttpHeaders;
 import org.springframework.http.HttpStatus;
@@ -30,7 +30,7 @@ public class ServerExceptionHandler {
         HttpStatus httpStatus = HttpStatus.NOT_FOUND;
         logRequest(ex, httpStatus, request);
         HttpHeaders headers = new HttpHeaders();
-        Map<String, Object> responseResult = new HashMap<>();
+        Map<String, Object> responseResult = new HashMap<>(16);
         responseResult.put("status", httpStatus.value());
         responseResult.put("message", ex.getMessage());
         responseResult.put("url", request.getRequestURL());
@@ -46,7 +46,7 @@ public class ServerExceptionHandler {
         HttpStatus httpStatus = HttpStatus.FORBIDDEN;
         logRequest(ex, httpStatus, request);
         HttpHeaders headers = new HttpHeaders();
-        Map<String, Object> responseResult = new HashMap<>();
+        Map<String, Object> responseResult = new HashMap<>(16);
         responseResult.put("status", httpStatus.value());
         responseResult.put("error", httpStatus.getReasonPhrase());
         responseResult.put("timestamp", new Date());
@@ -70,7 +70,7 @@ public class ServerExceptionHandler {
         HttpStatus httpStatus = HttpStatus.INTERNAL_SERVER_ERROR;
         logRequest(ex, httpStatus, request);
         HttpHeaders headers = new HttpHeaders();
-        Map<String, Object> responseResult = new HashMap<>();
+        Map<String, Object> responseResult = new HashMap<>(16);
         responseResult.put("status", httpStatus.value());
         responseResult.put("error", httpStatus.getReasonPhrase());
         responseResult.put("timestamp", new Date());
@@ -95,7 +95,7 @@ public class ServerExceptionHandler {
                 ";\nexception =" + ex.getMessage() +
                 ";\nuri =" + uri +
                 ";\ncontent Type =" + request.getHeader("content-type") +
-                ";\nrequest parameters =" + JSONUtil.multiValueMapToJSONString(parameters), ex);
+                ";\nrequest parameters =" + JsonUtil.multiValueMapToJsonString(parameters), ex);
         } catch (Exception e) {
             log.error("ControllerAdvice log  Exception", e);
         }
