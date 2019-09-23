@@ -107,9 +107,9 @@ Post /oauth/token?client_id=SampleClientId&client_secret=tgb.258&grant_type=refr
 
 ## 启动方法</br>
 ````
-java -jar oauth2-server-0.0.1-SNAPSHOT.jar
+java -jar oauth2-server-0.0.2-SNAPSHOT.jar
 或者指定配置文件覆盖默认配置
-java -jar oauth2-server-0.0.1-SNAPSHOT.jar --spring.config.additional-location=/path/to/override.properties
+java -jar oauth2-server-0.0.2-SNAPSHOT.jar --spring.config.additional-location=/path/to/override.properties
 ````
 
 ## 管理员角色登录后，可以对用户和client进行管理</br>

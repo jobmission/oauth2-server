@@ -40,7 +40,6 @@ public class CustomTokenEnhancer implements TokenEnhancer {
                 additionalInformation.put("grantType", map.get("grantType"));
             }
             additionalInformation.put("sub", map.get("sub"));
-            additionalInformation.put("status", 1);
         } else {
             // Important !,client_credentials mode ,no user!
             if (authentication.getUserAuthentication() != null) {
@@ -49,7 +48,6 @@ public class CustomTokenEnhancer implements TokenEnhancer {
                 additionalInformation.put("grantType", authentication.getOAuth2Request().getGrantType());
                 additionalInformation.put("accountOpenCode", user.getAccountOpenCode());
                 additionalInformation.put("sub", user.getUsername());
-                additionalInformation.put("status", 1);
             }
         }
 

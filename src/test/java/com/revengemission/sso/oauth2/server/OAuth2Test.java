@@ -4,6 +4,8 @@ import com.fasterxml.jackson.core.type.TypeReference;
 import com.revengemission.sso.oauth2.server.utils.JsonUtil;
 import org.junit.Ignore;
 import org.junit.Test;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.springframework.http.*;
 import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.util.LinkedMultiValueMap;
@@ -16,7 +18,10 @@ import java.util.Map;
 
 public class OAuth2Test {
 
-    private String host = "http://localhost:33380";
+    private Logger log = LoggerFactory.getLogger(this.getClass());
+
+
+    private String host = "http://localhost:10380";
 
     @Test
     @Ignore
@@ -30,11 +35,12 @@ public class OAuth2Test {
     public void flowTest() throws IOException {
         Map<String, String> result = getToken();
 
+        log.info("token = " + result.get("access_token"));
         String isActive = checkToken(result.get("access_token"));
-        System.out.println("isActive = " + isActive);
+        log.info("isActive = " + isActive);
 
         String newToken = refreshToken(result.get("refresh_token"));
-        System.out.println("newToken = " + newToken);
+        log.info("newToken = " + newToken);
     }
 
 
@@ -49,7 +55,7 @@ public class OAuth2Test {
         MultiValueMap<String, String> params = new LinkedMultiValueMap<>();
 //  也支持中文
         params.add("grant_type", "password");
-        params.add("scope", "read");
+        params.add("scope", "user_info");
         params.add("client_id", "SampleClientId");
         params.add("client_secret", "tgb.258");
         params.add("username", "zhangsan");
@@ -62,7 +68,6 @@ public class OAuth2Test {
         Map<String, String> result = JsonUtil.jsonStringToObject(jsonString, new TypeReference<Map<String, String>>() {
         });
 //  输出结果
-        System.out.println(result);
         return result;
     }
 
@@ -84,7 +89,6 @@ public class OAuth2Test {
         Map<String, Object> result = JsonUtil.jsonStringToObject(response.getBody(), new TypeReference<Map<String, Object>>() {
         });
 //  输出结果
-        System.out.println(result);
 
         return String.valueOf(result.get("active"));
     }
@@ -109,8 +113,6 @@ public class OAuth2Test {
         Map<String, String> result = JsonUtil.jsonStringToObject(response.getBody(), new TypeReference<Map<String, String>>() {
         });
 //  输出结果
-        System.out.println(result);
-
         return result.get("access_token");
     }
 
