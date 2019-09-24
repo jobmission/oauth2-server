@@ -1,7 +1,9 @@
 package com.revengemission.sso.oauth2.server.config;
 
 import com.revengemission.sso.oauth2.server.domain.RoleEnum;
+import com.revengemission.sso.oauth2.server.service.CaptchaService;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.beans.factory.annotation.Value;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.security.authentication.AuthenticationDetailsSource;
@@ -10,6 +12,7 @@ import org.springframework.security.authentication.AuthenticationProvider;
 import org.springframework.security.config.annotation.web.builders.HttpSecurity;
 import org.springframework.security.config.annotation.web.builders.WebSecurity;
 import org.springframework.security.config.annotation.web.configuration.WebSecurityConfigurerAdapter;
+import org.springframework.security.core.userdetails.UserDetailsService;
 import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.security.web.authentication.WebAuthenticationDetails;
@@ -19,6 +22,8 @@ import javax.servlet.http.HttpServletRequest;
 @Configuration
 public class SecurityConfiguration extends WebSecurityConfigurerAdapter {
 
+    @Value("${oauth2.granttype.password.captcha:false}")
+    private boolean passwordCaptcha;
 
     @Autowired
     CustomAuthenticationFailureHandler customAuthenticationFailureHandler;
@@ -33,11 +38,19 @@ public class SecurityConfiguration extends WebSecurityConfigurerAdapter {
     AuthenticationDetailsSource<HttpServletRequest, WebAuthenticationDetails> authenticationDetailsSource;
 
     @Autowired
-    AuthenticationProvider customAuthenticationProvider;
+    CaptchaService captchaService;
+
+    @Autowired
+    UserDetailsService userService;
 
     @Bean
     PasswordEncoder passwordEncoder() {
         return new BCryptPasswordEncoder();
+    }
+
+    @Bean
+    AuthenticationProvider authenticationProvider() {
+        return new CustomAuthenticationProvider(userService, passwordEncoder(), captchaService, passwordCaptcha);
     }
 
     @Override

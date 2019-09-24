@@ -16,7 +16,12 @@ import java.util.Map;
 
 public class CustomTokenEnhancer implements TokenEnhancer {
 
+    private String issuerUri;
     private JsonParser objectMapper = JsonParserFactory.create();
+
+    public CustomTokenEnhancer(String issuerUri) {
+        this.issuerUri = issuerUri;
+    }
 
     /**
      * 自定义一些token属性
@@ -37,9 +42,12 @@ public class CustomTokenEnhancer implements TokenEnhancer {
                 additionalInformation.put("grantType", map.get("grantType"));
             }
             if (map.containsKey("sub")) {
-                additionalInformation.put("grantType", map.get("grantType"));
+                additionalInformation.put("sub", map.get("sub"));
+            } else {
+                additionalInformation.put("sub", authentication.getUserAuthentication().getName());
             }
-            additionalInformation.put("sub", map.get("sub"));
+
+            additionalInformation.put("iss", this.issuerUri);
         } else {
             // Important !,client_credentials mode ,no user!
             if (authentication.getUserAuthentication() != null) {
@@ -49,6 +57,7 @@ public class CustomTokenEnhancer implements TokenEnhancer {
                 additionalInformation.put("accountOpenCode", user.getAccountOpenCode());
                 additionalInformation.put("sub", user.getUsername());
             }
+            additionalInformation.put("iss", this.issuerUri);
         }
 
         ((DefaultOAuth2AccessToken) accessToken).setAdditionalInformation(additionalInformation);

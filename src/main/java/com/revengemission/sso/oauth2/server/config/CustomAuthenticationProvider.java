@@ -4,39 +4,36 @@ import com.revengemission.sso.oauth2.server.domain.GlobalConstant;
 import com.revengemission.sso.oauth2.server.domain.VerificationCodeException;
 import com.revengemission.sso.oauth2.server.service.CaptchaService;
 import org.apache.commons.lang3.StringUtils;
-import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.beans.factory.annotation.Value;
 import org.springframework.security.authentication.BadCredentialsException;
 import org.springframework.security.authentication.InternalAuthenticationServiceException;
 import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
 import org.springframework.security.authentication.dao.AbstractUserDetailsAuthenticationProvider;
 import org.springframework.security.core.AuthenticationException;
-import org.springframework.security.core.GrantedAuthority;
-import org.springframework.security.core.authority.AuthorityUtils;
 import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.security.core.userdetails.UserDetailsService;
 import org.springframework.security.core.userdetails.UsernameNotFoundException;
 import org.springframework.security.crypto.password.PasswordEncoder;
-import org.springframework.stereotype.Component;
 
-import java.util.Collection;
 import java.util.LinkedHashMap;
 import java.util.Map;
 
-@Component
+
 public class CustomAuthenticationProvider extends AbstractUserDetailsAuthenticationProvider {
 
-    @Value("${oauth2.granttype.password.captcha:false}")
     private boolean passwordCaptcha;
 
-    @Autowired
-    UserDetailsService userService;
+    private UserDetailsService userService;
 
-    @Autowired
-    PasswordEncoder passwordEncoder;
+    private PasswordEncoder passwordEncoder;
 
-    @Autowired
-    CaptchaService captchaService;
+    private CaptchaService captchaService;
+
+    public CustomAuthenticationProvider(UserDetailsService userService, PasswordEncoder passwordEncoder, CaptchaService captchaService, boolean passwordCaptcha) {
+        this.passwordCaptcha = passwordCaptcha;
+        this.userService = userService;
+        this.passwordEncoder = passwordEncoder;
+        this.captchaService = captchaService;
+    }
 
     @Override
     protected void additionalAuthenticationChecks(UserDetails userDetails,
@@ -44,20 +41,20 @@ public class CustomAuthenticationProvider extends AbstractUserDetailsAuthenticat
         if (authentication.getCredentials() == null) {
             this.logger.debug("Authentication failed: no credentials provided");
             throw new BadCredentialsException(this.messages
-                    .getMessage("AbstractUserDetailsAuthenticationProvider.badCredentials", "Bad credentials"));
+                .getMessage("AbstractUserDetailsAuthenticationProvider.badCredentials", "Bad credentials"));
         } else {
             String presentedPassword = authentication.getCredentials().toString();
             if (!this.passwordEncoder.matches(presentedPassword, userDetails.getPassword())) {
                 this.logger.debug("Authentication failed: password does not match stored value");
                 throw new BadCredentialsException(this.messages
-                        .getMessage("AbstractUserDetailsAuthenticationProvider.badCredentials", "Bad credentials"));
+                    .getMessage("AbstractUserDetailsAuthenticationProvider.badCredentials", "Bad credentials"));
             }
         }
     }
 
     @Override
     protected UserDetails retrieveUser(String username, UsernamePasswordAuthenticationToken authentication)
-            throws AuthenticationException {
+        throws AuthenticationException {
 
         // 添加额外处理，如验证码等
         Object details = authentication.getDetails();
@@ -95,7 +92,7 @@ public class CustomAuthenticationProvider extends AbstractUserDetailsAuthenticat
             UserDetails loadedUser = userService.loadUserByUsername(username);
             if (loadedUser == null) {
                 throw new InternalAuthenticationServiceException(
-                        "UserDetailsService returned null, which is an interface contract violation");
+                    "UserDetailsService returned null, which is an interface contract violation");
             }
 
             return loadedUser;
