@@ -43,9 +43,9 @@ public class OauthClientServiceImpl implements OauthClientService {
         JsonObjects<OauthClient> jsonObjects = new JsonObjects<>();
         Sort sort;
         if (StringUtils.equalsIgnoreCase(sortOrder, "asc")) {
-            sort = new Sort(Sort.Direction.ASC, sortField);
+            sort = Sort.by(Sort.Direction.ASC, sortField);
         } else {
-            sort = new Sort(Sort.Direction.DESC, sortField);
+            sort = Sort.by(Sort.Direction.DESC, sortField);
         }
         Pageable pageable = PageRequest.of(pageNum - 1, pageSize, sort);
         Page<OauthClientEntity> page = oauthClientRepository.findAll(pageable);
