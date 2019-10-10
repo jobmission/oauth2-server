@@ -1,9 +1,15 @@
 package com.revengemission.sso.oauth2.server;
 
+import com.fasterxml.jackson.core.JsonProcessingException;
+import com.revengemission.sso.oauth2.server.domain.UserAccount;
 import com.revengemission.sso.oauth2.server.utils.CheckPasswordStrength;
+import com.revengemission.sso.oauth2.server.utils.JsonUtil;
 import org.apache.commons.lang3.StringUtils;
 import org.junit.Ignore;
 import org.junit.Test;
+
+import java.time.LocalDate;
+import java.time.LocalDateTime;
 
 /**
  * Created by zhang wanchao on 18-9-15.
@@ -24,4 +30,15 @@ public class SimpleTest {
         System.out.println(StringUtils.center("123789Aa!", 30, "-") + CheckPasswordStrength.check("123789Aa!"));
         System.out.println(StringUtils.center("!123789Aa!", 30, "-") + CheckPasswordStrength.check("!123789Aa!"));
     }
+
+    @Test
+    @Ignore
+    public void localDateTest() throws JsonProcessingException {
+        LocalDateTime nowDateTime = LocalDateTime.now();
+        UserAccount userAccount = new UserAccount();
+        userAccount.setDateCreated(nowDateTime);
+        userAccount.setBirthday(LocalDate.now());
+        System.out.println(JsonUtil.objectToJsonString(userAccount));
+    }
+
 }

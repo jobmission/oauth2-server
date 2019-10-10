@@ -6,8 +6,9 @@ import lombok.Data;
 import lombok.EqualsAndHashCode;
 import lombok.ToString;
 
+import java.time.LocalDate;
+import java.time.LocalDateTime;
 import java.util.ArrayList;
-import java.util.Date;
 import java.util.List;
 
 @JsonInclude(JsonInclude.Include.NON_NULL)
@@ -33,9 +34,9 @@ public class UserAccount extends BaseDomain {
     private String province;
     private String city;
     private String address;
-    private Date birthday;
+    private LocalDate birthday;
     private String gender;
-    private Date failureTime;
+    private LocalDateTime failureTime;
     private int failureCount;
     private List<Role> roles = new ArrayList<>();
 }

@@ -1,4 +1,4 @@
-## SpringBoot 2.x oauth2 server, SSO 单点登录
+## SpringBoot 2.1.x oauth2 server, SSO 单点登录
 
 ## 创建数据库：持久层采用JPA框架，项目启动前必须先创建数据库，启动时数据表会自动创建</br>
 ````

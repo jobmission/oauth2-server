@@ -2,17 +2,12 @@ package com.revengemission.sso.oauth2.server.persistence.entity;
 
 import javax.persistence.*;
 import java.io.Serializable;
-import java.util.Date;
+import java.time.LocalDateTime;
 
 @MappedSuperclass
 public abstract class BaseEntity implements Serializable {
 
-    /**
-	 * 
-	 */
-	private static final long serialVersionUID = -1486865262130226640L;
-
-	@Id
+    @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
 
@@ -21,18 +16,18 @@ public abstract class BaseEntity implements Serializable {
 
     @Version
     @Column(name = "version", columnDefinition = "int default 0")
-    private Integer version;
+    private int version;
 
     private String remarks;
 
     @Column(name = "sort_priority", columnDefinition = "int default 0")
-    private Integer sortPriority;
+    private int sortPriority;
 
-    @Temporal(TemporalType.TIMESTAMP)
-    private Date dateCreated;
+    @Column(columnDefinition = "DATETIME NOT NULL DEFAULT CURRENT_TIMESTAMP")
+    private LocalDateTime dateCreated;
 
-    @Temporal(TemporalType.TIMESTAMP)
-    private Date lastModified;
+    @Column(columnDefinition = "DATETIME DEFAULT CURRENT_TIMESTAMP ON update CURRENT_TIMESTAMP")
+    private LocalDateTime lastModified;
 
     public Long getId() {
         return id;
@@ -40,14 +35,6 @@ public abstract class BaseEntity implements Serializable {
 
     public void setId(Long id) {
         this.id = id;
-    }
-
-    public String getRemarks() {
-        return remarks;
-    }
-
-    public void setRemarks(String remarks) {
-        this.remarks = remarks;
     }
 
     public int getRecordStatus() {
@@ -58,48 +45,52 @@ public abstract class BaseEntity implements Serializable {
         this.recordStatus = recordStatus;
     }
 
-    public Integer getVersion() {
+    public int getVersion() {
         return version;
-    }
-
-    public void setVersion(Integer version) {
-        this.version = version;
-    }
-
-    public Date getDateCreated() {
-        return dateCreated;
-    }
-
-    public void setDateCreated(Date dateCreated) {
-        this.dateCreated = dateCreated;
-    }
-
-    public Date getLastModified() {
-        return lastModified;
-    }
-
-    public void setLastModified(Date lastModified) {
-        this.lastModified = lastModified;
     }
 
     public void setVersion(int version) {
         this.version = version;
     }
 
-    public Integer getSortPriority() {
+    public String getRemarks() {
+        return remarks;
+    }
+
+    public void setRemarks(String remarks) {
+        this.remarks = remarks;
+    }
+
+    public int getSortPriority() {
         return sortPriority;
     }
 
-    public void setSortPriority(Integer sortPriority) {
+    public void setSortPriority(int sortPriority) {
         this.sortPriority = sortPriority;
+    }
+
+    public LocalDateTime getDateCreated() {
+        return dateCreated;
+    }
+
+    public void setDateCreated(LocalDateTime dateCreated) {
+        this.dateCreated = dateCreated;
+    }
+
+    public LocalDateTime getLastModified() {
+        return lastModified;
+    }
+
+    public void setLastModified(LocalDateTime lastModified) {
+        this.lastModified = lastModified;
     }
 
     @PreUpdate
     @PrePersist
     public void updateTimeStamps() {
-        lastModified = new Date();
+        lastModified = LocalDateTime.now();
         if (dateCreated == null) {
-            dateCreated = new Date();
+            dateCreated = LocalDateTime.now();
         }
     }
 }

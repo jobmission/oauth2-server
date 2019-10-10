@@ -1,5 +1,7 @@
 package com.revengemission.sso.oauth2.server.utils;
 
+import java.time.LocalDate;
+import java.time.LocalDateTime;
 import java.util.Calendar;
 import java.util.Date;
 
@@ -14,5 +16,11 @@ public class DateUtil {
         calendar.set(Calendar.MILLISECOND, 999);
         Date yesterday = calendar.getTime();
         return date.before(yesterday);
+    }
+
+    public static boolean beforeToday(LocalDateTime date) {
+        LocalDate localDate = date.toLocalDate();
+        LocalDate nowDate = LocalDate.now();
+        return localDate.isBefore(nowDate);
     }
 }

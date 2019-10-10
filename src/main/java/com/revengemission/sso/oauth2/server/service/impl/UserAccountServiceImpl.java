@@ -22,7 +22,7 @@ import org.springframework.scheduling.annotation.Async;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
-import java.util.Date;
+import java.time.LocalDateTime;
 import java.util.Optional;
 
 @Service
@@ -165,7 +165,7 @@ public class UserAccountServiceImpl implements UserAccountService {
                     userAccountEntity.setFailureCount(userAccountEntity.getFailureCount() + 1);
                 }
             }
-            userAccountEntity.setFailureTime(new Date());
+            userAccountEntity.setFailureTime(LocalDateTime.now());
             if (userAccountEntity.getFailureCount() >= failureMax && userAccountEntity.getRecordStatus() >= 0) {
                 userAccountEntity.setRecordStatus(-1);
             }

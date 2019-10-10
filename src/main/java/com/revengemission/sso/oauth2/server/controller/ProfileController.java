@@ -17,7 +17,7 @@ import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.*;
 
 import java.security.Principal;
-import java.util.Date;
+import java.time.LocalDate;
 import java.util.HashMap;
 import java.util.Map;
 import java.util.regex.Matcher;
@@ -122,8 +122,8 @@ public class ProfileController {
                                 @RequestParam(value = "province", required = false) String province,
                                 @RequestParam(value = "city", required = false) String city,
                                 @RequestParam(value = "address", required = false) String address,
-                                @JsonFormat(pattern = "MM-dd-yyyy") @DateTimeFormat(pattern = "MM-dd-yyyy")
-                                @RequestParam(value = "birthday", required = false) Date birthday,
+                                @JsonFormat(pattern = "yyyy-MM-dd") @DateTimeFormat(pattern = "yyyy-MM-dd")
+                                @RequestParam(value = "birthday", required = false) LocalDate birthday,
                                 Model model) {
 
         try {

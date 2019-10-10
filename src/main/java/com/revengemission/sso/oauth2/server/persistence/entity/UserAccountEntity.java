@@ -1,8 +1,9 @@
 package com.revengemission.sso.oauth2.server.persistence.entity;
 
 import javax.persistence.*;
+import java.time.LocalDate;
+import java.time.LocalDateTime;
 import java.util.ArrayList;
-import java.util.Date;
 import java.util.List;
 
 
@@ -11,7 +12,7 @@ import java.util.List;
 public class UserAccountEntity extends BaseEntity {
 
     private static final long serialVersionUID = -5519234457588411587L;
-    @Column(nullable = false, columnDefinition = "VARCHAR(40)")
+    @Column(nullable = false, columnDefinition = "VARCHAR(50)")
     private String username;
     @Column(nullable = false)
     private String password;
@@ -26,9 +27,9 @@ public class UserAccountEntity extends BaseEntity {
     private String province;
     private String city;
     private String address;
-    private Date birthday;
+    private LocalDate birthday;
     private String gender;
-    private Date failureTime;
+    private LocalDateTime failureTime;
     @Column(name = "failure_count", columnDefinition = "int default 0")
     private int failureCount;
 
@@ -116,11 +117,11 @@ public class UserAccountEntity extends BaseEntity {
         this.address = address;
     }
 
-    public Date getBirthday() {
+    public LocalDate getBirthday() {
         return birthday;
     }
 
-    public void setBirthday(Date birthday) {
+    public void setBirthday(LocalDate birthday) {
         this.birthday = birthday;
     }
 
@@ -132,11 +133,11 @@ public class UserAccountEntity extends BaseEntity {
         this.gender = gender;
     }
 
-    public Date getFailureTime() {
+    public LocalDateTime getFailureTime() {
         return failureTime;
     }
 
-    public void setFailureTime(Date failureTime) {
+    public void setFailureTime(LocalDateTime failureTime) {
         this.failureTime = failureTime;
     }
 
@@ -155,6 +156,4 @@ public class UserAccountEntity extends BaseEntity {
     public void setRoles(List<RoleEntity> roles) {
         this.roles = roles;
     }
-
-
 }

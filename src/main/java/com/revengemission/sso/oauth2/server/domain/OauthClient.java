@@ -5,7 +5,7 @@ import lombok.Data;
 import lombok.EqualsAndHashCode;
 import lombok.ToString;
 
-import java.util.Date;
+import java.time.LocalDateTime;
 
 @JsonInclude(JsonInclude.Include.NON_NULL)
 @ToString(callSuper = true)
@@ -31,5 +31,5 @@ public class OauthClient extends BaseDomain {
     /**
      * 客户端过期时间
      */
-    private Date expirationDate;
+    private LocalDateTime expirationDate;
 }

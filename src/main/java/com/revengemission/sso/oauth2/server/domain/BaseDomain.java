@@ -5,30 +5,27 @@ import com.fasterxml.jackson.annotation.JsonInclude;
 import lombok.Data;
 
 import java.io.Serializable;
-import java.util.Date;
+import java.time.LocalDateTime;
 
 @JsonInclude(JsonInclude.Include.NON_NULL)
 @Data
 public class BaseDomain implements Serializable {
 
-    /**
-     *
-     */
-    private static final long serialVersionUID = 1L;
     private String id;
     /**
      * 创建时间
      */
-    private Date dateCreated;
+    private LocalDateTime dateCreated;
     /**
      * 修改时间
      */
-    private Date lastModified;
-    private Integer recordStatus;
+    private LocalDateTime lastModified;
+    private int recordStatus;
+    private int sortPriority;
     /**
      * 更改次数/每次修改+1
      */
-    private Integer version;
+    private int version;
     private String remarks;
     private String additionalData;
 }

@@ -17,8 +17,8 @@ import org.springframework.security.oauth2.provider.client.BaseClientDetails;
 import org.springframework.stereotype.Service;
 import org.springframework.util.StringUtils;
 
+import java.time.LocalDateTime;
 import java.util.ArrayList;
-import java.util.Date;
 import java.util.List;
 
 @Service
@@ -44,7 +44,7 @@ public class ClientDetailsServiceImpl implements ClientDetailsService {
             if (oauthClientEntity.getRecordStatus() < 0) {
                 throw new InvalidClientException(String.format("clientId %s is disabled!", clientId));
             }
-            if (oauthClientEntity.getExpirationDate() != null && oauthClientEntity.getExpirationDate().compareTo(new Date()) < 0) {
+            if (oauthClientEntity.getExpirationDate() != null && oauthClientEntity.getExpirationDate().isBefore(LocalDateTime.now())) {
                 throw new AlreadyExpiredException(String.format("clientId %s already expired!", clientId));
             }
             BaseClientDetails baseClientDetails = new BaseClientDetails();

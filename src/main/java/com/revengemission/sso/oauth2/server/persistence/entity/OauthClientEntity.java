@@ -4,7 +4,7 @@ import javax.persistence.Column;
 import javax.persistence.Entity;
 import javax.persistence.Table;
 import javax.persistence.UniqueConstraint;
-import java.util.Date;
+import java.time.LocalDateTime;
 
 @Entity
 @Table(uniqueConstraints = @UniqueConstraint(columnNames = {"clientId"}))
@@ -32,7 +32,7 @@ public class OauthClientEntity extends BaseEntity {
     /**
      * 客户端过期时间，比如应用于多店系统
      */
-    private Date expirationDate;
+    private LocalDateTime expirationDate;
 
 
     public String getClientId() {
@@ -131,11 +131,11 @@ public class OauthClientEntity extends BaseEntity {
         this.autoApprove = autoApprove;
     }
 
-    public Date getExpirationDate() {
+    public LocalDateTime getExpirationDate() {
         return expirationDate;
     }
 
-    public void setExpirationDate(Date expirationDate) {
+    public void setExpirationDate(LocalDateTime expirationDate) {
         this.expirationDate = expirationDate;
     }
 }
