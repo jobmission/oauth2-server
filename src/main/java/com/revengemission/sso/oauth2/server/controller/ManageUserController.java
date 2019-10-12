@@ -33,12 +33,12 @@ public class ManageUserController {
 
     @GetMapping(value = "/list")
     @ResponseBody
-    public JsonObjects<UserAccount> listObjects(@RequestParam(value = "search[value]", required = false, defaultValue = "") String searchValue,
+    public JsonObjects<UserAccount> listObjects(@RequestParam(value = "searchValue", required = false, defaultValue = "") String searchValue,
                                                 @RequestParam(value = "draw", defaultValue = "0") int draw,
                                                 @RequestParam(value = "length", defaultValue = "10") Integer pageSize,
                                                 @RequestParam(value = "start", defaultValue = "0") Integer start,
-                                                @RequestParam(value = "sidx", defaultValue = "id") String sortField,
-                                                @RequestParam(value = "sord", defaultValue = "desc") String sortOrder) {
+                                                @RequestParam(value = "sortField", required = false, defaultValue = "id") String sortField,
+                                                @RequestParam(value = "sortOrder", required = false, defaultValue = "desc") String sortOrder) {
         int pageNum = start / 10 + 1;
         JsonObjects<UserAccount> result = userAccountService.listByUsername(searchValue, pageNum, pageSize, sortField, sortOrder);
         result.setDraw(draw + 1);

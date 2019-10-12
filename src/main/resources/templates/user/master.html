@@ -177,8 +177,35 @@
                 orderMulti: false,
                 responsive: true,
                 ajax: {
+                    xhrFields: {withCredentials: true},
+                    crossDomain: true,
                     url: '/management/user/list',
-                    dataSrc: 'data'
+                    dataSrc: 'data',
+                    data: function (data) {
+                        var columnIndex, sortOrder, sortField;
+                        for (var i = 0, len = data.order.length; i < len; i++) {
+                            columnIndex = data.order[i].column;
+                            sortOrder = data.order[i].dir;
+                        }
+                        delete data.order;
+                        for (var i = 0, len = data.columns.length; i < len; i++) {
+                            if (i == columnIndex) {
+                                sortField = data.columns[i].data;
+                            }
+                        }
+                        delete data.columns;
+
+                        if (data.search.value) {
+                            data.searchValue = data.search.value;
+                        }
+
+                        delete data.search;
+
+                        data.sortField = sortField;
+                        data.sortOrder = sortOrder;
+                        console.log("sortField===" + sortField);
+                        console.log("sortOrder===" + sortOrder);
+                    }
                 },
                 columns: [
                     {data: 'id'},
@@ -191,7 +218,7 @@
                         bSortable: false,
                         render: function (data, type, row) {
                             var result = "";
-                            for (j = 0; j < data.length; j++) {
+                            for (var j = 0; j < data.length; j++) {
                                 result = result + data[j].roleName + "\n";
                             }
                             return result;

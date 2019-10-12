@@ -133,7 +133,8 @@
                     <div class="form-group row">
                         <label for="authorities" class="col-2 control-label text-right">authorities</label>
                         <div class="col-6">
-                            <input type="text" class="form-control" id="authorities" placeholder="authorities" required="required"/>
+                            <input type="text" class="form-control" id="authorities" placeholder="authorities"
+                                   required="required"/>
                         </div>
                     </div>
                     <div class="form-group row">
@@ -214,8 +215,35 @@
                 searching: false,
                 responsive: true,
                 ajax: {
+                    xhrFields: {withCredentials: true},
+                    crossDomain: true,
                     url: '/management/client/list',
-                    dataSrc: 'data'
+                    dataSrc: 'data',
+                    data: function (data) {
+                        var columnIndex, sortOrder, sortField;
+                        for (var i = 0, len = data.order.length; i < len; i++) {
+                            columnIndex = data.order[i].column;
+                            sortOrder = data.order[i].dir;
+                        }
+                        delete data.order;
+                        for (var i = 0, len = data.columns.length; i < len; i++) {
+                            if (i == columnIndex) {
+                                sortField = data.columns[i].data;
+                            }
+                        }
+                        delete data.columns;
+
+                        if (data.search.value) {
+                            data.searchValue = data.search.value;
+                        }
+
+                        delete data.search;
+
+                        data.sortField = sortField;
+                        data.sortOrder = sortOrder;
+                        console.log("sortField===" + sortField);
+                        console.log("sortOrder===" + sortOrder);
+                    }
                 },
                 columns: [
                     {data: 'id'},
@@ -227,7 +255,7 @@
                         render: function (data, type, row) {
                             var gts = data.split(",");
                             var result = "";
-                            for (j = 0; j < gts.length; j++) {
+                            for (var j = 0; j < gts.length; j++) {
                                 result = result + gts[j] + "\n";
                             }
                             return result;
