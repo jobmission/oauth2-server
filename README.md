@@ -1,4 +1,4 @@
-## SpringBoot 2.1.x oauth2 server, SSO 单点登录
+## SpringBoot 2.2.x oauth2 server, SSO 单点登录
 
 ## 创建数据库：持久层采用JPA框架，项目启动前必须先创建数据库，启动时数据表会自动创建</br>
 ````
@@ -59,13 +59,17 @@ Get /oauth/token_key
 ````
 Get /.well-known/jwks.json
 ````
+## issuer-uri：resource server 可以得到jwt token签名公钥等信息
+````
+Get /.well-known/oauth-authorization-server
+````
 
 ## 验证token，用于在资源端调用验证token是否有效</br>
 ````
 Post /oauth/check_token?token=a.b.c
 ````
 
-## 访问受保护资源，请求时携带token</br>
+## 访问受保护资源，请求时携带token
 ````
 Get /user/me?access_token=a.b.c
 或者http header中加入Authorization,如下
@@ -107,9 +111,9 @@ Post /oauth/token?client_id=SampleClientId&client_secret=tgb.258&grant_type=refr
 
 ## 启动方法</br>
 ````
-java -jar oauth2-server-0.0.2-SNAPSHOT.jar
+java -jar oauth2-server-0.0.3-SNAPSHOT.jar
 或者指定配置文件覆盖默认配置
-java -jar oauth2-server-0.0.2-SNAPSHOT.jar --spring.config.additional-location=/path/to/override.properties
+java -jar oauth2-server-0.0.3-SNAPSHOT.jar --spring.config.additional-location=/path/to/override.properties
 ````
 
 ## 管理员角色登录后，可以对用户和client进行管理</br>
