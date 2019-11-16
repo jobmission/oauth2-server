@@ -1,3 +1,11 @@
+#
+#
+# spring-security-oauth2项目官方团队已宣布停止进一步开发，本项目也将暂停更新
+# [Spring 官方声明](https://spring.io/blog/2019/11/14/spring-security-oauth-2-0-roadmap-update)
+## 推荐使用其他开源方案，如  https://www.keycloak.org
+#
+#
+
 ## SpringBoot 2.2.x oauth2 server, SSO 单点登录
 
 ## 创建数据库：持久层采用JPA框架，项目启动前必须先创建数据库，启动时数据表会自动创建</br>
