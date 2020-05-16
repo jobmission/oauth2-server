@@ -12,9 +12,6 @@ import java.time.LocalDateTime;
 @EqualsAndHashCode(callSuper = true)
 @Data
 public class OauthClient extends BaseDomain {
-    /**
-     *
-     */
     private static final long serialVersionUID = 8626957691648832578L;
     private String clientId;
     private String applicationName;
@@ -24,8 +21,8 @@ public class OauthClient extends BaseDomain {
     private String authorizedGrantTypes;
     private String webServerRedirectUri;
     private String authorities;
-    private Integer accessTokenValidity;
-    private Integer refreshTokenValidity;
+    private int accessTokenValidity = 60 * 60 * 2;
+    private int refreshTokenValidity = 60 * 60 * 24;
     private String additionalInformation;
     private String autoApprove;
     /**

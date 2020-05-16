@@ -1,12 +1,5 @@
-#
-#
-# spring-security-oauth2项目官方团队已宣布停止进一步开发，本项目也将暂停更新
-# [Spring 官方声明](https://spring.io/blog/2019/11/14/spring-security-oauth-2-0-roadmap-update)
-## 推荐使用其他开源方案，如  https://www.keycloak.org
-#
-#
 
-## SpringBoot 2.2.x oauth2 server, SSO 单点登录
+## SpringBoot 2.3.x oauth2 server, SSO 单点登录
 
 ## 创建数据库：持久层采用JPA框架，项目启动前必须先创建数据库，启动时数据表会自动创建</br>
 ````
@@ -19,9 +12,9 @@ grant all privileges on oauth2_server.* to 'oauth2_server'@'localhost';
 
 #初始化数据sql在src/main/resources/sql/init.sql,可自行修改client_id等初始化数据
 ````
-## 支持的4种授权模式grant_type</br>
+## 支持的授权模式grant_type</br>
 ````
-authorization_code,implicit,password,client_credentials;
+authorization_code, password, refresh_token
 ````
 #####
 * authorization_code模式：**用于PC端，页面跳转**，安全性最高，需要两步获取token;`需确保redirect_uri和数据库中对应的redirect_uri一致`
@@ -56,13 +49,10 @@ Post /oauth/token?client_id=SampleClientId&client_secret=tgb.258&grant_type=pass
 ````
 ## RSA密钥生成，用于签名token，客户端、资源端本地验证token
 ````
-使用Java工具包中的keytool制作证书jwt.jks，重要参数:设置别名为【jwt】，有效天数为【36500】，密码为【keypass】，替换位置src/main/resources/jwt.jks
-keytool -genkey -alias jwt -keyalg RSA -keysize 1024 -keystore /your/path/to/jwt.jks -validity 36500
+使用Java工具包中的keytool制作证书jwt.jks，重要参数:设置别名为【jwt】，有效天数为【1000】，密码为【keypass】，替换位置src/main/resources/jwt.jks
+keytool -genkey -alias jwt -keyalg RSA -keysize 2048 -keystore /your/path/to/jwt.jks -validity 1000
 ````
-## 获取jwt token签名的RSA公钥，用于本地验证token
-````
-Get /oauth/token_key
-````
+
 ## jwk-set-uri：resource server 可以得到jwt token签名公钥并缓存，进行本地验证
 ````
 Get /.well-known/jwks.json
@@ -114,14 +104,11 @@ Post /oauth/token?client_id=SampleClientId&client_secret=tgb.258&grant_type=refr
  
 ````
 
-##  扩展grant_type,參照SMSCodeTokenGranter
-
-
 ## 启动方法</br>
 ````
-java -jar oauth2-server-0.0.3-SNAPSHOT.jar
+java -jar oauth2-server-0.0.4-SNAPSHOT.jar
 或者指定配置文件覆盖默认配置
-java -jar oauth2-server-0.0.3-SNAPSHOT.jar --spring.config.additional-location=/path/to/override.properties
+java -jar oauth2-server-0.0.4-SNAPSHOT.jar --spring.config.additional-location=/path/to/override.properties
 ````
 
 ## 管理员角色登录后，可以对用户和client进行管理</br>
@@ -130,18 +117,11 @@ java -jar oauth2-server-0.0.3-SNAPSHOT.jar --spring.config.additional-location=/
 ![用户管理](https://raw.githubusercontent.com/jobmission/oauth2-server/master/src/test/resources/static/imgs/users.png)
 ![client管理](https://raw.githubusercontent.com/jobmission/oauth2-server/master/src/test/resources/static/imgs/clients.png)
 
-## OAuth 2 Developers Guide
-[spring-security-oauth官方文档](https://projects.spring.io/spring-security-oauth/docs/oauth2.html) <br/>
-[Spring Boot and OAuth2 Tutorial](https://spring.io/guides/tutorials/spring-boot-oauth2/)
-
 [client 前端DEMO](https://github.com/jobmission/oauth2-client.git) <br/>
 [api 资源接口端DEMO](https://github.com/jobmission/oauth2-resource.git)
 
 
 ## 注意！！！
 当Server和Client在一台机器上时，请配置域名代理，避免cookie相互覆盖
-
-[Bcrypt 在线密码生成](https://www.jisuan.mobi/index.php?tag=Bcrypt)
-[ Bcrypt 在线密码生成](https://www.devglan.com/online-tools/bcrypt-hash-generator)
 
 
