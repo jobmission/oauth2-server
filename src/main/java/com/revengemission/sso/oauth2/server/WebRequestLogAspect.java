@@ -18,6 +18,8 @@ import org.springframework.web.context.request.ServletRequestAttributes;
 import javax.servlet.http.HttpServletRequest;
 import java.lang.annotation.Annotation;
 import java.lang.reflect.Method;
+import java.util.Enumeration;
+import java.util.HashMap;
 import java.util.Map;
 
 @Aspect
@@ -43,7 +45,6 @@ public class WebRequestLogAspect {
             if (attributes != null) {
                 HttpServletRequest request = attributes.getRequest();
                 Map<String, String[]> parameters = request.getParameterMap();
-
                 try {
                     String parametersString = null;
                     String requestBody = null;
@@ -78,7 +79,8 @@ public class WebRequestLogAspect {
                     stringBuffer.append(";\n");
 
                     log.info(stringBuffer.toString());
-
+                    String headers = JsonUtil.objectToJsonString(getHeadersInfo(request));
+                    log.info("headers:" + headers);
                 } catch (Exception e) {
                     log.info("log http request Exception: ", e);
                 }
@@ -115,5 +117,19 @@ public class WebRequestLogAspect {
         return null;
     }
 
+    //get request headers
+    private Map<String, String> getHeadersInfo(HttpServletRequest request) {
+
+        Map<String, String> map = new HashMap<>();
+
+        Enumeration headerNames = request.getHeaderNames();
+        while (headerNames.hasMoreElements()) {
+            String key = (String) headerNames.nextElement();
+            String value = request.getHeader(key);
+            map.put(key, value);
+        }
+
+        return map;
+    }
 
 }

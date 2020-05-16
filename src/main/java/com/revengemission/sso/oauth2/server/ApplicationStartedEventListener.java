@@ -13,8 +13,6 @@ import java.time.LocalDateTime;
 public class ApplicationStartedEventListener implements ApplicationListener<ApplicationStartedEvent> {
     @Override
     public void onApplicationEvent(ApplicationStartedEvent applicationStartedEvent) {
-        System.out.format("\33[32;3m" + "Application started @ " + LocalDateTime.now() + " ! %n");
-        System.out.format("\33[32;4m" + "-----------------------------------------------%n");
-        System.out.format("\33[10;2m" + "%n");
+        System.out.format("Application started @ " + LocalDateTime.now() + " -----------------------------------------------\n");
     }
 }

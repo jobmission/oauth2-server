@@ -21,6 +21,8 @@ public enum CachesEnum {
      * 指定过期时间和最大容量
      */
     Oauth2ClientCache(60 * 60 * 2, 20),
+    Oauth2AuthorizationCodeCache(60 * 3, 100000),
+    Oauth2AuthorizationCodeFailureTimesCache(60 * 3, 100000),
     ;
 
     CachesEnum() {

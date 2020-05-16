@@ -4,18 +4,25 @@ import com.fasterxml.jackson.annotation.JsonFormat;
 import com.revengemission.sso.oauth2.server.domain.EntityNotFoundException;
 import com.revengemission.sso.oauth2.server.domain.UserAccount;
 import com.revengemission.sso.oauth2.server.service.UserAccountService;
+import io.jsonwebtoken.Claims;
+import io.jsonwebtoken.Jwts;
 import org.apache.commons.lang3.StringUtils;
 import org.apache.commons.text.StringEscapeUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.format.annotation.DateTimeFormat;
-import org.springframework.security.oauth2.common.OAuth2AccessToken;
-import org.springframework.security.oauth2.provider.token.TokenStore;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
-import org.springframework.web.bind.annotation.*;
+import org.springframework.web.bind.annotation.CookieValue;
+import org.springframework.web.bind.annotation.GetMapping;
+import org.springframework.web.bind.annotation.PostMapping;
+import org.springframework.web.bind.annotation.RequestHeader;
+import org.springframework.web.bind.annotation.RequestMapping;
+import org.springframework.web.bind.annotation.RequestParam;
+import org.springframework.web.bind.annotation.ResponseBody;
 
+import java.security.KeyPair;
 import java.security.Principal;
 import java.time.LocalDate;
 import java.util.HashMap;
@@ -28,13 +35,14 @@ public class ProfileController {
 
     private Logger log = LoggerFactory.getLogger(this.getClass());
 
-    private static final Pattern AUTHORIZATION_PATTERN = Pattern.compile("^Bearer (?<token>[a-zA-Z0-9-._~+/]+)=*$");
+
+    private static final Pattern AUTHORIZATION_PATTERN = Pattern.compile("^[B|b]]earer (?<token>[a-zA-Z0-9-._~+/]+)=*$");
 
     @Autowired
     UserAccountService userAccountService;
 
     @Autowired
-    TokenStore tokenStore;
+    KeyPair keyPair;
 
     @ResponseBody
     @RequestMapping("/user/me")
@@ -60,26 +68,28 @@ public class ProfileController {
             }
 
             if (token != null) {
-                OAuth2AccessToken auth2AccessToken = tokenStore.readAccessToken(token);
-                if (auth2AccessToken.isExpired()) {
-                    result.put("status", 0);
-                    result.put("message", "access_token无效");
-                    return result;
-                }
+                try {
+                    Claims claims = Jwts.parserBuilder().setSigningKey(keyPair.getPublic()).build().parseClaimsJws(token).getBody();
 
-                String username = auth2AccessToken.getAdditionalInformation().get("sub").toString();
-                UserAccount userAccount = userAccountService.findByUsername(username);
-                result.put("username", username);
-                if (StringUtils.isNotEmpty(userAccount.getGender())) {
-                    result.put("gender", userAccount.getGender());
+                    String username = claims.getSubject();
+                    UserAccount userAccount = userAccountService.findByUsername(username);
+                    result.put("username", username);
+                    if (StringUtils.isNotEmpty(userAccount.getGender())) {
+                        result.put("gender", userAccount.getGender());
+                    }
+                    if (StringUtils.isNotEmpty(userAccount.getNickName())) {
+                        result.put("nickName", userAccount.getNickName());
+                    }
+                    result.put("accountOpenCode", "" + userAccount.getId());
+                    result.put("authorities", claims.get("roles"));
+                    result.put("status", 1);
+                } catch (Exception e) {
+                    if (log.isDebugEnabled()) {
+                        log.debug("exception", e);
+                    }
+                    result.put("status", 0);
+                    result.put("message", e.getMessage());
                 }
-                if (StringUtils.isNotEmpty(userAccount.getNickName())) {
-                    result.put("nickName", userAccount.getNickName());
-                }
-                result.put("grantType", auth2AccessToken.getAdditionalInformation().get("grantType"));
-                result.put("accountOpenCode", "" + userAccount.getId());
-                result.put("authorities", auth2AccessToken.getAdditionalInformation().get("authorities"));
-                result.put("status", 1);
             } else {
                 result.put("status", 0);
                 result.put("message", "未检测到access_token");
@@ -96,7 +106,6 @@ public class ProfileController {
 
         return result;
     }
-
 
     @GetMapping(value = {"", "/", "/user/profile"})
     public String profile(Principal principal,
@@ -144,7 +153,6 @@ public class ProfileController {
                 log.error("findByUsername exception", e);
             }
         }
-
         return "profile";
     }
 }
