@@ -5,8 +5,8 @@ import com.revengemission.sso.oauth2.server.domain.UserAccount;
 import com.revengemission.sso.oauth2.server.utils.CheckPasswordStrength;
 import com.revengemission.sso.oauth2.server.utils.JsonUtil;
 import org.apache.commons.lang3.StringUtils;
-import org.junit.Ignore;
-import org.junit.Test;
+import org.junit.jupiter.api.Disabled;
+import org.junit.jupiter.api.Test;
 
 import java.time.LocalDate;
 import java.time.LocalDateTime;
@@ -17,7 +17,7 @@ import java.time.LocalDateTime;
 public class SimpleTest {
 
     @Test
-    @Ignore
+    @Disabled
     public void checkPwd() {
         System.out.println(StringUtils.center("123", 30, "-") + CheckPasswordStrength.check("123"));
         System.out.println(StringUtils.center("123456", 30, "-") + CheckPasswordStrength.check("123456"));
@@ -32,7 +32,7 @@ public class SimpleTest {
     }
 
     @Test
-    @Ignore
+    @Disabled
     public void localDateTest() throws JsonProcessingException {
         LocalDateTime nowDateTime = LocalDateTime.now();
         UserAccount userAccount = new UserAccount();

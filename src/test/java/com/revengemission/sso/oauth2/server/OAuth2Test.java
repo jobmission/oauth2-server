@@ -2,11 +2,15 @@ package com.revengemission.sso.oauth2.server;
 
 import com.fasterxml.jackson.core.type.TypeReference;
 import com.revengemission.sso.oauth2.server.utils.JsonUtil;
-import org.junit.Ignore;
-import org.junit.Test;
+import org.junit.jupiter.api.Disabled;
+import org.junit.jupiter.api.Test;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
-import org.springframework.http.*;
+import org.springframework.http.HttpEntity;
+import org.springframework.http.HttpHeaders;
+import org.springframework.http.HttpMethod;
+import org.springframework.http.MediaType;
+import org.springframework.http.ResponseEntity;
 import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.util.LinkedMultiValueMap;
 import org.springframework.util.MultiValueMap;
@@ -24,14 +28,14 @@ public class OAuth2Test {
     private String issuerUrl = "http://localhost:10380";
 
     @Test
-    @Ignore
+    @Disabled
     public void encodePassword() {
         System.out.println("tgb.258------" + new BCryptPasswordEncoder().encode("tgb.258"));
     }
 
 
     @Test
-    @Ignore
+    @Disabled
     public void flowTest() throws IOException {
         Map<String, String> result = getToken();
 

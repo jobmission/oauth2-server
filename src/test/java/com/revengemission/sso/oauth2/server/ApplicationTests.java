@@ -5,19 +5,16 @@ import com.revengemission.sso.oauth2.server.persistence.entity.UserAccountEntity
 import com.revengemission.sso.oauth2.server.persistence.repository.UserAccountRepository;
 import com.revengemission.sso.oauth2.server.utils.JsonUtil;
 import org.apache.commons.lang3.RandomStringUtils;
-import org.junit.Ignore;
-import org.junit.Test;
-import org.junit.runner.RunWith;
+import org.junit.jupiter.api.Disabled;
+import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.jdbc.core.JdbcTemplate;
 import org.springframework.security.crypto.password.PasswordEncoder;
-import org.springframework.test.context.junit4.SpringRunner;
 
 import java.time.LocalDate;
 import java.util.UUID;
 
-@RunWith(SpringRunner.class)
 @SpringBootTest
 public class ApplicationTests {
 
@@ -31,7 +28,7 @@ public class ApplicationTests {
     @Autowired
     PasswordEncoder passwordEncoder;
 
-    @Ignore
+    @Disabled
     @Test
     public void localDateTest() {
 
@@ -41,7 +38,7 @@ public class ApplicationTests {
 
     }
 
-    @Ignore
+    @Disabled
     @Test
     public void insertUserAccount() throws JsonProcessingException {
         UserAccountEntity userAccountEntity = new UserAccountEntity();
@@ -57,7 +54,7 @@ public class ApplicationTests {
 
     }
 
-    @Ignore
+    @Disabled
     @Test
     public void updateUserAccount() {
         userAccountRepository.findById(1L).ifPresent(e -> {
