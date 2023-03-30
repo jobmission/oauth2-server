@@ -25,7 +25,7 @@ public class OAuth2Test {
     private Logger log = LoggerFactory.getLogger(this.getClass());
 
 
-    private String issuerUrl = "http://localhost:10380";
+    private String issuerUrl = "http://localhost:8080";
 
     @Test
     @Disabled
@@ -40,8 +40,6 @@ public class OAuth2Test {
         Map<String, String> result = getToken();
 
         log.info("token = " + result.get("access_token"));
-        String isActive = checkToken(result.get("access_token"));
-        log.info("isActive = " + isActive);
 
         String newToken = refreshToken(result.get("refresh_token"));
         log.info("newToken = " + newToken);
@@ -50,7 +48,7 @@ public class OAuth2Test {
 
     public Map<String, String> getToken() throws IOException {
 
-        String url = issuerUrl + "/oauth/token";
+        String url = issuerUrl + "/oauth2/token";
         RestTemplate client = new RestTemplate();
         HttpHeaders headers = new HttpHeaders();
 //  请勿轻易改变此提交方式，大部分的情况下，提交方式都是表单提交
@@ -76,30 +74,6 @@ public class OAuth2Test {
         return result;
     }
 
-
-    public String checkToken(String token) throws IOException {
-
-        String url = issuerUrl + "/oauth/check_token";
-        RestTemplate client = new RestTemplate();
-        HttpHeaders headers = new HttpHeaders();
-//  请勿轻易改变此提交方式，大部分的情况下，提交方式都是表单提交
-        headers.setContentType(MediaType.APPLICATION_FORM_URLENCODED);
-//  封装参数，千万不要替换为Map与HashMap，否则参数无法传递
-        MultiValueMap<String, String> params = new LinkedMultiValueMap<>();
-//  也支持中文
-        params.add("token", token);
-        HttpEntity<MultiValueMap<String, String>> requestEntity = new HttpEntity<>(params, headers);
-//  执行HTTP请求
-        ResponseEntity<String> response = client.exchange(url, HttpMethod.POST, requestEntity, String.class);
-        String jsonString = response.getBody();
-        log.info("checkToken:" + jsonString);
-
-        Map<String, Object> result = JsonUtil.jsonStringToObject(response.getBody(), new TypeReference<Map<String, Object>>() {
-        });
-//  输出结果
-
-        return String.valueOf(result.get("active"));
-    }
 
     public String refreshToken(String refresh_token) throws IOException {
 

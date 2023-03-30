@@ -4,30 +4,21 @@ import com.fasterxml.jackson.annotation.JsonFormat;
 import com.revengemission.sso.oauth2.server.domain.EntityNotFoundException;
 import com.revengemission.sso.oauth2.server.domain.UserAccount;
 import com.revengemission.sso.oauth2.server.service.UserAccountService;
-import io.jsonwebtoken.Claims;
-import io.jsonwebtoken.Jwts;
-import org.apache.commons.lang3.StringUtils;
+import com.revengemission.sso.oauth2.server.utils.CheckPasswordStrength;
 import org.apache.commons.text.StringEscapeUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.format.annotation.DateTimeFormat;
+import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
-import org.springframework.web.bind.annotation.CookieValue;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PostMapping;
-import org.springframework.web.bind.annotation.RequestHeader;
-import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestParam;
-import org.springframework.web.bind.annotation.ResponseBody;
 
-import java.security.KeyPair;
 import java.security.Principal;
 import java.time.LocalDate;
-import java.util.HashMap;
-import java.util.Map;
-import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
 @Controller
@@ -35,77 +26,13 @@ public class ProfileController {
 
     private Logger log = LoggerFactory.getLogger(this.getClass());
 
-
     private static final Pattern AUTHORIZATION_PATTERN = Pattern.compile("^[B|b]]earer (?<token>[a-zA-Z0-9-._~+/]+)=*$");
 
     @Autowired
     UserAccountService userAccountService;
 
     @Autowired
-    KeyPair keyPair;
-
-    @ResponseBody
-    @RequestMapping("/user/me")
-    public Map<String, Object> info(@RequestParam(value = "access_token", required = false) String paramToken,
-                                    @RequestHeader(value = "Authorization", required = false) String headerToken,
-                                    @CookieValue(value = "access_token", required = false) String cookieToken) {
-        Map<String, Object> result = new HashMap<>(16);
-        try {
-            String token = null;
-            if (StringUtils.isNoneBlank(headerToken)) {
-                Matcher matcher = AUTHORIZATION_PATTERN.matcher(headerToken);
-                if (matcher.matches()) {
-                    token = matcher.group("token");
-                }
-            }
-
-            if (token == null && StringUtils.isNoneBlank(paramToken)) {
-                token = paramToken;
-            }
-
-            if (token == null && StringUtils.isNoneBlank(cookieToken)) {
-                token = cookieToken;
-            }
-
-            if (token != null) {
-                try {
-                    Claims claims = Jwts.parserBuilder().setSigningKey(keyPair.getPublic()).build().parseClaimsJws(token).getBody();
-
-                    String username = claims.getSubject();
-                    UserAccount userAccount = userAccountService.findByUsername(username);
-                    result.put("username", username);
-                    if (StringUtils.isNotEmpty(userAccount.getGender())) {
-                        result.put("gender", userAccount.getGender());
-                    }
-                    if (StringUtils.isNotEmpty(userAccount.getNickName())) {
-                        result.put("nickName", userAccount.getNickName());
-                    }
-                    result.put("accountOpenCode", "" + userAccount.getId());
-                    result.put("authorities", claims.get("roles"));
-                    result.put("status", 1);
-                } catch (Exception e) {
-                    if (log.isDebugEnabled()) {
-                        log.debug("exception", e);
-                    }
-                    result.put("status", 0);
-                    result.put("message", e.getMessage());
-                }
-            } else {
-                result.put("status", 0);
-                result.put("message", "未检测到access_token");
-            }
-
-
-        } catch (Exception e) {
-            if (log.isInfoEnabled()) {
-                log.info("/user/me exception", e);
-            }
-            result.put("status", 0);
-            result.put("message", "access_token无效");
-        }
-
-        return result;
-    }
+    PasswordEncoder passwordEncoder;
 
     @GetMapping(value = {"", "/", "/user/profile"})
     public String profile(Principal principal,
@@ -152,7 +79,52 @@ public class ProfileController {
             if (log.isErrorEnabled()) {
                 log.error("findByUsername exception", e);
             }
+            model.addAttribute("updated", false);
+            model.addAttribute("error", e.getMessage());
         }
         return "profile";
+    }
+
+    @GetMapping(value = "/user/changePwd")
+    public String changePwd(Principal principal) {
+        return "changePwd";
+    }
+
+    @PostMapping("/user/changePwd")
+    public String handleChangePwd(Principal principal,
+                                  @RequestParam(value = "oldPassword") String oldPassword,
+                                  @RequestParam(value = "newPassword") String newPassword,
+                                  Model model) {
+
+        if (newPassword.length() < 6) {
+            model.addAttribute("updated", false);
+            model.addAttribute("error", "密码至少6位");
+            return "changePwd";
+        }
+
+        if (CheckPasswordStrength.check(newPassword) < 4) {
+            model.addAttribute("updated", false);
+            model.addAttribute("error", "密码安全等级较低，应包含字母、数字、符号");
+            return "changePwd";
+        }
+
+        try {
+            UserAccount userAccount = userAccountService.findByUsername(principal.getName());
+            if (!passwordEncoder.matches(oldPassword, userAccount.getPassword())) {
+                model.addAttribute("updated", false);
+                model.addAttribute("error", "原密码错误");
+            } else {
+                userAccount.setPassword(passwordEncoder.encode(newPassword));
+                userAccount = userAccountService.updateById(userAccount);
+                model.addAttribute("updated", true);
+            }
+        } catch (EntityNotFoundException e) {
+            if (log.isErrorEnabled()) {
+                log.error("findByUsername exception", e);
+            }
+            model.addAttribute("updated", false);
+            model.addAttribute("error", e.getMessage());
+        }
+        return "changePwd";
     }
 }

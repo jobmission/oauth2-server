@@ -1,10 +1,10 @@
 package com.revengemission.sso.oauth2.server.service.impl;
 
-import com.github.dozermapper.core.Mapper;
 import com.revengemission.sso.oauth2.server.domain.AlreadyExistsException;
 import com.revengemission.sso.oauth2.server.domain.EntityNotFoundException;
 import com.revengemission.sso.oauth2.server.domain.JsonObjects;
 import com.revengemission.sso.oauth2.server.domain.UserAccount;
+import com.revengemission.sso.oauth2.server.mapper.UserAccountMapper;
 import com.revengemission.sso.oauth2.server.persistence.entity.RoleEntity;
 import com.revengemission.sso.oauth2.server.persistence.entity.UserAccountEntity;
 import com.revengemission.sso.oauth2.server.persistence.repository.RoleRepository;
@@ -35,7 +35,7 @@ public class UserAccountServiceImpl implements UserAccountService {
     RoleRepository roleRepository;
 
     @Autowired
-    Mapper dozerMapper;
+    UserAccountMapper mapper;
 
     @Value("${signin.failure.max:5}")
     private int failureMax;
@@ -59,7 +59,7 @@ public class UserAccountServiceImpl implements UserAccountService {
         if (page.getContent() != null && page.getContent().size() > 0) {
             jsonObjects.setRecordsTotal(page.getTotalElements());
             jsonObjects.setRecordsFiltered(page.getTotalElements());
-            page.getContent().forEach(u -> jsonObjects.getData().add(dozerMapper.map(u, UserAccount.class)));
+            page.getContent().forEach(u -> jsonObjects.getData().add(mapper.entityToDto(u)));
         }
         return jsonObjects;
 
@@ -72,7 +72,7 @@ public class UserAccountServiceImpl implements UserAccountService {
         if (exist != null) {
             throw new AlreadyExistsException(userAccount.getUsername() + " already exists!");
         }
-        UserAccountEntity userAccountEntity = dozerMapper.map(userAccount, UserAccountEntity.class);
+        UserAccountEntity userAccountEntity = mapper.dtoToEntity(userAccount);
         userAccountEntity.getRoles().clear();
         if (userAccount.getRoles() != null && userAccount.getRoles().size() > 0) {
             userAccount.getRoles().forEach(e -> {
@@ -83,13 +83,13 @@ public class UserAccountServiceImpl implements UserAccountService {
             });
         }
         userAccountRepository.save(userAccountEntity);
-        return dozerMapper.map(userAccountEntity, UserAccount.class);
+        return mapper.entityToDto(userAccountEntity);
     }
 
     @Override
     public UserAccount retrieveById(long id) throws EntityNotFoundException {
         Optional<UserAccountEntity> entityOptional = userAccountRepository.findById(id);
-        return dozerMapper.map(entityOptional.orElseThrow(EntityNotFoundException::new), UserAccount.class);
+        return mapper.entityToDto(entityOptional.orElseThrow(EntityNotFoundException::new));
     }
 
     @Override
@@ -110,7 +110,7 @@ public class UserAccountServiceImpl implements UserAccountService {
         e.setEmail(userAccount.getEmail());
 
         userAccountRepository.save(e);
-        return dozerMapper.map(e, UserAccount.class);
+        return mapper.entityToDto(e);
     }
 
     @Override
@@ -126,7 +126,7 @@ public class UserAccountServiceImpl implements UserAccountService {
     public UserAccount findByUsername(String username) throws EntityNotFoundException {
         UserAccountEntity userAccountEntity = userAccountRepository.findByUsername(username);
         if (userAccountEntity != null) {
-            return dozerMapper.map(userAccountEntity, UserAccount.class);
+            return mapper.entityToDto(userAccountEntity);
         } else {
             throw new EntityNotFoundException(username + " not found!");
         }

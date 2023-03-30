@@ -1,0 +1,95 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org">
+<head>
+    <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+    <meta http-equiv="Content-Type" content="text/html; charset=utf-8"/>
+    <title>change password</title>
+    <link rel="stylesheet" href="../static/assets/sweetalert2/sweetalert2.min.css"
+          th:href="@{/assets/sweetalert2/sweetalert2.min.css}"/>
+    <link rel="stylesheet" href="../static/assets/bootstrap/css/bootstrap.min.css"
+          th:href="@{/assets/bootstrap/css/bootstrap.min.css}"/>
+</head>
+<body>
+
+<section>
+    <div class="container mt-5">
+        <div class="row justify-content-center">
+            <div class="col-sm-6">
+                <form id="changePasswordForm" action="/user/changePwd" method="post">
+                    <div class="form-group row my-2">
+                        <label class="col-3 col-form-label text-end"></label>
+                        <div class="col-9">
+                            <h5 class="bg-primary text-center" th:if="${updated}">更新成功</h5>
+                            <h5 class="text-center alert alert-danger" th:if="${error!=null && error!=''}" th:text="${error}"></h5>
+                        </div>
+                    </div>
+
+                    <div class="form-group row my-2">
+                        <label for="oldPassword" class="col-3 col-form-label text-end">原密码</label>
+                        <div class="col-9">
+                            <input type="password" class="form-control" name="oldPassword" id="oldPassword" placeholder="原密码" required="required">
+                        </div>
+                    </div>
+                    <div class="form-group row my-2">
+                        <label for="newPassword" class="col-3 col-form-label text-end">新密码</label>
+                        <div class="col-9">
+                            <input type="password" class="form-control" name="newPassword" id="newPassword" placeholder="新密码" required="required">
+                        </div>
+                    </div>
+                    <div class="form-group row my-2">
+                        <label for="confirmPassword" class="col-3 col-form-label text-end">确认密码</label>
+                        <div class="col-9">
+                            <input type="password" class="form-control" name="confirmPassword" id="confirmPassword"  placeholder="确认密码" required="required">
+                        </div>
+                    </div>
+                    <div class="form-group row my-2">
+                        <label class="col-3 col-form-label"></label>
+                        <div class="col-9">
+                            <button type="submit" class="btn btn-primary">提交</button> <a class="btn btn-sm" href="/logout">退出</a>
+                        </div>
+                    </div>
+
+                </form>
+            </div>
+        </div>
+    </div>
+</section>
+<script src="../static/assets/jquery.min.js"
+        th:src="@{/assets/jquery.min.js}"></script>
+<script src="../static/assets/bootstrap/js/bootstrap.min.js"
+        th:src="@{/assets/bootstrap/js/bootstrap.min.js}"></script>
+<script th:src="@{/assets/localforage.min.js}" src="../static/assets/localforage.min.js"></script>
+<script th:src="@{/assets/sweetalert2/sweetalert2.all.min.js}"
+        src="../static/assets/sweetalert2/sweetalert2.all.min.js"></script>
+<script th:inline="javascript">
+    /*<![CDATA[*/
+
+    $(document).ready(function () {
+        $("form").submit(function(e){
+               if (!$("#oldPassword").val() || !$("#newPassword").val() || !$("#confirmPassword").val()) {
+                     e.preventDefault();
+                     Swal.fire({
+                              title: 'Oops...',
+                              text: "请检查输入",
+                              icon: 'info',
+                              confirmButtonText: '确定'
+                            });
+                }
+
+                if ($("#newPassword").val() != $("#confirmPassword").val()) {
+                     e.preventDefault();
+                     Swal.fire({
+                              title: 'Oops...',
+                              text: "新密码和确认密码不匹配",
+                              icon: 'error',
+                              confirmButtonText: '确定'
+                            });
+
+                }
+        });
+
+    });
+    /*]]>*/
+</script>
+</body>
+</html>

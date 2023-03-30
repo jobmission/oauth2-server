@@ -8,9 +8,9 @@
     <!-- The above 3 meta tags *must* come first in the head; any other head content must come *after* these tags -->
 
     <title>sign up</title>
-    <link rel="stylesheet" href="../static/assets/bootstrap/css/bootstrap.min.css"
-          th:href="@{/assets/sweetalert2/sweetalert2.min.css}"/>
     <link rel="stylesheet" href="../static/assets/sweetalert2/sweetalert2.min.css"
+          th:href="@{/assets/sweetalert2/sweetalert2.min.css}"/>
+    <link rel="stylesheet" href="../static/assets/bootstrap/css/bootstrap.min.css"
           th:href="@{/assets/bootstrap/css/bootstrap.min.css}"/>
     <style type="text/css">
     </style>
@@ -19,74 +19,51 @@
 <body>
 <section>
     <div class="container mt-5">
-        <div class="row">
+        <div class="row justify-content-center">
             <div class="col-sm-3">
-
-            </div>
-            <div class="col-sm-6">
                 <form id="signUpForm" action="/signUp" method="post">
-                    <input type="hidden" name="graphId" id="graphId" />
-                    <h3 class="text-center">注册</h3>
-                    <p class="text-center alert alert-danger" th:classappend="${error==null || error==''?'invisible':''}" th:text="${error}"></p>
-                    <div class="form-group row">
-                        <label for="username" class="col-3 col-form-label text-right">用户名</label>
-                        <div class="col-9">
-                            <input type="text" name="username" class="form-control" id="username" required="required"
-                                   placeholder="用户名"/>
-                            <i class="fa fa-user"></i>
-                        </div>
+                    <div class="form-group row my-2 px-2 justify-content-center">
+                        <input type="hidden" name="graphId" id="graphId" />
+                        <h3 class="text-center">注册</h3>
+                        <p class="text-center alert alert-danger" th:if="${error!=null && error!=''}" th:text="${error}"></p>
                     </div>
-                    <div class="form-group row">
-                        <label for="password" class="col-3 col-form-label text-right">密　码</label>
-                        <div class="col-9">
-                            <input type="password" name="password" class="form-control" id="password"
-                                   required="required"
-                                   placeholder="密　码"/>
-                            <i class="fa fa-lock"></i>
-                        </div>
+
+                    <div class="form-group row my-2 px-2 justify-content-center">
+                        <input type="text" name="username" class="form-control" id="username" required="required"
+                               placeholder="用户名"/>
                     </div>
-                    <div class="form-group row">
-                        <label for="confirmPassword" class="col-3 col-form-label text-right">确　认</label>
-                        <div class="col-9">
-                            <input type="password" name="confirmPassword" class="form-control" id="confirmPassword"
-                                   required="required"
-                                   placeholder="确认密码"/>
-                            <i class="fa fa-lock"></i>
-                        </div>
+                    <div class="form-group row my-2 px-2 justify-content-center">
+                        <input type="password" name="password" class="form-control" id="password"
+                               required="required" placeholder="密　码"/>
                     </div>
-                    <div class="form-group row">
-                        <label for="verificationCode" class="col-3 col-form-label text-right">验证码</label>
-                        <div class="col-4">
+                    <div class="form-group row my-2 px-2 justify-content-center">
+                        <input type="password" name="confirmPassword" class="form-control" id="confirmPassword"
+                               required="required" placeholder="确认密码"/>
+                    </div>
+                    <div class="form-group row my-2 px-2 justify-content-center">
+                        <div class="col-6 p-0">
                             <input type="text" name="verificationCode" class="form-control" id="verificationCode"
-                                   required="required"
-                                   placeholder="验证码"/>
-                            <i class="fa fa-lock"></i>
+                                   required="required" placeholder="验证码"/>
                         </div>
-                        <div class="col-5">
+                        <div class="col-6">
                             <img src="/captcha?ts=1" id="captchaImg" style="cursor: pointer;" class="img-fluid"/>
                         </div>
                     </div>
-                    <div class="form-group row">
-                        <label class="col-3 col-form-label text-right"></label>
-                        <div class="col-9">
-                            <button type="submit" class="btn btn-primary btn-block">注册</button>
-                        </div>
+                    <div class="form-group row my-2 px-2 justify-content-center">
+                        <button type="submit" class="btn btn-primary btn-block">注册</button>
                     </div>
                 </form>
-            </div>
-            <div class="col-sm-3">
-
             </div>
         </div>
     </div>
 </section>
-<script src="../static/assets/jquery-3.5.1.min.js"
-        th:src="@{/assets/jquery-3.5.1.min.js}"></script>
+<script src="../static/assets/jquery.min.js"
+        th:src="@{/assets/jquery.min.js}"></script>
 <script src="../static/assets/bootstrap/js/bootstrap.min.js"
         th:src="@{/assets/bootstrap/js/bootstrap.min.js}"></script>
 <script th:src="@{/assets/localforage.min.js}" src="../static/assets/localforage.min.js"></script>
-<script th:src="@{/assets/sweetalert2/sweetalert2.min.js}"
-        src="../static/assets/sweetalert2/sweetalert2.min.js"></script>
+<script th:src="@{/assets/sweetalert2/sweetalert2.all.min.js}"
+        src="../static/assets/sweetalert2/sweetalert2.all.min.js"></script>
 <script th:inline="javascript">
     /*<![CDATA[*/
     $(document).ready(function () {
@@ -101,7 +78,12 @@
                 method: 'get',
                 success: function (result) {
                     if (result.status < 1) {
-                        Swal('Oops...', result.message, 'error');
+                        Swal.fire({
+                          title: 'Oops...',
+                          text: result.message,
+                          icon: 'error',
+                          confirmButtonText: '确定'
+                        })
                     } else {
                         $("#graphId").val(result.graphId);
                         $("#captchaImg").attr("src", result.graphUrl);
@@ -143,12 +125,17 @@
             }
 
             $.ajax({
-                url: "/oauth/signUp",
+                url: "/signUp",
                 method: 'post',
                 data: $('#signUpForm').serialize(),
                 success: function (result) {
                     if (result.status < 0) {
-                        Swal('Oops...', result.message, 'error')
+                        Swal.fire({
+                          title: 'Oops...',
+                          text: result.message,
+                          icon: 'error',
+                          confirmButtonText: '确定'
+                        })
                     } else {
                         window.location.href = "/";
                     }

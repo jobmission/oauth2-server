@@ -1,6 +1,7 @@
 package com.revengemission.sso.oauth2.server;
 
 import com.revengemission.sso.oauth2.server.utils.JsonUtil;
+import jakarta.servlet.http.HttpServletRequest;
 import org.slf4j.LoggerFactory;
 import org.springframework.http.HttpHeaders;
 import org.springframework.http.HttpStatus;
@@ -11,8 +12,6 @@ import org.springframework.web.bind.annotation.ExceptionHandler;
 import org.springframework.web.bind.annotation.ResponseBody;
 import org.springframework.web.servlet.NoHandlerFoundException;
 
-import javax.servlet.http.HttpServletRequest;
-import java.security.AccessControlException;
 import java.util.Date;
 import java.util.HashMap;
 import java.util.Map;
@@ -38,7 +37,7 @@ public class ServerExceptionHandler {
     }
 
     @ExceptionHandler({
-        AccessControlException.class, AccessDeniedException.class
+        AccessDeniedException.class
     })
     @ResponseBody
     ResponseEntity<Object> handleDeniedException(Exception ex, HttpServletRequest request) {

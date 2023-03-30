@@ -1,8 +1,8 @@
 package com.revengemission.sso.oauth2.server.service.impl;
 
-import com.github.dozermapper.core.Mapper;
 import com.revengemission.sso.oauth2.server.domain.NotImplementException;
 import com.revengemission.sso.oauth2.server.domain.ScopeDefinition;
+import com.revengemission.sso.oauth2.server.mapper.ScopeDefinitionMapper;
 import com.revengemission.sso.oauth2.server.persistence.entity.ScopeDefinitionEntity;
 import com.revengemission.sso.oauth2.server.persistence.repository.ScopeDefinitionRepository;
 import com.revengemission.sso.oauth2.server.service.ScopeDefinitionService;
@@ -16,13 +16,13 @@ public class ScopeDefinitionServiceImpl implements ScopeDefinitionService {
     ScopeDefinitionRepository scopeDefinitionRepository;
 
     @Autowired
-    Mapper dozerMapper;
+    ScopeDefinitionMapper mapper;
 
     @Override
     public ScopeDefinition findByScope(String scope) throws NotImplementException {
         ScopeDefinitionEntity scopeDefinitionEntity = scopeDefinitionRepository.findByScope(scope);
         if (scopeDefinitionEntity != null) {
-            return dozerMapper.map(scopeDefinitionEntity, ScopeDefinition.class);
+            return mapper.entityToDto(scopeDefinitionEntity);
         } else {
             return null;
         }

@@ -61,7 +61,7 @@ public class CustomAuthenticationProvider extends AbstractUserDetailsAuthenticat
         if (details instanceof CustomWebAuthenticationDetails) {
             CustomWebAuthenticationDetails customWebAuthenticationDetails = (CustomWebAuthenticationDetails) details;
             String captcha = captchaService.getCaptcha(CachesEnum.GraphCaptchaCache, customWebAuthenticationDetails.getGraphId());
-            if (!StringUtils.equalsIgnoreCase(customWebAuthenticationDetails.getInputVerificationCode(), captcha)) {
+            if (passwordCaptcha && !StringUtils.equalsIgnoreCase(customWebAuthenticationDetails.getInputVerificationCode(), captcha)) {
                 throw new VerificationCodeException("验证码错误！");
             }
             captchaService.removeCaptcha(CachesEnum.GraphCaptchaCache, customWebAuthenticationDetails.getGraphId());

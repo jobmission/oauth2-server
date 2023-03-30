@@ -12,6 +12,7 @@ import org.apache.commons.text.StringEscapeUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.beans.factory.annotation.Value;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
@@ -26,11 +27,11 @@ import java.util.UUID;
 public class SignInAndUpController {
     private Logger log = LoggerFactory.getLogger(this.getClass());
 
-    @Autowired
-    UserAccountService userAccountService;
+    @Value("${signin.captcha:false}")
+    private boolean passwordCaptcha;
 
     @Autowired
-    OauthClientService oauthClientService;
+    UserAccountService userAccountService;
 
     @Autowired
     PasswordEncoder passwordEncoder;
@@ -47,6 +48,7 @@ public class SignInAndUpController {
         if (StringUtils.isNotEmpty(error)) {
             model.addAttribute("error", error);
         }
+        model.addAttribute("passwordCaptcha", passwordCaptcha);
         return "signIn";
     }
 
@@ -60,11 +62,11 @@ public class SignInAndUpController {
     }
 
     @ResponseBody
-    @PostMapping("/oauth/signUp")
-    public ResponseResult<Object> handleOauthSignUp(@RequestParam(value = GlobalConstant.VERIFICATION_CODE) String verificationCode,
-                                                    @RequestParam(value = "graphId") String graphId,
-                                                    @RequestParam(value = "username") String username,
-                                                    @RequestParam(value = "password") String password) {
+    @PostMapping("/signUp")
+    public ResponseResult<Object> handleSignUp(@RequestParam(value = GlobalConstant.VERIFICATION_CODE) String verificationCode,
+                                               @RequestParam(value = "graphId") String graphId,
+                                               @RequestParam(value = "username") String username,
+                                               @RequestParam(value = "password") String password) {
 
         ResponseResult<Object> responseResult = new ResponseResult<>();
         if (StringUtils.isAnyBlank(graphId, username, password)) {
@@ -90,7 +92,7 @@ public class SignInAndUpController {
 
         if (CheckPasswordStrength.check(password) < 4) {
             responseResult.setStatus(GlobalConstant.ERROR);
-            responseResult.setMessage("密码应包含字母、数字、符号");
+            responseResult.setMessage("密码安全等级较低，应包含字母、数字、符号");
             return responseResult;
         }
 

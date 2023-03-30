@@ -8,11 +8,8 @@ import java.time.LocalDateTime;
 @Component
 public class Task {
 
-    /**
-     * 每天凌晨2点30分0秒执行
-     */
-    @Scheduled(cron = "0 30 2 * * *")
-    public void task2() {
+    @Scheduled(cron = "0 0 * * * *")
+    public void task() {
         System.out.println("[ 当前时间" + LocalDateTime.now() + " ]");
     }
 }

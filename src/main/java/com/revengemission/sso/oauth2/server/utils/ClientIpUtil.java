@@ -1,6 +1,7 @@
 package com.revengemission.sso.oauth2.server.utils;
 
-import javax.servlet.http.HttpServletRequest;
+
+import jakarta.servlet.http.HttpServletRequest;
 
 public class ClientIpUtil {
     public static String getIpAddress(HttpServletRequest request) {

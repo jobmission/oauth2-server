@@ -24,7 +24,7 @@ public class CustomCorsConfiguration {
 ///        corsConfiguration.addExposedHeader("head1");
 ///        corsConfiguration.addExposedHeader("Location");
         UrlBasedCorsConfigurationSource urlBasedCorsConfigurationSource = new UrlBasedCorsConfigurationSource();
-        urlBasedCorsConfigurationSource.registerCorsConfiguration("/oauth/**", corsConfiguration);
+        urlBasedCorsConfigurationSource.registerCorsConfiguration("/oauth2/**", corsConfiguration);
         urlBasedCorsConfigurationSource.registerCorsConfiguration("/user/me", corsConfiguration);
         urlBasedCorsConfigurationSource.registerCorsConfiguration("/captcha/**", corsConfiguration);
         return new CorsFilter(urlBasedCorsConfigurationSource);
