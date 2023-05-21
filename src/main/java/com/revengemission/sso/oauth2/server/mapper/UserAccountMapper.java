@@ -5,9 +5,10 @@ import com.revengemission.sso.oauth2.server.persistence.entity.UserAccountEntity
 import org.mapstruct.Mapper;
 import org.mapstruct.Mapping;
 import org.mapstruct.MappingConstants;
+import org.mapstruct.ReportingPolicy;
 import org.mapstruct.factory.Mappers;
 
-@Mapper(componentModel = MappingConstants.ComponentModel.SPRING)
+@Mapper(unmappedTargetPolicy = ReportingPolicy.IGNORE, componentModel = MappingConstants.ComponentModel.SPRING)
 public interface UserAccountMapper {
     UserAccountMapper INSTANCE = Mappers.getMapper(UserAccountMapper.class);
 

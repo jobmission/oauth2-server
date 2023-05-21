@@ -5,7 +5,17 @@
         xsi:schemaLocation="http://www.liquibase.org/xml/ns/dbchangelog
      http://www.liquibase.org/xml/ns/dbchangelog/dbchangelog-3.1.xsd">
 
-    <changeSet id="init-data" author="author">
+<!--    <changeSet id="create-table-spring" author="spring">-->
+<!--        <sqlFile path="classpath:org/springframework/security/oauth2/server/authorization/oauth2-authorization-schema.sql"/>-->
+<!--        <sqlFile path="classpath:org/springframework/security/oauth2/server/authorization/oauth2-authorization-consent-schema.sql"/>-->
+<!--        <sqlFile path="classpath:org/springframework/security/oauth2/server/authorization/client/oauth2-registered-client-schema.sql"/>-->
+<!--    </changeSet>-->
+
+    <changeSet id="create-table" author="mission">
+        <sqlFile path="classpath:sql/create-table.sql"/>
+    </changeSet>
+
+    <changeSet id="init-data" author="mission">
         <sqlFile path="classpath:sql/init-data.sql"/>
     </changeSet>
 

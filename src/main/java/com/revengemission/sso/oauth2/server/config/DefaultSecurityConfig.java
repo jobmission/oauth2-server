@@ -2,12 +2,10 @@ package com.revengemission.sso.oauth2.server.config;
 
 import com.revengemission.sso.oauth2.server.domain.RoleEnum;
 import com.revengemission.sso.oauth2.server.service.CaptchaService;
-import jakarta.servlet.http.HttpServletRequest;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
-import org.springframework.security.authentication.AuthenticationDetailsSource;
 import org.springframework.security.authentication.AuthenticationProvider;
 import org.springframework.security.config.annotation.web.builders.HttpSecurity;
 import org.springframework.security.config.annotation.web.configuration.EnableWebSecurity;
@@ -17,7 +15,7 @@ import org.springframework.security.core.userdetails.UserDetailsService;
 import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.security.web.SecurityFilterChain;
-import org.springframework.security.web.authentication.WebAuthenticationDetails;
+import org.springframework.security.web.authentication.AuthenticationSuccessHandler;
 import org.springframework.security.web.session.HttpSessionEventPublisher;
 
 /**
@@ -46,9 +44,6 @@ public class DefaultSecurityConfig {
     @Autowired
     CustomAccessDeniedHandler customAccessDeniedHandler;
 
-    @Autowired
-    AuthenticationDetailsSource<HttpServletRequest, WebAuthenticationDetails> authenticationDetailsSource;
-
     @Bean
     PasswordEncoder passwordEncoder() {
         return new BCryptPasswordEncoder();
@@ -57,32 +52,40 @@ public class DefaultSecurityConfig {
     @Bean
     SecurityFilterChain defaultSecurityFilterChain(HttpSecurity http) throws Exception {
         http
-            .authorizeHttpRequests()
-            .requestMatchers("/assets/**", "/favicon.ico", "/signIn", "/signUp", "/security_check", "/404", "/captcha/**", "/oauth2/token", "/.well-known/**").permitAll()
-            .requestMatchers("/management/**").hasAnyAuthority(RoleEnum.ROLE_SUPER.name())
-            .requestMatchers("/oauth2/signUp").permitAll()
-            .anyRequest().authenticated()
-            .and()
-            .csrf()
-            .disable()
-            .logout()
-            .logoutUrl("/logout")
-            .logoutSuccessUrl("/signIn?out")
-            .and()
-            .formLogin()
-            .authenticationDetailsSource(authenticationDetailsSource)
-            .failureHandler(customAuthenticationFailureHandler)
-            .successHandler(customAuthenticationSuccessHandler)
-            .loginPage("/signIn")
-            .loginProcessingUrl("/security_check");
-        http.exceptionHandling().accessDeniedHandler(customAccessDeniedHandler);
+            .authorizeHttpRequests(requestMatcherRegistry ->
+                requestMatcherRegistry.requestMatchers("/assets/**", "/favicon.ico", "/signIn", "/signUp", "/security_check", "/404", "/captcha/**", "/oauth2/token", "/.well-known/**").permitAll()
+                    .requestMatchers("/management/**").hasAnyAuthority(RoleEnum.ROLE_SUPER.name())
+                    .requestMatchers("/oauth2/signUp").permitAll()
+                    .anyRequest().authenticated())
+            .csrf(csrfCustomizer -> csrfCustomizer.disable())
+            .logout(logoutCustomizer ->
+                logoutCustomizer
+                    .logoutUrl("/logout")
+                    .logoutSuccessUrl("/signIn?out"))
+            .formLogin(formLoginCustomizer ->
+                formLoginCustomizer
+                    .failureHandler(customAuthenticationFailureHandler)
+                    .successHandler(customAuthenticationSuccessHandler)
+                    .loginPage("/signIn")
+                    .loginProcessingUrl("/security_check"))
+            .oauth2Login(oauth2Login ->
+                oauth2Login
+                    .loginPage("/signIn")
+                    .successHandler(authenticationSuccessHandler())
+            )
+            .exceptionHandling(exceptionHandlingCustomizer -> exceptionHandlingCustomizer.accessDeniedHandler(customAccessDeniedHandler));
+
         return http.build();
     }
 
-    @Bean
-    AuthenticationProvider authenticationProvider() {
-        return new CustomAuthenticationProvider(userDetailsService, passwordEncoder(), captchaService, passwordCaptcha);
+    private AuthenticationSuccessHandler authenticationSuccessHandler() {
+        return new FederatedIdentityAuthenticationSuccessHandler();
     }
+
+//    @Bean
+//    AuthenticationProvider authenticationProvider() {
+//        return new CustomAuthenticationProvider(userDetailsService, passwordEncoder(), captchaService, passwordCaptcha);
+//    }
 
     @Bean
     SessionRegistry sessionRegistry() {

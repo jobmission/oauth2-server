@@ -3,29 +3,30 @@ package com.revengemission.sso.oauth2.server.service.impl;
 import com.revengemission.sso.oauth2.server.config.CachesEnum;
 import com.revengemission.sso.oauth2.server.persistence.entity.OauthClientEntity;
 import com.revengemission.sso.oauth2.server.persistence.repository.OauthClientRepository;
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.cache.Cache;
 import org.springframework.cache.CacheManager;
+import org.springframework.security.oauth2.client.registration.ClientRegistration;
 import org.springframework.security.oauth2.core.AuthorizationGrantType;
 import org.springframework.security.oauth2.core.ClientAuthenticationMethod;
 import org.springframework.security.oauth2.server.authorization.client.RegisteredClient;
 import org.springframework.security.oauth2.server.authorization.client.RegisteredClientRepository;
 import org.springframework.security.oauth2.server.authorization.settings.TokenSettings;
-import org.springframework.stereotype.Service;
 import org.springframework.util.StringUtils;
 
 import java.time.Duration;
 import java.util.Arrays;
 import java.util.stream.Collectors;
 
-@Service
 public class RegisteredClientRepositoryImpl implements RegisteredClientRepository {
 
-    @Autowired
     OauthClientRepository oauthClientRepository;
 
-    @Autowired
     CacheManager cacheManager;
+
+    public RegisteredClientRepositoryImpl(OauthClientRepository oauthClientRepository, CacheManager cacheManager) {
+        this.oauthClientRepository = oauthClientRepository;
+        this.cacheManager = cacheManager;
+    }
 
     @Override
     public void save(RegisteredClient registeredClient) {
@@ -84,4 +85,5 @@ public class RegisteredClientRepositoryImpl implements RegisteredClientRepositor
             .build();
         return registeredClient;
     }
+
 }

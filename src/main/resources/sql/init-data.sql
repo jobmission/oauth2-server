@@ -10,7 +10,7 @@ values (1, 'openid', 'openid'),(2, 'profile', '昵称、头像')
 ON DUPLICATE KEY UPDATE version = version + 1;
 
 insert into role_entity(id, role_name)
-values (1, 'ROLE_SUPER'), (2, 'ROLE_USER')
+values (1, 'ROLE_SUPER'), (2, 'ROLE_USER'), (3, 'ROLE_OPERATOR')
 ON DUPLICATE KEY UPDATE version = version + 1;
 
 INSERT INTO user_account_entity (id, username, password, account_open_code, nick_name, remarks)
@@ -19,6 +19,6 @@ VALUES (1, 'zhangsan', '$2a$10$gcrWom7ubcRaVD1.6ZIrIeJP0mtPLH5J9V/.8Qth59lZ4B/5H
        ON DUPLICATE KEY UPDATE version = version + 1;
 
 insert into user_account_entity_roles(user_id, role_id)
-values (1, 1), (2, 2)
+values (1, 1),(1, 3), (2, 2), (2, 3)
 ON DUPLICATE KEY UPDATE role_id = role_id;
 
