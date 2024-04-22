@@ -9,43 +9,34 @@ public class JsonObjects<T> implements Serializable {
 	 * 
 	 */
 	private static final long serialVersionUID = 5382742283722856873L;
-	private List<T> data;
-    private int draw;
-    private long recordsFiltered;
-    private long recordsTotal;
+	private List<T> rows;
+    private long total;
+    private long pages;
 
-    public List<T> getData() {
-        if (data == null) {
-            data = new ArrayList<>();
+    public List<T> getRows() {
+        if (rows == null) {
+            rows = new ArrayList<>();
         }
-        return data;
+        return rows;
     }
 
-    public void setData(List<T> data) {
-        this.data = data;
+    public void setRows(List<T> rows) {
+        this.rows = rows;
     }
 
-    public int getDraw() {
-        return draw;
+    public long getTotal() {
+        return total;
     }
 
-    public void setDraw(int draw) {
-        this.draw = draw;
+    public void setTotal(long total) {
+        this.total = total;
     }
 
-    public long getRecordsFiltered() {
-        return recordsFiltered;
+    public long getPages() {
+        return pages;
     }
 
-    public void setRecordsFiltered(long recordsFiltered) {
-        this.recordsFiltered = recordsFiltered;
-    }
-
-    public long getRecordsTotal() {
-        return recordsTotal;
-    }
-
-    public void setRecordsTotal(long recordsTotal) {
-        this.recordsTotal = recordsTotal;
+    public void setPages(long pages) {
+        this.pages = pages;
     }
 }

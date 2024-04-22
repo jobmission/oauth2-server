@@ -57,9 +57,9 @@ public class UserAccountServiceImpl implements UserAccountService {
             page = userAccountRepository.findByUsernameLike(username + "%", pageable);
         }
         if (page.getContent() != null && page.getContent().size() > 0) {
-            jsonObjects.setRecordsTotal(page.getTotalElements());
-            jsonObjects.setRecordsFiltered(page.getTotalElements());
-            page.getContent().forEach(u -> jsonObjects.getData().add(mapper.entityToDto(u)));
+            jsonObjects.setTotal(page.getTotalElements());
+            jsonObjects.setPages(page.getTotalPages());
+            page.getContent().forEach(u -> jsonObjects.getRows().add(mapper.entityToDto(u)));
         }
         return jsonObjects;
 

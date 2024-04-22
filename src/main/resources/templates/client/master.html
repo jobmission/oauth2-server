@@ -6,9 +6,8 @@
     <title>Client管理</title>
     <link rel="stylesheet" href="../../static/assets/bootstrap/css/bootstrap.min.css"
           th:href="@{/assets/bootstrap/css/bootstrap.min.css}"/>
-    <!-- The link to the CSS that the grid needs -->
-    <link rel="stylesheet" type="text/css" media="screen" href="../../static/assets/DataTables/datatables.min.css"
-          th:href="@{/assets/DataTables/datatables.min.css}"/>
+    <link rel="stylesheet" type="text/css" media="screen" href="../../static/assets/bootstrap-table/bootstrap-table.min.css"
+          th:href="@{/assets/bootstrap-table/bootstrap-table.min.css}"/>
     <script src="../../static/assets/jquery.min.js"
             th:src="@{/assets/jquery.min.js}"></script>
 </head>
@@ -65,19 +64,7 @@
         <div class="content-wrapper">
             <!-- Main content -->
             <section class="content gridContainer">
-                <table id="myTable" class="table table-striped table-bordered">
-                    <thead>
-                    <tr>
-                        <th>id</th>
-                        <th>clientId</th>
-                        <th>scope</th>
-                        <th>grantTypes</th>
-                        <th>redirectUri</th>
-                        <th>remarks</th>
-                        <th>时间</th>
-                        <th>操作</th>
-                    </tr>
-                    </thead>
+                <table id="table">
                 </table>
                 <br/>
                 <button type="button" class="btn btn-info" id="createNew">添加新纪录</button>
@@ -155,8 +142,8 @@
         th:src="@{/assets/moment-with-locales.min.js}"></script>
 <script th:src="@{/assets/localforage.min.js}" src="../static/assets/localforage.min.js"></script>
 
-<script type="text/javascript" charset="utf8" src="../../static/assets/DataTables/datatables.min.js"
-        th:src="@{/assets/DataTables/datatables.min.js}"></script>
+<script type="text/javascript" charset="utf8" src="../../static/assets/bootstrap-table/bootstrap-table.min.js"
+        th:src="@{/assets/bootstrap-table/bootstrap-table.min.js}"></script>
 
 <th:block th:inline="javascript">
     <script>
@@ -194,82 +181,73 @@
 
         $(document).ready(function () {
 
-            var table = $('#myTable').DataTable({
-                paging: true,
-                serverSide: true,
-                orderMulti: false,
-                searching: false,
-                responsive: true,
-                ajax: {
-                    xhrFields: {withCredentials: true},
-                    crossDomain: true,
-                    url: '/management/client/list',
-                    dataSrc: 'data',
-                    data: function (data) {
-                        var columnIndex, sortOrder, sortField;
-                        for (var i = 0, len = data.order.length; i < len; i++) {
-                            columnIndex = data.order[i].column;
-                            sortOrder = data.order[i].dir;
+            let $table = $('#table');
+            $table.bootstrapTable({
+                url: '/management/client/list',
+                dataField:'rows',
+                uniqueId:'id',
+                toolbar: '#toolbar',
+                clickEdit: true,
+                showToggle: true,
+                pagination: true,       //显示分页条
+                showColumns: true,
+                showPaginationSwitch: true,     //显示切换分页按钮
+                showRefresh: true,      //显示刷新按钮
+                showPaginationSwitch: false,
+                sidePagination:'server',
+                //clickToSelect: true,  //点击row选中radio或CheckBox
+                columns: [{
+                    checkbox: true
+                }, {
+                    field: 'id',
+                    title: 'ID',
+                    sortable: false
+                }, {
+                    field: 'clientId',
+                    title: 'clientId',
+                    sortable: true
+                }, {
+                    field: 'scope',
+                    title: 'scope',
+                    sortable: true
+                }, {
+                    field: 'authorizedGrantTypes',
+                    title: 'authorizedGrantTypes',
+                    sortable: false
+                }, {
+                    field: 'webServerRedirectUri',
+                    title: 'webServerRedirectUri',
+                    sortable: false
+                }, {
+                    field: 'remarks',
+                    title: 'remarks',
+                    sortable: false
+                }, {
+                    field: 'dateCreated',
+                    title: 'dateCreated',
+                    sortable: false
+                }, {
+                    field: '',
+                    title: '操作',
+                    formatter: function (value, row, index){
+                        var btnString = "";
+                        if (row.recordStatus < 0) {
+                            btnString = "<button class='btn btn-secondary btn-sm btn-status' data-client-id='" + row.id + "' data-record-status='" + row.recordStatus + "'>启用</button>";
+                        } else {
+                            btnString = "<button class='btn btn-success btn-sm btn-status' data-client-id='" + row.id + "' data-record-status='" + row.recordStatus + "'>禁用</button>";
                         }
-                        delete data.order;
-                        for (var i = 0, len = data.columns.length; i < len; i++) {
-                            if (i == columnIndex) {
-                                sortField = data.columns[i].data;
-                            }
-                        }
-                        delete data.columns;
-
-                        if (data.search.value) {
-                            data.searchValue = data.search.value;
-                        }
-
-                        delete data.search;
-
-                        data.sortField = sortField;
-                        data.sortOrder = sortOrder;
+                        btnString += "&nbsp;&nbsp;&nbsp;<button class='btn btn-primary btn-sm btn-edit' data-client-id='" + row.id + "'>编辑</button>";
+                        return btnString;
                     }
-                },
-                columns: [
-                    {data: 'id'},
-                    {data: 'clientId'},
-                    {data: 'scope', bSortable: false},
-                    {
-                        data: 'authorizedGrantTypes',
-                        bSortable: false,
-                        render: function (data, type, row) {
-                            var gts = data.split(",");
-                            var result = "";
-                            for (var j = 0; j < gts.length; j++) {
-                                result = result + gts[j] + "\n";
-                            }
-                            return result;
-                        }
-                    },
-                    {data: 'webServerRedirectUri', bSortable: false},
-                    {data: 'remarks', defaultContent: "", bSortable: false},
-                    {
-                        data: 'dateCreated',
-                        render: function (data, type, row) {
-                            return formatDate(data);
-                        }
-                    }
-                ],
-                columnDefs: [
-                    {
-                        "targets": [7],
-                        "data": "id",
-                        "render": function (data, type, row, meta) {
-                            var btnString = "";
-                            if (row.recordStatus < 0) {
-                                btnString = "<button class='btn btn-secondary btn-sm btn-status' data-client-id='" + data + "' data-record-status='" + row.recordStatus + "'>启用</button>";
-                            } else {
-                                btnString = "<button class='btn btn-success btn-sm btn-status' data-client-id='" + data + "' data-record-status='" + row.recordStatus + "'>禁用</button>";
-                            }
-                            btnString += "&nbsp;&nbsp;&nbsp;<button class='btn btn-primary btn-sm btn-edit' data-client-id='" + data + "'>编辑</button>";
-                            return btnString;
-                        }
-                    }
-                ]
+                }],
+                onLoadError:function(status, jqXHR) {
+                    Swal.fire({
+                      icon: 'error',
+                      title: status,
+                      text: 'Something went wrong!',
+                      timer: 1500
+                    })
+                }
             });
 
             $("#createNew").click(function () {
@@ -285,7 +263,7 @@
                 $("#message").removeClass("bg-success").html("");
             });
 
-            $("#myTable").on("click", ".btn-edit", function () {
+            $("#table").on("click", ".btn-edit", function () {
                 var clientId = $(this).data("client-id");
                 $("#detailsForm").removeClass("d-none");
                 var url = "/management/client/details?id=" + clientId;
@@ -319,7 +297,7 @@
                     },
                     success: function (data) {
                         if (data.status == 1) {
-                            table.ajax.reload(null, false); // 刷新表格数据，分页信息不会重置
+                            $table.bootstrapTable('refresh')
                             $("#createNew").trigger("click");
                             $("#detailsForm").addClass("d-none");
                             alert("保存成功!");
@@ -332,7 +310,7 @@
             });
 
 
-            $("#myTable").on("click", ".btn-status", function () {
+            $("#table").on("click", ".btn-status", function () {
                 var clientId = $(this).data("client-id");
                 var deleteOperation = $(this).data("record-status");
                 $.ajax({
@@ -340,7 +318,7 @@
                     url: '/management/client/details',
                     data: {id: clientId, deleteOperation: deleteOperation},
                     success: function (data) {
-                        table.ajax.reload(null, false); // 刷新表格数据，分页信息不会重置
+                        $table.bootstrapTable('refresh')
                     }
                 });
 

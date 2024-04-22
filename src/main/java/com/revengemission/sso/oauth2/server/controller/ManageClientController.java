@@ -29,16 +29,13 @@ public class ManageClientController {
 
     @GetMapping(value = "/list")
     @ResponseBody
-    public JsonObjects<OauthClient> listObjects(@RequestParam(value = "searchValue", required = false, defaultValue = "") String searchValue,
-                                                @RequestParam(value = "draw", defaultValue = "0") int draw,
-                                                @RequestParam(value = "length", defaultValue = "10") Integer pageSize,
-                                                @RequestParam(value = "start", defaultValue = "0") Integer start,
-                                                @RequestParam(value = "sortField", required = false, defaultValue = "id") String sortField,
-                                                @RequestParam(value = "sortOrder", required = false, defaultValue = "desc") String sortOrder) {
-        int pageNum = start / 10 + 1;
-        JsonObjects<OauthClient> result = oauthClientService.list(pageNum, pageSize, sortField, sortOrder);
-        result.setDraw(draw + 1);
-        return result;
+    public JsonObjects<OauthClient> listObjects(@RequestParam(value = "search", required = false) String searchValue,
+                                                @RequestParam(value = "offset", defaultValue = "0") int offset,
+                                                @RequestParam(value = "limit", defaultValue = "20") int limit,
+                                                @RequestParam(value = "sortField", defaultValue = "id") String sortField,
+                                                @RequestParam(value = "sortOrder", defaultValue = "desc") String sortOrder) {
+        int pageNum = offset / limit + 1;
+        return oauthClientService.list(pageNum, limit, sortField, sortOrder);
     }
 
     @GetMapping(value = "/details")
@@ -91,6 +88,7 @@ public class ManageClientController {
                 object.setRemarks(remarks);
             }
             oauthClientService.updateById(object);
+            responseResult.setStatus(GlobalConstant.SUCCESS);
         } else {
             if (StringUtils.isAnyEmpty(clientId, clientSecret, authorities, scope, authorizedGrantTypes, webServerRedirectUri)) {
                 responseResult.setStatus(GlobalConstant.ERROR);
@@ -104,6 +102,7 @@ public class ManageClientController {
                 object.setWebServerRedirectUri(webServerRedirectUri);
                 object.setRemarks(remarks);
                 oauthClientService.create(object);
+                responseResult.setStatus(GlobalConstant.SUCCESS);
             }
 
         }

@@ -13,7 +13,7 @@
     <parent>
         <groupId>org.springframework.boot</groupId>
         <artifactId>spring-boot-starter-parent</artifactId>
-        <version>3.1.0</version>
+        <version>3.2.5</version>
         <relativePath/> <!-- lookup parent from repository -->
     </parent>
 
@@ -22,7 +22,8 @@
         <project.reporting.outputEncoding>UTF-8</project.reporting.outputEncoding>
         <java.version>17</java.version>
         <org.mapstruct.version>1.5.5.Final</org.mapstruct.version>
-        <commons-text.version>1.11.0</commons-text.version>
+        <commons-text.version>1.12.0</commons-text.version>
+        <tianai-captcha.version>1.4.1</tianai-captcha.version>
     </properties>
 
     <dependencies>
@@ -100,12 +101,6 @@
             <version>${org.mapstruct.version}</version>
         </dependency>
 
-        <dependency>
-            <groupId>com.revengemission.commons</groupId>
-            <artifactId>captcha</artifactId>
-            <version>0.7</version>
-        </dependency>
-
         <!-- cache -->
         <dependency>
             <groupId>org.springframework.boot</groupId>
@@ -114,6 +109,12 @@
         <dependency>
             <groupId>com.github.ben-manes.caffeine</groupId>
             <artifactId>caffeine</artifactId>
+        </dependency>
+
+        <dependency>
+            <groupId>cloud.tianai.captcha</groupId>
+            <artifactId>tianai-captcha-springboot-starter</artifactId>
+            <version>${tianai-captcha.version}</version>
         </dependency>
 
         <dependency>
@@ -146,6 +147,8 @@
                 <artifactId>maven-resources-plugin</artifactId>
                 <configuration>
                     <nonFilteredFileExtensions>
+                        <nonFilteredFileExtension>js</nonFilteredFileExtension>
+                        <nonFilteredFileExtension>css</nonFilteredFileExtension>
                         <nonFilteredFileExtension>ttf</nonFilteredFileExtension>
                         <nonFilteredFileExtension>woff</nonFilteredFileExtension>
                         <nonFilteredFileExtension>jks</nonFilteredFileExtension>
