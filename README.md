@@ -29,7 +29,7 @@ authorization_code, refresh_token
 ````
 #### 接口调用
 ````
-1. Get /oauth2/authorize?client_id=SampleClientId&response_type=code&redirect_uri=http://client.sso.com/login/oauth2/code/sso-loginscope=openid profile
+1. Get /oauth2/authorize?client_id=SampleClientId&response_type=code&redirect_uri=http://client.sso.com/login/oauth2/code/sso-login&scope=openid profile
 用户同意授权后服务端响应,浏览器重定向到：http://client.sso.com/login?code=1E37Xk，接收code,然后后端调用步骤2获取token
 2. Post /oauth/token?client_id=SampleClientId&client_secret=tgb.258&grant_type=authorization_code&redirect_uri=http://client.sso.com/login/oauth2/code/sso-login&code=1E37Xk
 响应：
@@ -53,31 +53,6 @@ Authorization: Bearer a.b.c
 #### 刷新token</br>
 ````
 Post /oauth2/token?client_id=SampleClientId&client_secret=tgb.258&grant_type=refresh_token&refresh_token=d.e.f
-````
-
-#### 注册新用户接口</br>
-````
-1、获取验证码序号
- Get /captcha/graph
- 响应：
- {
-   "graphUrl": "/captcha/graph/print?graphId=32a41c71-d74a-4aa6-b73c-af3627e82485",
-   "graphId": "32a41c71-d74a-4aa6-b73c-af3627e82485",
-   "ttl": 300,
-   "status": 1
- }
-2、显示验证码
- Get /captcha/graph/print?graphId=a32a41c71-d74a-4aa6-b73c-af3627e82485
- 响应：
- 图片流
-3、调用注册接口 
- Post /signUp?username=lisi&password=yourpass0!&graphId=a32a41c71-d74a-4aa6-b73c-af3627e82485&verificationCode=1324
- 响应：
- {
-     "status": 1,
-     "timestamp": 1561729652797
- }
- 
 ````
 
 #### 启动方法</br>

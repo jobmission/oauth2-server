@@ -1,9 +1,6 @@
 package com.revengemission.sso.oauth2.server.controller;
 
-import com.revengemission.sso.oauth2.server.config.CachesEnum;
 import com.revengemission.sso.oauth2.server.domain.*;
-import com.revengemission.sso.oauth2.server.service.CaptchaService;
-import com.revengemission.sso.oauth2.server.service.OauthClientService;
 import com.revengemission.sso.oauth2.server.service.RoleService;
 import com.revengemission.sso.oauth2.server.service.UserAccountService;
 import com.revengemission.sso.oauth2.server.utils.CheckPasswordStrength;
@@ -37,9 +34,6 @@ public class SignInAndUpController {
     PasswordEncoder passwordEncoder;
 
     @Autowired
-    CaptchaService captchaService;
-
-    @Autowired
     RoleService roleService;
 
     @GetMapping("/signIn")
@@ -63,13 +57,11 @@ public class SignInAndUpController {
 
     @ResponseBody
     @PostMapping("/signUp")
-    public ResponseResult<Object> handleSignUp(@RequestParam(value = GlobalConstant.VERIFICATION_CODE) String verificationCode,
-                                               @RequestParam(value = "graphId") String graphId,
-                                               @RequestParam(value = "username") String username,
+    public ResponseResult<Object> handleSignUp(@RequestParam(value = "username") String username,
                                                @RequestParam(value = "password") String password) {
 
         ResponseResult<Object> responseResult = new ResponseResult<>();
-        if (StringUtils.isAnyBlank(graphId, username, password)) {
+        if (StringUtils.isAnyBlank(username, password)) {
             responseResult.setStatus(GlobalConstant.ERROR);
             responseResult.setMessage("请检查输入");
             return responseResult;
@@ -96,13 +88,6 @@ public class SignInAndUpController {
             return responseResult;
         }
 
-        String captcha = captchaService.getCaptcha(CachesEnum.GraphCaptchaCache, graphId);
-        if (!StringUtils.equalsIgnoreCase(verificationCode, captcha)) {
-            responseResult.setStatus(GlobalConstant.ERROR);
-            responseResult.setMessage("验证码错误");
-            return responseResult;
-        }
-
         UserAccount userAccount = new UserAccount();
         Role userRole = roleService.findByRoleName(RoleEnum.ROLE_USER.name());
         userAccount.getRoles().add(userRole);
@@ -111,8 +96,6 @@ public class SignInAndUpController {
         userAccount.setAccountOpenCode(UUID.randomUUID().toString());
         try {
             userAccountService.create(userAccount);
-            //移除验证码
-            captchaService.removeCaptcha(CachesEnum.GraphCaptchaCache, graphId);
         } catch (AlreadyExistsException e) {
             if (log.isErrorEnabled()) {
                 log.error("create user exception", e);

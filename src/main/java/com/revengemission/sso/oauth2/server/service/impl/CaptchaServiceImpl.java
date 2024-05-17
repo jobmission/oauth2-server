@@ -53,7 +53,7 @@ public class CaptchaServiceImpl implements CaptchaService {
     public boolean checkCaptchaTimes(CachesEnum cachesEnum, String key) {
         ValueWrapper valueWrapper = cacheManager.getCache(CachesEnum.CaptchaTimesCache.name()).get(key);
         if (valueWrapper != null) {
-            int times = Integer.valueOf(String.valueOf(valueWrapper.get()));
+            int times = Integer.parseInt(String.valueOf(valueWrapper.get()));
             if (times < captchaMaxTimes) {
                 cacheManager.getCache(CachesEnum.CaptchaTimesCache.name()).put(key, times + 1);
                 return true;

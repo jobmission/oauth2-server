@@ -98,6 +98,51 @@ CREATE TABLE scope_definition_entity (
   UNIQUE KEY (scope)
 ) ENGINE=InnoDB;
 
+CREATE TABLE oauth2_authorization_consent (
+    registered_client_id varchar(255) NOT NULL,
+    principal_name varchar(255) NOT NULL,
+    authorities varchar(1000) NOT NULL,
+    PRIMARY KEY (registered_client_id, principal_name)
+);
+
+CREATE TABLE oauth2_authorization (
+    id varchar(255) NOT NULL,
+    registered_client_id varchar(100) NOT NULL,
+    principal_name varchar(100) NOT NULL,
+    authorization_grant_type varchar(50) NOT NULL,
+    authorized_scopes varchar(50) DEFAULT NULL,
+    attributes varchar(3000) DEFAULT NULL,
+    state varchar(100) DEFAULT NULL,
+    authorization_code_value varchar(255) DEFAULT NULL,
+    authorization_code_issued_at timestamp DEFAULT NULL,
+    authorization_code_expires_at timestamp DEFAULT NULL,
+    authorization_code_metadata varchar(255) DEFAULT NULL,
+    access_token_value varchar(1000) DEFAULT NULL,
+    access_token_issued_at timestamp DEFAULT NULL,
+    access_token_expires_at timestamp DEFAULT NULL,
+    access_token_metadata varchar(1000) DEFAULT NULL,
+    access_token_type varchar(100) DEFAULT NULL,
+    access_token_scopes varchar(100) DEFAULT NULL,
+    refresh_token_value varchar(1000) DEFAULT NULL,
+    refresh_token_issued_at timestamp DEFAULT NULL,
+    refresh_token_expires_at timestamp DEFAULT NULL,
+    refresh_token_metadata varchar(1000) DEFAULT NULL,
+    oidc_id_token_value varchar(500) DEFAULT NULL,
+    oidc_id_token_issued_at timestamp DEFAULT NULL,
+    oidc_id_token_expires_at timestamp DEFAULT NULL,
+    oidc_id_token_metadata varchar(1000) DEFAULT NULL,
+    oidc_id_token_claims varchar(1000) DEFAULT NULL,
+    user_code_value varchar(500) DEFAULT NULL,
+    user_code_issued_at timestamp DEFAULT NULL,
+    user_code_expires_at timestamp DEFAULT NULL,
+    user_code_metadata varchar(1000) DEFAULT NULL,
+    device_code_value varchar(500) DEFAULT NULL,
+    device_code_issued_at timestamp DEFAULT NULL,
+    device_code_expires_at timestamp DEFAULT NULL,
+    device_code_metadata varchar(1000) DEFAULT NULL,
+    PRIMARY KEY (id)
+);
+
 CREATE TABLE third_party_account_entity (
   id bigint NOT NULL AUTO_INCREMENT,
   date_created datetime NOT NULL DEFAULT CURRENT_TIMESTAMP,
