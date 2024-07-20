@@ -13,7 +13,7 @@
     <parent>
         <groupId>org.springframework.boot</groupId>
         <artifactId>spring-boot-starter-parent</artifactId>
-        <version>3.3.1</version>
+        <version>3.3.2</version>
         <relativePath/> <!-- lookup parent from repository -->
     </parent>
 
@@ -23,7 +23,7 @@
         <java.version>17</java.version>
         <org.mapstruct.version>1.5.5.Final</org.mapstruct.version>
         <commons-text.version>1.12.0</commons-text.version>
-        <tianai-captcha.version>1.4.1</tianai-captcha.version>
+        <tianai-captcha.version>1.5.0</tianai-captcha.version>
     </properties>
 
     <dependencies>
