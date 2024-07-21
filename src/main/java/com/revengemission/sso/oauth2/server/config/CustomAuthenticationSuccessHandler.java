@@ -47,18 +47,20 @@ public class CustomAuthenticationSuccessHandler extends SavedRequestAwareAuthent
             redirectUrl = savedRequest.getRedirectUrl();
         }
 
+        boolean isAjax = "XMLHttpRequest".equals(request
+            .getHeader("X-Requested-With")) || "apiLogin".equals(request
+            .getHeader("api-login"));
+
         LoginHistory loginHistory = new LoginHistory();
         loginHistory.setUsername(authentication.getName());
         loginHistory.setIp(ClientIpUtil.getIpAddress(request));
         loginHistory.setDevice(request.getHeader("User-Agent"));
         loginHistory.setRecordStatus(1);
+        loginHistory.setRemarks("isAjax:" + isAjax + ",redirectUrl:" + redirectUrl);
         loginHistoryService.asyncCreate(loginHistory);
 
         userAccountService.loginSuccess(authentication.getName());
 
-        boolean isAjax = "XMLHttpRequest".equals(request
-            .getHeader("X-Requested-With")) || "apiLogin".equals(request
-            .getHeader("api-login"));
 
         if (isAjax) {
             response.setHeader("Content-Type", "application/json;charset=UTF-8");

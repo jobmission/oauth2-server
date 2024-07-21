@@ -29,9 +29,9 @@ authorization_code, refresh_token
 ````
 #### 接口调用
 ````
-1. Get /oauth2/authorize?client_id=SampleClientId&response_type=code&redirect_uri=http://client.sso.com/login/oauth2/code/sso-login&scope=openid profile
-用户同意授权后服务端响应,浏览器重定向到：http://client.sso.com/login?code=1E37Xk，接收code,然后后端调用步骤2获取token
-2. Post /oauth/token?client_id=SampleClientId&client_secret=tgb.258&grant_type=authorization_code&redirect_uri=http://client.sso.com/login/oauth2/code/sso-login&code=1E37Xk
+1. Get /oauth2/authorize?client_id=SampleClientId&response_type=code&redirect_uri=http://localhost:10480/login/oauth2/code/sso-login&scope=openid profile
+用户同意授权后服务端响应,浏览器重定向到：http://localhost:10480/login?code=1E37Xk，接收code,然后后端调用步骤2获取token
+2. Post /oauth/token?client_id=SampleClientId&client_secret=tgb.258&grant_type=authorization_code&redirect_uri=http://localhost:10480/login/oauth2/code/sso-login&code=1E37Xk
 响应：
 {
     "access_token": "a.b.c",
@@ -69,6 +69,10 @@ java -jar oauth2-server-x.y.z.jar --spring.config.additional-location=/path/to/o
 ![client管理](https://raw.githubusercontent.com/jobmission/oauth2-server/master/src/test/resources/static/imgs/clients.png)
 
 
-#### 注意！！！当Server和Client在一台机器上时，请配置域名代理，避免cookie相互覆盖
+#### 注意！！！当Server和Client在一台机器上时，请配置域名代理，避免cookie相互覆盖，或者修改默认的session id
+````
+#修改默认的JSESSIONID为my_session_id
+server.servlet.session.cookie.name=oauth2_session_id
+````
 
 

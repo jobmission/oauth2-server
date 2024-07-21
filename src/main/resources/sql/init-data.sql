@@ -2,7 +2,7 @@ INSERT INTO oauth_client_entity (id, client_id, application_name, client_secret,
                                  scope, web_server_redirect_uri, access_token_validity, refresh_token_validity, remarks)
 VALUES (1, 'SampleClientId', 'SampleClientId 测试应用', '$2a$10$gcrWom7ubcRaVD1.6ZIrIeJP0mtPLH5J9V/.8Qth59lZ4B/5HMq96',
         'authorization_code,refresh_token', 'openid,profile,message.read,message.write',
-        'http://client.sso.com/login/oauth2/code/sso-login', 7200, 2592000, '测试明文:tgb.258')
+        'http://localhost:10480/login/oauth2/code/sso-login,http://client.sso.com/login/oauth2/code/sso-login', 7200, 2592000, '测试明文:tgb.258')
         ON DUPLICATE KEY UPDATE version = version + 1;
 
 INSERT INTO scope_definition_entity (id, scope, definition)
