@@ -27,5 +27,9 @@ jobs:
         java-version: '17'
         distribution: 'temurin'
         cache: maven
+    - name: Start MySQL
+      run: |
+        sudo systemctl start mysql.service
+        mysql --host localhost --port 3306 -uroot -proot -e "CREATE DATABASE IF NOT EXISTS oauth2_server;create user 'user_dev'@'localhost' identified by 'pass_dev';grant all privileges on demo_01.* to 'user_dev'@'localhost'"
     - name: Build with Maven
-      run: mvn -B package --file pom.xml clean compile -DskipTests=true
+      run: mvn -B clean package --file pom.xml -DskipTests=true

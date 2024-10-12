@@ -7,10 +7,10 @@
 ##### 创建数据库SQL：数据库名、数据库用户名、数据库密码需要和application.properties中的一致
 ````
 CREATE DATABASE IF NOT EXISTS oauth2_server DEFAULT CHARSET utf8 COLLATE utf8_general_ci;
-create user 'oauth2_server'@'localhost' identified by 'password_dev';
-grant all privileges on oauth2_server.* to 'oauth2_server'@'localhost';
+create user 'pass_dev'@'localhost' identified by 'pass_dev';
+grant all privileges on oauth2_server.* to 'pass_dev'@'localhost';
 ````
-##### 初始化数据sql在src/main/resources/sql/init.sql, liquibase自动执行(首次执行需禁用)
+##### 初始化数据sql在src/main/resources/sql/init.sql
 
 #### RSA密钥生成，用于签名token，客户端、资源端本地验证token
 ````

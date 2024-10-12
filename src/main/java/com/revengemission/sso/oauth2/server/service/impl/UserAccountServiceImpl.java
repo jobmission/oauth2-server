@@ -23,6 +23,8 @@ import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
 import java.time.LocalDateTime;
+import java.util.ArrayList;
+import java.util.List;
 import java.util.Optional;
 
 @Service
@@ -74,7 +76,7 @@ public class UserAccountServiceImpl implements UserAccountService {
         }
         UserAccountEntity userAccountEntity = mapper.dtoToEntity(userAccount);
         userAccountEntity.getRoles().clear();
-        if (userAccount.getRoles() != null && userAccount.getRoles().size() > 0) {
+        if (userAccount.getRoles() != null && !userAccount.getRoles().isEmpty()) {
             userAccount.getRoles().forEach(e -> {
                 RoleEntity roleEntity = roleRepository.findByRoleName(e.getRoleName());
                 if (roleEntity != null) {
@@ -96,21 +98,59 @@ public class UserAccountServiceImpl implements UserAccountService {
     @Transactional(rollbackFor = Exception.class)
     public UserAccount updateById(UserAccount userAccount) throws EntityNotFoundException {
         Optional<UserAccountEntity> entityOptional = userAccountRepository.findById(Long.parseLong(userAccount.getId()));
-        UserAccountEntity e = entityOptional.orElseThrow(EntityNotFoundException::new);
+        UserAccountEntity entity = entityOptional.orElseThrow(EntityNotFoundException::new);
         if (StringUtils.isNotEmpty(userAccount.getPassword())) {
-            e.setPassword(userAccount.getPassword());
+            entity.setPassword(userAccount.getPassword());
         }
-        e.setNickName(userAccount.getNickName());
-        e.setBirthday(userAccount.getBirthday());
-        e.setMobile(userAccount.getMobile());
-        e.setProvince(userAccount.getProvince());
-        e.setCity(userAccount.getCity());
-        e.setAddress(userAccount.getAddress());
-        e.setAvatarUrl(userAccount.getAvatarUrl());
-        e.setEmail(userAccount.getEmail());
+        if (userAccount.getRoles() != null && !userAccount.getRoles().isEmpty()) {
+            List<RoleEntity> roleEntityDBList = entity.getRoles();
 
-        userAccountRepository.save(e);
-        return mapper.entityToDto(e);
+            List<RoleEntity> roleEntityFinalList = new ArrayList<>();
+
+            // check if delete operation
+            for (RoleEntity role : roleEntityDBList) {
+                boolean findFlag = false;
+                for (int j = 0; j < userAccount.getRoles().size(); j++) {
+                    if (role.getRoleName().equals(userAccount.getRoles().get(j).getRoleName())) {
+                        findFlag = true;
+                        break;
+                    }
+                }
+                if (findFlag) {
+                    roleEntityFinalList.add(role);
+                }
+            }
+            // check if add operation
+            userAccount.getRoles().forEach(e -> {
+                boolean findFlag = false;
+                for (RoleEntity role : roleEntityFinalList) {
+                    if (role.getRoleName().equals(e.getRoleName())) {
+                        findFlag = true;
+                        break;
+                    }
+                }
+                if (!findFlag) {
+                    RoleEntity roleEntity = roleRepository.findByRoleName(e.getRoleName());
+                    if (roleEntity != null) {
+                        roleEntityFinalList.add(roleEntity);
+                    }
+                }
+            });
+            entity.setRoles(roleEntityFinalList);
+        } else {
+            entity.setRoles(null);
+        }
+        entity.setNickName(userAccount.getNickName());
+        entity.setBirthday(userAccount.getBirthday());
+        entity.setMobile(userAccount.getMobile());
+        entity.setProvince(userAccount.getProvince());
+        entity.setCity(userAccount.getCity());
+        entity.setAddress(userAccount.getAddress());
+        entity.setAvatarUrl(userAccount.getAvatarUrl());
+        entity.setEmail(userAccount.getEmail());
+
+        userAccountRepository.save(entity);
+        return mapper.entityToDto(entity);
     }
 
     @Override

@@ -6,7 +6,8 @@
     <title>用户管理</title>
     <link rel="stylesheet" href="../../static/assets/bootstrap/css/bootstrap.min.css"
           th:href="@{/assets/bootstrap/css/bootstrap.min.css}"/>
-    <link rel="stylesheet" type="text/css" media="screen" href="../../static/assets/bootstrap-table/bootstrap-table.min.css"
+    <link rel="stylesheet" type="text/css" media="screen"
+          href="../../static/assets/bootstrap-table/bootstrap-table.min.css"
           th:href="@{/assets/bootstrap-table/bootstrap-table.min.css}"/>
     <script src="../../static/assets/jquery.min.js"
             th:src="@{/assets/jquery.min.js}"></script>
@@ -67,6 +68,7 @@
                 <table id="table">
                 </table>
                 <br/>
+                <button type="button" class="btn btn-info" id="createNew">添加新纪录</button>
             </section>
             <section class="content">
                 <form class="d-none" id="detailsForm">
@@ -76,16 +78,37 @@
                     <div class="form-group row my-2">
                         <label for="nickName" class="col-2 control-label text-end">昵称</label>
                         <div class="col-6">
-                            <input type="text" class="form-control" id="nickName" placeholder="昵称" required="required"/>
+                            <input type="text" class="form-control" id="nickName" placeholder="昵称"
+                                   required="required"/>
+                        </div>
+                    </div>
+
+                    <div class="form-group row my-2">
+                        <label for="username" class="col-2 control-label text-end">用户名</label>
+                        <div class="col-6">
+                            <input type="text" class="form-control" id="username" placeholder="用户名"
+                                   required="required"/>
                         </div>
                     </div>
 
                     <div class="form-group row my-2">
                         <label for="password" class="col-2 control-label text-end">密码</label>
                         <div class="col-6">
-                            <input type="text" class="form-control" id="password" placeholder="密码"/>
+                            <input type="password" class="form-control" id="password" placeholder="密码"/>
                         </div>
                     </div>
+
+                    <div class="form-group row my-2">
+                        <label for="roles" class="col-2 control-label text-end">角色</label>
+                        <div class="col-6">
+                            <select class="form-control" id="roles" multiple="multiple" required="required">
+                                <option value="ROLE_USER">ROLE_USER</option>
+                                <option value="ROLE_OPERATOR">ROLE_OPERATOR</option>
+                                <option value="ROLE_SUPER">ROLE_SUPER</option>
+                            </select>
+                        </div>
+                    </div>
+
                     <div class="form-group row my-2">
                         <label for="address" class="col-2 control-label text-end">地址</label>
                         <div class="col-6">
@@ -157,8 +180,8 @@
             let $table = $('#table');
             $table.bootstrapTable({
                 url: '/management/user/list',
-                dataField:'rows',
-                uniqueId:'id',
+                dataField: 'rows',
+                uniqueId: 'id',
                 toolbar: '#toolbar',
                 clickEdit: true,
                 showToggle: true,
@@ -166,8 +189,7 @@
                 showColumns: true,
                 showPaginationSwitch: true,     //显示切换分页按钮
                 showRefresh: true,      //显示刷新按钮
-                showPaginationSwitch: false,
-                sidePagination:'server',
+                sidePagination: 'server',
                 //clickToSelect: true,  //点击row选中radio或CheckBox
                 columns: [{
                     checkbox: true
@@ -183,25 +205,25 @@
                     field: 'roles',
                     title: 'roles',
                     sortable: false,
-                    formatter: function (value, row, index){
-                        var result = "";
-                        for (var j = 0; j < value.length; j++) {
-                            result = result + value[j].roleName + "\n";
+                    formatter: function (value, row, index) {
+                        let roleArray = [];
+                        for (let j = 0; j < value.length; j++) {
+                            roleArray.push(value[j].roleName);
                         }
-                        return result;
+                        return roleArray.join(",");
                     }
                 }, {
                     field: 'nickName',
                     title: 'nickName',
                     sortable: false
-                },{
+                }, {
                     field: 'dateCreated',
                     title: 'dateCreated',
                     sortable: true
                 }, {
                     field: '',
                     title: '操作',
-                    formatter: function (value, row, index){
+                    formatter: function (value, row, index) {
                         var btnString = "";
                         if (row.recordStatus < 0) {
                             btnString = "<button class='btn btn-secondary btn-sm btn-status' data-user-id='" + row.id + "' data-record-status='" + row.recordStatus + "'>启用</button>";
@@ -212,14 +234,27 @@
                         return btnString;
                     }
                 }],
-                onLoadError:function(status, jqXHR) {
+                onLoadError: function (status, jqXHR) {
                     Swal.fire({
-                      icon: 'error',
-                      title: status,
-                      text: 'Something went wrong!',
-                      timer: 1500
+                        icon: 'error',
+                        title: status,
+                        text: 'Something went wrong!',
+                        timer: 1500
                     })
                 }
+            });
+
+
+            $("#createNew").click(function () {
+                $("#id").val(0);
+                $("#nickName").val("");
+                $("#address").val("");
+                $("#username").val('');
+                $("#password").val('');
+                $("#roles").val('');
+                $("#detailsForm").removeClass("d-none");
+                $("#message").removeClass("bg-danger").html("");
+                $("#message").removeClass("bg-success").html("");
             });
 
 
@@ -231,7 +266,13 @@
                     $("#id").val(data.id);
                     $("#nickName").val(data.nickName);
                     $("#address").val(data.address);
+                    $("#username").val(data.username);
                     $("#password").val('');
+                    let roleArray = [];
+                    for (let j = 0; j < data.roles.length; j++) {
+                        roleArray.push(data.roles[j].roleName)
+                    }
+                    $('#roles').val(roleArray);
                     $("#message").removeClass("bg-danger").html("");
                     $("#message").removeClass("bg-success").html("");
                 });
@@ -240,6 +281,10 @@
 
             $("#detailsForm").on("submit", function (e) {
                 e.preventDefault();
+                let selectedValues = $("#roles").find('option:selected').map(function () {
+                    return $(this).val();
+                }).get();
+
                 $.ajax({
                     type: 'POST',
                     url: '/management/user/details',
@@ -247,7 +292,9 @@
                         id: $("#id").val(),
                         nickName: $("#nickName").val(),
                         address: $("#address").val(),
-                        password: $("#password").val()
+                        username: $("#username").val(),
+                        password: $("#password").val(),
+                        roles: selectedValues.join(",")
                     },
                     success: function (data) {
                         if (data.status == 1) {
@@ -262,7 +309,6 @@
                 });
                 return false;
             });
-
 
             $("#table").on("click", ".btn-status", function () {
                 var userId = $(this).data("user-id");

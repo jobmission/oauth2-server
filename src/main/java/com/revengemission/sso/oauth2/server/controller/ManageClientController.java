@@ -90,7 +90,7 @@ public class ManageClientController {
             oauthClientService.updateById(object);
             responseResult.setStatus(GlobalConstant.SUCCESS);
         } else {
-            if (StringUtils.isAnyEmpty(clientId, clientSecret, authorities, scope, authorizedGrantTypes, webServerRedirectUri)) {
+            if (StringUtils.isAnyEmpty(clientId, clientSecret, scope, authorizedGrantTypes, webServerRedirectUri)) {
                 responseResult.setStatus(GlobalConstant.ERROR);
             } else {
                 OauthClient object = new OauthClient();
