@@ -7,8 +7,8 @@
 ##### 创建数据库SQL：数据库名、数据库用户名、数据库密码需要和application.properties中的一致
 ````
 CREATE DATABASE IF NOT EXISTS oauth2_server DEFAULT CHARSET utf8 COLLATE utf8_general_ci;
-create user 'pass_dev'@'localhost' identified by 'pass_dev';
-grant all privileges on oauth2_server.* to 'pass_dev'@'localhost';
+create user 'user_dev'@'localhost' identified by 'pass_dev';
+grant all privileges on oauth2_server.* to 'user_dev'@'localhost';
 ````
 ##### 初始化数据sql在src/main/resources/sql/init.sql
 
