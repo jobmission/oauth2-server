@@ -1,5 +1,5 @@
 
-## SpringBoot 3.x oauth2 server
+## SpringBoot 3.3+ oauth2 server
 
 #### 创建数据库：持久层采用JPA框架，项目启动前必须先创建数据库，启动时数据表会自动创建
 
