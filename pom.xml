@@ -23,7 +23,7 @@
         <java.version>17</java.version>
         <org.mapstruct.version>1.6.3</org.mapstruct.version>
         <commons-text.version>1.13.1</commons-text.version>
-        <tianai-captcha.version>1.5.1</tianai-captcha.version>
+        <tianai-captcha.version>1.5.2</tianai-captcha.version>
     </properties>
 
     <dependencies>
