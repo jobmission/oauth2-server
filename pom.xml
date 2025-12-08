@@ -22,7 +22,7 @@
         <project.reporting.outputEncoding>UTF-8</project.reporting.outputEncoding>
         <java.version>17</java.version>
         <org.mapstruct.version>1.6.3</org.mapstruct.version>
-        <commons-text.version>1.14.0</commons-text.version>
+        <commons-text.version>1.15.0</commons-text.version>
         <tianai-captcha.version>1.5.2</tianai-captcha.version>
     </properties>
 
