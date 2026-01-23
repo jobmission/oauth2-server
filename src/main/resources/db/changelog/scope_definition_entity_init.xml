@@ -1,0 +1,15 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<databaseChangeLog xmlns="http://www.liquibase.org/xml/ns/dbchangelog"
+                   xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+                   xsi:schemaLocation="http://www.liquibase.org/xml/ns/dbchangelog http://www.liquibase.org/xml/ns/dbchangelog/dbchangelog-latest.xsd">
+    <changeSet id="scope_definition_entity_init" author="xyz">
+        <insert tableName="scope_definition_entity">
+            <column name="scope" value="openid"/>
+            <column name="definition" value="openid"/>
+        </insert>
+        <insert tableName="scope_definition_entity">
+            <column name="scope" value="profile"/>
+            <column name="definition" value="昵称、头像"/>
+        </insert>
+    </changeSet>
+</databaseChangeLog>

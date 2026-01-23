@@ -1,0 +1,23 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<databaseChangeLog xmlns="http://www.liquibase.org/xml/ns/dbchangelog"
+                   xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+                   xsi:schemaLocation="http://www.liquibase.org/xml/ns/dbchangelog http://www.liquibase.org/xml/ns/dbchangelog/dbchangelog-latest.xsd">
+    <changeSet id="user_account_role_entity_init" author="xyz">
+        <insert tableName="user_account_role_entity">
+            <column name="user_id" value="1"/>
+            <column name="role_id" value="1"/>
+        </insert>
+        <insert tableName="user_account_role_entity">
+            <column name="user_id" value="1"/>
+            <column name="role_id" value="3"/>
+        </insert>
+        <insert tableName="user_account_role_entity">
+            <column name="user_id" value="2"/>
+            <column name="role_id" value="2"/>
+        </insert>
+        <insert tableName="user_account_role_entity">
+            <column name="user_id" value="2"/>
+            <column name="role_id" value="3"/>
+        </insert>
+    </changeSet>
+</databaseChangeLog>

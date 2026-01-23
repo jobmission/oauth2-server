@@ -1,0 +1,19 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<databaseChangeLog xmlns="http://www.liquibase.org/xml/ns/dbchangelog"
+                   xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+                   xsi:schemaLocation="http://www.liquibase.org/xml/ns/dbchangelog http://www.liquibase.org/xml/ns/dbchangelog/dbchangelog-latest.xsd">
+    <changeSet id="role_entity_init" author="xyz">
+        <insert tableName="role_entity">
+            <column name="role_name" value="ROLE_SUPER"/>
+            <column name="role_description" value="超级管理员"/>
+        </insert>
+        <insert tableName="role_entity">
+            <column name="role_name" value="ROLE_USER"/>
+            <column name="role_description" value="普通用户"/>
+        </insert>
+        <insert tableName="role_entity">
+            <column name="role_name" value="ROLE_OPERATOR"/>
+            <column name="role_description" value="操作员"/>
+        </insert>
+    </changeSet>
+</databaseChangeLog>

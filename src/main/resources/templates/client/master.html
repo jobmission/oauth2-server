@@ -8,6 +8,8 @@
           th:href="@{/assets/bootstrap/css/bootstrap.min.css}"/>
     <link rel="stylesheet" type="text/css" media="screen" href="../../static/assets/bootstrap-table/bootstrap-table.min.css"
           th:href="@{/assets/bootstrap-table/bootstrap-table.min.css}"/>
+    <link rel="stylesheet" type="text/css" media="screen" href="../../static/assets/bootstrap-icons/bootstrap-icons.min.css"
+          th:href="@{/assets/bootstrap-icons/bootstrap-icons.min.css}"/>
     <script src="../../static/assets/jquery.min.js"
             th:src="@{/assets/jquery.min.js}"></script>
 </head>
@@ -78,7 +80,7 @@
                     <div class="form-group row my-2">
                         <label for="clientId" class="col-2 control-label text-end">clientId</label>
                         <div class="col-6">
-                            <input type="text" class="form-control" id="clientId" placeholder="clientId"
+                            <input type="text" class="form-control" id="clientId" placeholder="客户端 id"
                                    required="required"/>
                         </div>
                     </div>
@@ -86,15 +88,17 @@
                     <div class="form-group row my-2">
                         <label for="clientSecret" class="col-2 control-label text-end">clientSecret</label>
                         <div class="col-6">
-                            <input type="text" class="form-control" id="clientSecret" placeholder="clientSecret"
+                            <input type="text" class="form-control" id="clientSecret" placeholder="客户端 secret"
                                    required="required"/>
                         </div>
                     </div>
 
                     <div class="form-group row my-2">
-                        <label for="scope" class="col-2 control-label text-end">scope</label>
+                        <label for="clientAuthenticationMethods"
+                               class="col-2 control-label text-end">authenticationMethods</label>
                         <div class="col-6">
-                            <input type="text" class="form-control" id="scope" placeholder="scope" required="required"/>
+                            <input type="text" class="form-control" id="clientAuthenticationMethods"
+                                   placeholder="客户端鉴权方法" required="required"/>
                         </div>
                     </div>
                     <div class="form-group row my-2">
@@ -102,7 +106,13 @@
                                class="col-2 control-label text-end">grantTypes</label>
                         <div class="col-6">
                             <input type="text" class="form-control" id="authorizedGrantTypes"
-                                   placeholder="authorizedGrantTypes" required="required"/>
+                                   placeholder="客户端授权类型" required="required"/>
+                        </div>
+                    </div>
+                    <div class="form-group row my-2">
+                        <label for="scope" class="col-2 control-label text-end">scope</label>
+                        <div class="col-6">
+                            <input type="text" class="form-control" id="scope" placeholder="scope" required="required"/>
                         </div>
                     </div>
                     <div class="form-group row my-2">
@@ -110,13 +120,13 @@
                                class="col-2 control-label text-end">redirectUri</label>
                         <div class="col-6">
                             <input type="text" class="form-control" id="webServerRedirectUri"
-                                   placeholder="redirectUri" required="required"/>
+                                   placeholder="客户端回调地址" required="required"/>
                         </div>
                     </div>
                     <div class="form-group row my-2">
                         <label for="remarks" class="col-2 control-label text-end">remarks</label>
                         <div class="col-6">
-                            <input type="text" class="form-control" id="remarks" placeholder="remarks"/>
+                            <input type="text" class="form-control" id="remarks" placeholder="备注"/>
                         </div>
                     </div>
                     <div class="form-group row my-2">
@@ -203,27 +213,31 @@
                     sortable: false
                 }, {
                     field: 'clientId',
-                    title: 'clientId',
+                    title: '客户端id',
                     sortable: true
+                }, {
+                    field: 'clientAuthenticationMethods',
+                    title: '客户端鉴权方法',
+                    sortable: false
+                }, {
+                    field: 'authorizedGrantTypes',
+                    title: '授权类型',
+                    sortable: false
                 }, {
                     field: 'scope',
                     title: 'scope',
                     sortable: true
                 }, {
-                    field: 'authorizedGrantTypes',
-                    title: 'authorizedGrantTypes',
-                    sortable: false
-                }, {
                     field: 'webServerRedirectUri',
-                    title: 'webServerRedirectUri',
+                    title: '客户端回调地址',
                     sortable: false
                 }, {
                     field: 'remarks',
-                    title: 'remarks',
+                    title: '备注',
                     sortable: false
                 }, {
                     field: 'dateCreated',
-                    title: 'dateCreated',
+                    title: '创建时间',
                     sortable: false
                 }, {
                     field: '',
@@ -254,6 +268,7 @@
                 $("#id").val("0");
                 $("#clientId").val('');
                 $("#clientSecret").val('');
+                $("#clientAuthenticationMethods").val('none');
                 $("#scope").val("");
                 $("#authorizedGrantTypes").val("refresh_token,authorization_code");
                 $("#webServerRedirectUri").val("");
@@ -272,6 +287,7 @@
                     $("#clientId").val(data.clientId);
                     $("#clientSecret").val('');
                     $("#scope").val(data.scope);
+                    $("#clientAuthenticationMethods").val(data.clientAuthenticationMethods);
                     $("#authorizedGrantTypes").val(data.authorizedGrantTypes);
                     $("#webServerRedirectUri").val(data.webServerRedirectUri);
                     $("#remarks").val(data.remarks);
@@ -291,6 +307,7 @@
                         clientId: $("#clientId").val(),
                         clientSecret: $("#clientSecret").val(),
                         scope: $("#scope").val(),
+                        clientAuthenticationMethods: $("#clientAuthenticationMethods").val(),
                         authorizedGrantTypes: $("#authorizedGrantTypes").val(),
                         webServerRedirectUri: $("#webServerRedirectUri").val(),
                         remarks: $("#remarks").val()

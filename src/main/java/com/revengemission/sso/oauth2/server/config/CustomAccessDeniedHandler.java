@@ -1,8 +1,5 @@
 package com.revengemission.sso.oauth2.server.config;
 
-import com.fasterxml.jackson.core.JsonEncoding;
-import com.fasterxml.jackson.core.JsonGenerator;
-import com.fasterxml.jackson.databind.ObjectMapper;
 import com.revengemission.sso.oauth2.server.domain.GlobalConstant;
 import com.revengemission.sso.oauth2.server.domain.ResponseResult;
 import com.revengemission.sso.oauth2.server.utils.ClientIpUtil;
@@ -13,6 +10,9 @@ import org.springframework.http.converter.HttpMessageNotWritableException;
 import org.springframework.security.access.AccessDeniedException;
 import org.springframework.security.web.access.AccessDeniedHandler;
 import org.springframework.stereotype.Component;
+import tools.jackson.core.JsonEncoding;
+import tools.jackson.core.JsonGenerator;
+import tools.jackson.databind.ObjectMapper;
 
 import java.io.IOException;
 
@@ -37,7 +37,7 @@ public class CustomAccessDeniedHandler implements AccessDeniedHandler {
                 responseMessage.setStatus(GlobalConstant.ERROR_DENIED);
                 responseMessage.setMessage(toUrl);
                 ObjectMapper objectMapper = new ObjectMapper();
-                JsonGenerator jsonGenerator = objectMapper.getFactory().createGenerator(response.getOutputStream(),
+                JsonGenerator jsonGenerator = objectMapper.createGenerator(response.getOutputStream(),
                     JsonEncoding.UTF8);
                 objectMapper.writeValue(jsonGenerator, responseMessage);
             } catch (Exception ex) {

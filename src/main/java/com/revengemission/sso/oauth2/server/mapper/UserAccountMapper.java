@@ -9,12 +9,13 @@ import org.mapstruct.ReportingPolicy;
 import org.mapstruct.factory.Mappers;
 
 @Mapper(unmappedTargetPolicy = ReportingPolicy.IGNORE, componentModel = MappingConstants.ComponentModel.SPRING)
-public interface UserAccountMapper {
+public interface UserAccountMapper extends BaseMapper {
     UserAccountMapper INSTANCE = Mappers.getMapper(UserAccountMapper.class);
 
     @Mapping(target = "username", source = "username")
     UserAccount entityToDto(UserAccountEntity entity);
 
     @Mapping(target = "username", source = "username")
+    @Mapping(source = "id", target = "id", qualifiedByName = "stringToLong")
     UserAccountEntity dtoToEntity(UserAccount dto);
 }

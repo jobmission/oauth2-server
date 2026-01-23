@@ -1,8 +1,8 @@
 package com.revengemission.sso.oauth2.server.config;
 
-import org.apache.commons.logging.Log;
-import org.apache.commons.logging.LogFactory;
 
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.springframework.security.authentication.AuthenticationProvider;
 import org.springframework.security.core.Authentication;
 import org.springframework.security.core.AuthenticationException;
@@ -19,14 +19,15 @@ import org.springframework.util.Assert;
 /**
  * @author Joe Grandja
  * @author Steve Riesenberg
- * @since 1.1
  * @see DeviceClientAuthenticationToken
  * @see DeviceClientAuthenticationConverter
  * @see OAuth2ClientAuthenticationFilter
+ * @since 1.1
  */
 public final class DeviceClientAuthenticationProvider implements AuthenticationProvider {
     private static final String ERROR_URI = "https://datatracker.ietf.org/doc/html/rfc6749#section-3.2.1";
-    private final Log logger = LogFactory.getLog(getClass());
+    private static final Logger logger = LoggerFactory.getLogger(DeviceClientAuthenticationProvider.class);
+
     private final RegisteredClientRepository registeredClientRepository;
 
     public DeviceClientAuthenticationProvider(RegisteredClientRepository registeredClientRepository) {

@@ -99,6 +99,7 @@ public class ManageUserController {
                 responseResult.setStatus(GlobalConstant.ERROR);
             } else {
                 UserAccount object = new UserAccount();
+                object.setId(null);
                 object.setUsername(username);
                 object.setPassword(passwordEncoder.encode(StringUtils.trim(password)));
                 object.setAddress(address);

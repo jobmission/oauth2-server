@@ -1,8 +1,5 @@
 package com.revengemission.sso.oauth2.server.config;
 
-import com.fasterxml.jackson.core.JsonEncoding;
-import com.fasterxml.jackson.core.JsonGenerator;
-import com.fasterxml.jackson.databind.ObjectMapper;
 import com.revengemission.sso.oauth2.server.domain.GlobalConstant;
 import com.revengemission.sso.oauth2.server.domain.LoginHistory;
 import com.revengemission.sso.oauth2.server.domain.ResponseResult;
@@ -23,8 +20,12 @@ import org.springframework.security.web.savedrequest.HttpSessionRequestCache;
 import org.springframework.security.web.savedrequest.RequestCache;
 import org.springframework.security.web.savedrequest.SavedRequest;
 import org.springframework.stereotype.Component;
+import tools.jackson.core.JsonEncoding;
+import tools.jackson.core.JsonGenerator;
+import tools.jackson.databind.ObjectMapper;
 
 import java.io.IOException;
+import java.util.Objects;
 
 @Component
 public class CustomAuthenticationSuccessHandler extends SavedRequestAwareAuthenticationSuccessHandler {
@@ -46,13 +47,15 @@ public class CustomAuthenticationSuccessHandler extends SavedRequestAwareAuthent
         if (savedRequest != null && StringUtils.isNotEmpty(savedRequest.getRedirectUrl())) {
             redirectUrl = savedRequest.getRedirectUrl();
         }
-
+        String clientId = savedRequest.getParameterValues("client_id") != null && savedRequest.getParameterValues("client_id").length > 0 ?
+            Objects.requireNonNull(savedRequest.getParameterValues("client_id"))[0] : "";
         boolean isAjax = "XMLHttpRequest".equals(request
             .getHeader("X-Requested-With")) || "apiLogin".equals(request
             .getHeader("api-login"));
 
         LoginHistory loginHistory = new LoginHistory();
         loginHistory.setUsername(authentication.getName());
+        loginHistory.setClientId(clientId);
         loginHistory.setIp(ClientIpUtil.getIpAddress(request));
         loginHistory.setDevice(request.getHeader("User-Agent"));
         loginHistory.setRecordStatus(1);
@@ -70,13 +73,10 @@ public class CustomAuthenticationSuccessHandler extends SavedRequestAwareAuthent
                 responseMessage.setStatus(GlobalConstant.SUCCESS);
                 responseMessage.setAdditional(redirectUrl);
                 ObjectMapper objectMapper = new ObjectMapper();
-                JsonGenerator jsonGenerator = objectMapper.getFactory().createGenerator(response.getOutputStream(),
+                JsonGenerator jsonGenerator = objectMapper.createGenerator(response.getOutputStream(),
                     JsonEncoding.UTF8);
                 objectMapper.writeValue(jsonGenerator, responseMessage);
             } catch (Exception ex) {
-                if (logger.isErrorEnabled()) {
-                    logger.error("Could not write JSON:", ex);
-                }
                 throw new HttpMessageNotWritableException("Could not write JSON: " + ex.getMessage(), ex);
             }
         } else {

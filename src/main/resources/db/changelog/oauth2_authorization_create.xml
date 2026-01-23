@@ -1,0 +1,56 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<databaseChangeLog xmlns="http://www.liquibase.org/xml/ns/dbchangelog"
+                   xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+                   xsi:schemaLocation="http://www.liquibase.org/xml/ns/dbchangelog http://www.liquibase.org/xml/ns/dbchangelog/dbchangelog-latest.xsd">
+    <changeSet id="oauth2_authorization_create" author="xyz">
+        <preConditions>
+            <not>
+                <tableExists tableName="oauth2_authorization"/>
+            </not>
+        </preConditions>
+        <createTable tableName="oauth2_authorization" remarks="oauth2_authorization">
+            <column name="id" type="varchar(255)" remarks="id">
+                <constraints primaryKey="true" nullable="false" primaryKeyName="pk_oauth2_authorization_id"/>
+            </column>
+            <column name="registered_client_id" type="varchar(50)">
+                <constraints nullable="false"/>
+            </column>
+            <column name="principal_name" type="varchar(255)">
+                <constraints nullable="false"/>
+            </column>
+            <column name="authorization_grant_type" type="varchar(255)">
+                <constraints nullable="false"/>
+            </column>
+            <column name="authorized_scopes" type="varchar(255)"/>
+            <column name="attributes" type="varchar(3000)"/>
+            <column name="state" type="varchar(255)"/>
+            <column name="authorization_code_value" type="varchar(255)"/>
+            <column name="authorization_code_issued_at" type="timestamp"/>
+            <column name="authorization_code_expires_at" type="timestamp"/>
+            <column name="authorization_code_metadata" type="varchar(255)"/>
+            <column name="access_token_value" type="varchar(1000)"/>
+            <column name="access_token_issued_at" type="timestamp"/>
+            <column name="access_token_expires_at" type="timestamp"/>
+            <column name="access_token_metadata" type="varchar(1000)"/>
+            <column name="access_token_type" type="varchar(255)"/>
+            <column name="access_token_scopes" type="varchar(255)"/>
+            <column name="refresh_token_value" type="varchar(1000)"/>
+            <column name="refresh_token_issued_at" type="timestamp"/>
+            <column name="refresh_token_expires_at" type="timestamp"/>
+            <column name="refresh_token_metadata" type="varchar(1000)"/>
+            <column name="oidc_id_token_value" type="varchar(1000)"/>
+            <column name="oidc_id_token_issued_at" type="timestamp"/>
+            <column name="oidc_id_token_expires_at" type="timestamp"/>
+            <column name="oidc_id_token_metadata" type="varchar(1000)"/>
+            <column name="oidc_id_token_claims" type="varchar(1000)"/>
+            <column name="user_code_value" type="varchar(1000)"/>
+            <column name="user_code_issued_at" type="timestamp"/>
+            <column name="user_code_expires_at" type="timestamp"/>
+            <column name="user_code_metadata" type="varchar(1000)"/>
+            <column name="device_code_value" type="varchar(1000)"/>
+            <column name="device_code_issued_at" type="timestamp"/>
+            <column name="device_code_expires_at" type="timestamp"/>
+            <column name="device_code_metadata" type="varchar(1000)"/>
+        </createTable>
+    </changeSet>
+</databaseChangeLog>

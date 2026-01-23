@@ -4,6 +4,7 @@ import jakarta.persistence.Column;
 import jakarta.persistence.Entity;
 import jakarta.persistence.Table;
 import jakarta.persistence.UniqueConstraint;
+import org.springframework.security.oauth2.core.ClientAuthenticationMethod;
 
 import java.time.LocalDateTime;
 
@@ -20,6 +21,7 @@ public class OauthClientEntity extends BaseEntity {
     private String resourceIds;
     @Column(nullable = false)
     private String clientSecret;
+    private String clientAuthenticationMethods;
     private String scope;
     @Column(nullable = false)
     private String authorizedGrantTypes;
@@ -65,6 +67,14 @@ public class OauthClientEntity extends BaseEntity {
 
     public void setClientSecret(String clientSecret) {
         this.clientSecret = clientSecret;
+    }
+
+    public String getClientAuthenticationMethods() {
+        return clientAuthenticationMethods;
+    }
+
+    public void setClientAuthenticationMethods(String clientAuthenticationMethods) {
+        this.clientAuthenticationMethods = clientAuthenticationMethods;
     }
 
     public String getScope() {

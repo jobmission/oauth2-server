@@ -1,0 +1,43 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<databaseChangeLog xmlns="http://www.liquibase.org/xml/ns/dbchangelog"
+                   xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+                   xsi:schemaLocation="http://www.liquibase.org/xml/ns/dbchangelog http://www.liquibase.org/xml/ns/dbchangelog/dbchangelog-latest.xsd">
+
+    <!-- 针对不同数据库类型的变量, ${timeDefaultValue}  -->
+    <property name="timeDefaultValue" value="now()" dbms="postgresql" global="true"/>
+    <property name="timeDefaultValue" value="now()" dbms="mysql,h2" global="true"/>
+    <property name="timeDefaultValue" value="CURRENT_TIMESTAMP" dbms="sqlite" global="true"/>
+    <property name="timeDefaultValue" value="getdate()" dbms="mssql" global="true"/>
+    <property name="timeDefaultValue" value="sysdate" dbms="oracle" global="true"/>
+
+    <property name="timestampForDBScheduler" value="timestamp with time zone" dbms="postgresql" global="true"/>
+    <property name="timestampForDBScheduler" value="timestamp(6)" dbms="mysql,mssql,sqlite" global="true"/>
+
+    <property name="blobForDBScheduler" value="bytea" dbms="postgresql" global="true"/>
+    <property name="blobForDBScheduler" value="blob" dbms="mysql,mssql,sqlite" global="true"/>
+
+    <property name="collate_ci" value="collate collation_case_insensitive" dbms="postgresql" global="true"/>
+    <property name="collate_ci" value="" dbms="!postgresql" global="true"/>
+
+    <property name="bigIntType" value="INTEGER" dbms="sqlite" global="true"/>
+    <property name="bigIntType" value="bigint" dbms="!sqlite" global="true"/>
+
+    <!-- After a while, not sure about the execution sequence, so don't use <includeAll/>.
+      <includeAll path="liquibase/changelog/" relativeToChangelogFile="false"/>
+    -->
+    <include file="role_entity_create.xml" relativeToChangelogFile="true"/>
+    <include file="role_entity_init.xml" relativeToChangelogFile="true"/>
+    <include file="user_account_entity_create.xml" relativeToChangelogFile="true"/>
+    <include file="user_account_entity_init.xml" relativeToChangelogFile="true"/>
+    <include file="user_account_role_entity_create.xml" relativeToChangelogFile="true"/>
+    <include file="user_account_role_entity_init.xml" relativeToChangelogFile="true"/>
+    <include file="login_history_entity_create.xml" relativeToChangelogFile="true"/>
+    <include file="scope_definition_entity_create.xml" relativeToChangelogFile="true"/>
+    <include file="scope_definition_entity_init.xml" relativeToChangelogFile="true"/>
+    <include file="oauth_client_entity_create.xml" relativeToChangelogFile="true"/>
+    <include file="oauth_client_entity_init.xml" relativeToChangelogFile="true"/>
+    <include file="oauth2_authorization_consent_create.xml" relativeToChangelogFile="true"/>
+    <include file="oauth2_authorization_create.xml" relativeToChangelogFile="true"/>
+    <include file="third_pargy_entity_create.xml" relativeToChangelogFile="true"/>
+    <include file="third_party_role_entity_create.xml" relativeToChangelogFile="true"/>
+</databaseChangeLog>

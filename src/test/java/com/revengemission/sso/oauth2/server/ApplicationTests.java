@@ -1,6 +1,5 @@
 package com.revengemission.sso.oauth2.server;
 
-import com.fasterxml.jackson.core.JsonProcessingException;
 import com.revengemission.sso.oauth2.server.persistence.entity.UserAccountEntity;
 import com.revengemission.sso.oauth2.server.persistence.repository.UserAccountRepository;
 import com.revengemission.sso.oauth2.server.utils.JsonUtil;
@@ -40,9 +39,10 @@ public class ApplicationTests {
 
     @Disabled
     @Test
-    public void insertUserAccount() throws JsonProcessingException {
+    public void insertUserAccount() {
+        RandomStringUtils randomStringUtils = RandomStringUtils.secure();
         UserAccountEntity userAccountEntity = new UserAccountEntity();
-        userAccountEntity.setUsername(RandomStringUtils.randomAlphabetic(10));
+        userAccountEntity.setUsername(randomStringUtils.nextAlphabetic(10));
         userAccountEntity.setPassword(passwordEncoder.encode("tgb.258"));
         userAccountEntity.setAccountOpenCode(UUID.randomUUID().toString());
         LocalDate date = LocalDate.of(1988, 6, 6);

@@ -17,6 +17,7 @@ public class OauthClient extends BaseDomain {
     private String applicationName;
     private String resourceIds;
     private String clientSecret;
+    private String clientAuthenticationMethods;
     private String scope;
     private String authorizedGrantTypes;
     private String webServerRedirectUri;

@@ -8,6 +8,7 @@ import com.revengemission.sso.oauth2.server.persistence.entity.LoginHistoryEntit
 import com.revengemission.sso.oauth2.server.persistence.repository.LoginHistoryRepository;
 import com.revengemission.sso.oauth2.server.service.LoginHistoryService;
 import org.apache.commons.lang3.StringUtils;
+import org.apache.commons.lang3.Strings;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageRequest;
@@ -29,14 +30,15 @@ public class LoginHistoryServiceImpl implements LoginHistoryService {
     public JsonObjects<LoginHistory> listByUsername(String username, int pageNum, int pageSize, String sortField, String sortOrder) {
         JsonObjects<LoginHistory> jsonObjects = new JsonObjects<>();
         Sort sort;
-        if (StringUtils.equalsIgnoreCase(sortOrder, "asc")) {
+        if (Strings.CI.equals(sortOrder, "asc")) {
             sort = Sort.by(Sort.Direction.ASC, sortField);
         } else {
             sort = Sort.by(Sort.Direction.DESC, sortField);
         }
         Pageable pageable = PageRequest.of(pageNum - 1, pageSize, sort);
         Page<LoginHistoryEntity> page = loginHistoryRepository.findByUsername(username, pageable);
-        if (page.getContent() != null && page.getContent().size() > 0) {
+        page.getContent();
+        if (!page.getContent().isEmpty()) {
             jsonObjects.setTotal(page.getTotalElements());
             jsonObjects.setPages(page.getTotalPages());
             page.getContent().forEach(u -> jsonObjects.getRows().add(mapper.entityToDto(u)));

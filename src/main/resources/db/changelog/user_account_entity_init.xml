@@ -1,0 +1,23 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<databaseChangeLog xmlns="http://www.liquibase.org/xml/ns/dbchangelog"
+                   xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+                   xsi:schemaLocation="http://www.liquibase.org/xml/ns/dbchangelog http://www.liquibase.org/xml/ns/dbchangelog/dbchangelog-latest.xsd">
+    <changeSet id="user_account_entity_init" author="xyz">
+        <insert tableName="user_account_entity">
+            <column name="username" value="zhangsan"/>
+            <column name="password" value="$2a$10$gcrWom7ubcRaVD1.6ZIrIeJP0mtPLH5J9V/.8Qth59lZ4B/5HMq96"/>
+            <column name="account_open_code" value="11111111111111111111111"/>
+            <column name="nick_name" value="张三"/>
+            <column name="failure_count" value="0"/>
+            <column name="remarks" value="测试明文:tgb.258"/>
+        </insert>
+        <insert tableName="user_account_entity">
+            <column name="username" value="lisi"/>
+            <column name="password" value="$2a$10$gcrWom7ubcRaVD1.6ZIrIeJP0mtPLH5J9V/.8Qth59lZ4B/5HMq96"/>
+            <column name="account_open_code" value="11111111111111111111112"/>
+            <column name="nick_name" value="李四"/>
+            <column name="failure_count" value="0"/>
+            <column name="remarks" value="测试明文:tgb.258"/>
+        </insert>
+    </changeSet>
+</databaseChangeLog>

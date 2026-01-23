@@ -1,6 +1,5 @@
 package com.revengemission.sso.oauth2.server;
 
-import com.fasterxml.jackson.core.type.TypeReference;
 import com.revengemission.sso.oauth2.server.utils.JsonUtil;
 import org.junit.jupiter.api.Disabled;
 import org.junit.jupiter.api.Test;
@@ -15,6 +14,7 @@ import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.util.LinkedMultiValueMap;
 import org.springframework.util.MultiValueMap;
 import org.springframework.web.client.RestTemplate;
+import tools.jackson.core.type.TypeReference;
 
 import java.io.IOException;
 import java.util.Map;

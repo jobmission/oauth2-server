@@ -55,6 +55,7 @@ public class ManageClientController {
                                              @RequestParam(value = "clientSecret", required = false) String clientSecret,
                                              @RequestParam(value = "authorities", required = false) String authorities,
                                              @RequestParam(value = "scope", required = false) String scope,
+                                             @RequestParam(value = "clientAuthenticationMethods", required = false) String clientAuthenticationMethods,
                                              @RequestParam(value = "authorizedGrantTypes", required = false) String authorizedGrantTypes,
                                              @RequestParam(value = "webServerRedirectUri", required = false) String webServerRedirectUri,
                                              @RequestParam(value = "remarks", required = false) String remarks) {
@@ -81,6 +82,9 @@ public class ManageClientController {
             if (StringUtils.isNotEmpty(authorizedGrantTypes)) {
                 object.setAuthorizedGrantTypes(authorizedGrantTypes);
             }
+            if (StringUtils.isNotEmpty(clientAuthenticationMethods)) {
+                object.setClientAuthenticationMethods(clientAuthenticationMethods);
+            }
             if (StringUtils.isNotEmpty(webServerRedirectUri)) {
                 object.setWebServerRedirectUri(webServerRedirectUri);
             }
@@ -94,8 +98,10 @@ public class ManageClientController {
                 responseResult.setStatus(GlobalConstant.ERROR);
             } else {
                 OauthClient object = new OauthClient();
+                object.setId(null);
                 object.setClientId(clientId);
                 object.setClientSecret(passwordEncoder.encode(StringUtils.trim(clientSecret)));
+                object.setClientAuthenticationMethods(clientAuthenticationMethods);
                 object.setAuthorities(authorities);
                 object.setScope(scope);
                 object.setAuthorizedGrantTypes(authorizedGrantTypes);

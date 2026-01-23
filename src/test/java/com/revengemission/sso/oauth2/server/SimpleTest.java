@@ -1,6 +1,5 @@
 package com.revengemission.sso.oauth2.server;
 
-import com.fasterxml.jackson.core.JsonProcessingException;
 import com.revengemission.sso.oauth2.server.domain.UserAccount;
 import com.revengemission.sso.oauth2.server.utils.CheckPasswordStrength;
 import com.revengemission.sso.oauth2.server.utils.JsonUtil;
@@ -33,7 +32,7 @@ public class SimpleTest {
 
     @Test
     @Disabled
-    public void localDateTest() throws JsonProcessingException {
+    public void localDateTest() {
         LocalDateTime nowDateTime = LocalDateTime.now();
         UserAccount userAccount = new UserAccount();
         userAccount.setDateCreated(nowDateTime);

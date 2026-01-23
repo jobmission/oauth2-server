@@ -1,0 +1,50 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<databaseChangeLog xmlns="http://www.liquibase.org/xml/ns/dbchangelog"
+                   xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+                   xsi:schemaLocation="http://www.liquibase.org/xml/ns/dbchangelog http://www.liquibase.org/xml/ns/dbchangelog/dbchangelog-latest.xsd">
+    <changeSet id="user_account_entity_create" author="xyz">
+        <preConditions>
+            <not>
+                <tableExists tableName="user_account_entity"/>
+            </not>
+        </preConditions>
+        <createTable tableName="user_account_entity" remarks="user_account_entity">
+            <column name="id" type="BIGINT" remarks="id" autoIncrement="true">
+                <constraints primaryKey="true" nullable="false" primaryKeyName="pk_user_account_entity_id"/>
+            </column>
+            <column name="username" type="varchar(50)">
+                <constraints nullable="false"/>
+            </column>
+            <column name="password" type="varchar(255)">
+                <constraints nullable="false"/>
+            </column>
+            <column name="nick_name" type="varchar(255)"/>
+            <column name="email" type="varchar(255)"/>
+            <column name="mobile" type="varchar(255)"/>
+            <column name="avatar_url" type="varchar(255)"/>
+            <column name="gender" type="varchar(255)"/>
+            <column name="account_open_code" type="varchar(255)"/>
+            <column name="province" type="varchar(255)"/>
+            <column name="city" type="varchar(255)"/>
+            <column name="address" type="varchar(255)"/>
+            <column name="birthday" type="date"/>
+            <column name="failure_count" type="INT" defaultValue="0"/>
+            <column name="failure_time" type="date"/>
+            <column name="version" type="INT" defaultValueNumeric="0">
+                <constraints nullable="false"/>
+            </column>
+            <column name="record_status" type="int" defaultValue="0">
+                <constraints nullable="false"/>
+            </column>
+            <column name="sort_priority" type="int" defaultValue="0">
+                <constraints nullable="false"/>
+            </column>
+            <column name="date_created" type="datetime" remarks="创建时间" defaultValueComputed="${timeDefaultValue}"/>
+            <column name="last_modified" type="datetime" remarks="更新时间"/>
+            <column name="remarks" type="varchar(1000)" remarks="备注"/>
+        </createTable>
+        <createIndex indexName="uc_uae_username" tableName="user_account_entity" unique="true">
+            <column name="username"/>
+        </createIndex>
+    </changeSet>
+</databaseChangeLog>

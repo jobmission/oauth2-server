@@ -12,6 +12,7 @@ import com.revengemission.sso.oauth2.server.persistence.repository.UserAccountRe
 import com.revengemission.sso.oauth2.server.service.UserAccountService;
 import com.revengemission.sso.oauth2.server.utils.DateUtil;
 import org.apache.commons.lang3.StringUtils;
+import org.apache.commons.lang3.Strings;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.data.domain.Page;
@@ -46,7 +47,7 @@ public class UserAccountServiceImpl implements UserAccountService {
     public JsonObjects<UserAccount> listByUsername(String username, int pageNum, int pageSize, String sortField, String sortOrder) {
         JsonObjects<UserAccount> jsonObjects = new JsonObjects<>();
         Sort sort;
-        if (StringUtils.equalsIgnoreCase(sortOrder, "asc")) {
+        if (Strings.CI.equals(sortOrder, "asc")) {
             sort = Sort.by(Sort.Direction.ASC, sortField);
         } else {
             sort = Sort.by(Sort.Direction.DESC, sortField);
@@ -58,7 +59,8 @@ public class UserAccountServiceImpl implements UserAccountService {
         } else {
             page = userAccountRepository.findByUsernameLike(username + "%", pageable);
         }
-        if (page.getContent() != null && page.getContent().size() > 0) {
+        page.getContent();
+        if (!page.getContent().isEmpty()) {
             jsonObjects.setTotal(page.getTotalElements());
             jsonObjects.setPages(page.getTotalPages());
             page.getContent().forEach(u -> jsonObjects.getRows().add(mapper.entityToDto(u)));

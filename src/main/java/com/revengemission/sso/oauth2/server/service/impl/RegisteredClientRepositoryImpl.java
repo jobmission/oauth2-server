@@ -5,7 +5,6 @@ import com.revengemission.sso.oauth2.server.persistence.entity.OauthClientEntity
 import com.revengemission.sso.oauth2.server.persistence.repository.OauthClientRepository;
 import org.springframework.cache.Cache;
 import org.springframework.cache.CacheManager;
-import org.springframework.security.oauth2.client.registration.ClientRegistration;
 import org.springframework.security.oauth2.core.AuthorizationGrantType;
 import org.springframework.security.oauth2.core.ClientAuthenticationMethod;
 import org.springframework.security.oauth2.server.authorization.client.RegisteredClient;
@@ -15,7 +14,6 @@ import org.springframework.util.StringUtils;
 
 import java.time.Duration;
 import java.util.Arrays;
-import java.util.stream.Collectors;
 
 public class RegisteredClientRepositoryImpl implements RegisteredClientRepository {
 
@@ -38,8 +36,7 @@ public class RegisteredClientRepositoryImpl implements RegisteredClientRepositor
 
         OauthClientEntity oauthClientEntity = oauthClientRepository.findById(Long.parseLong(id)).orElse(null);
         if (oauthClientEntity != null) {
-            RegisteredClient registeredClient = convertOauthClientEntityToRegisteredClient(oauthClientEntity);
-            return registeredClient;
+            return convertOauthClientEntityToRegisteredClient(oauthClientEntity);
         } else {
             return null;
         }
@@ -71,19 +68,19 @@ public class RegisteredClientRepositoryImpl implements RegisteredClientRepositor
             .authorizationCodeTimeToLive(Duration.ofMinutes(5))
             .build();
 
-        RegisteredClient registeredClient = RegisteredClient
+        return RegisteredClient
             .withId(String.valueOf(oauthClientEntity.getId()))
             .clientId(oauthClientEntity.getClientId())
             .clientSecret(oauthClientEntity.getClientSecret())
+            .clientAuthenticationMethods(set -> set.addAll(StringUtils.commaDelimitedListToSet(oauthClientEntity.getClientAuthenticationMethods()).stream().map(ClientAuthenticationMethod::new).toList()))
             .clientName(oauthClientEntity.getApplicationName())
             .redirectUris(set -> set.addAll(StringUtils.commaDelimitedListToSet(oauthClientEntity.getResourceIds())))
-            .authorizationGrantTypes(set -> set.addAll(StringUtils.commaDelimitedListToSet(oauthClientEntity.getAuthorizedGrantTypes()).stream().map(s -> new AuthorizationGrantType(s)).collect(Collectors.toList())))
+            .authorizationGrantTypes(set -> set.addAll(StringUtils.commaDelimitedListToSet(oauthClientEntity.getAuthorizedGrantTypes()).stream().map(AuthorizationGrantType::new).toList()))
             .clientAuthenticationMethods(set -> set.addAll(Arrays.asList(ClientAuthenticationMethod.CLIENT_SECRET_BASIC, ClientAuthenticationMethod.CLIENT_SECRET_POST)))
             .scopes(set -> set.addAll(StringUtils.commaDelimitedListToSet(oauthClientEntity.getScope())))
             .redirectUris(set -> set.addAll(StringUtils.commaDelimitedListToSet(oauthClientEntity.getWebServerRedirectUri())))
             .tokenSettings(tokenSettings)
             .build();
-        return registeredClient;
     }
 
 }

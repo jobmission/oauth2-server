@@ -6,9 +6,10 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
-import org.springframework.security.authentication.AuthenticationProvider;
+import org.springframework.core.annotation.Order;
 import org.springframework.security.config.annotation.web.builders.HttpSecurity;
 import org.springframework.security.config.annotation.web.configuration.EnableWebSecurity;
+import org.springframework.security.config.annotation.web.configurers.AbstractHttpConfigurer;
 import org.springframework.security.core.session.SessionRegistry;
 import org.springframework.security.core.session.SessionRegistryImpl;
 import org.springframework.security.core.userdetails.UserDetailsService;
@@ -49,15 +50,17 @@ public class DefaultSecurityConfig {
         return new BCryptPasswordEncoder();
     }
 
+    @Order(2)
     @Bean
     SecurityFilterChain defaultSecurityFilterChain(HttpSecurity http) throws Exception {
         http
+            .securityMatcher("/management/**", "/assets/**", "/favicon.ico", "/signIn", "/signUp", "/security_check", "/404", "/captcha/**", "/.well-known/openid-configuration")
             .authorizeHttpRequests(requestMatcherRegistry ->
-                requestMatcherRegistry.requestMatchers("/assets/**", "/favicon.ico", "/signIn", "/signUp", "/security_check", "/404", "/captcha/**", "/oauth2/token", "/.well-known/**").permitAll()
+                requestMatcherRegistry.requestMatchers("/assets/**", "/favicon.ico", "/signIn", "/signUp", "/security_check", "/404", "/captcha/**", "/.well-known/openid-configuration").permitAll()
                     .requestMatchers("/management/**").hasAnyAuthority(RoleEnum.ROLE_SUPER.name())
                     .requestMatchers("/oauth2/signUp").permitAll()
                     .anyRequest().authenticated())
-            .csrf(csrfCustomizer -> csrfCustomizer.disable())
+            .csrf(AbstractHttpConfigurer::disable)
             .logout(logoutCustomizer ->
                 logoutCustomizer
                     .logoutUrl("/logout")
@@ -81,11 +84,6 @@ public class DefaultSecurityConfig {
     private AuthenticationSuccessHandler authenticationSuccessHandler() {
         return new FederatedIdentityAuthenticationSuccessHandler();
     }
-
-//    @Bean
-//    AuthenticationProvider authenticationProvider() {
-//        return new CustomAuthenticationProvider(userDetailsService, passwordEncoder(), captchaService, passwordCaptcha);
-//    }
 
     @Bean
     SessionRegistry sessionRegistry() {

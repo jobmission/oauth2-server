@@ -1,10 +1,8 @@
 package com.revengemission.sso.oauth2.server.config;
 
 import jakarta.servlet.http.HttpServletRequest;
-
-
+import org.jspecify.annotations.Nullable;
 import org.springframework.http.HttpMethod;
-import org.springframework.lang.Nullable;
 import org.springframework.security.core.Authentication;
 import org.springframework.security.oauth2.core.AuthorizationGrantType;
 import org.springframework.security.oauth2.core.ClientAuthenticationMethod;
@@ -12,8 +10,8 @@ import org.springframework.security.oauth2.core.OAuth2AuthenticationException;
 import org.springframework.security.oauth2.core.OAuth2ErrorCodes;
 import org.springframework.security.oauth2.core.endpoint.OAuth2ParameterNames;
 import org.springframework.security.web.authentication.AuthenticationConverter;
+import org.springframework.security.web.servlet.util.matcher.PathPatternRequestMatcher;
 import org.springframework.security.web.util.matcher.AndRequestMatcher;
-import org.springframework.security.web.util.matcher.AntPathRequestMatcher;
 import org.springframework.security.web.util.matcher.RequestMatcher;
 import org.springframework.util.StringUtils;
 
@@ -29,10 +27,9 @@ public final class DeviceClientAuthenticationConverter implements Authentication
     public DeviceClientAuthenticationConverter(String deviceAuthorizationEndpointUri) {
         RequestMatcher clientIdParameterMatcher = request ->
             request.getParameter(OAuth2ParameterNames.CLIENT_ID) != null;
-        this.deviceAuthorizationRequestMatcher = new AndRequestMatcher(
-            new AntPathRequestMatcher(
-                deviceAuthorizationEndpointUri, HttpMethod.POST.name()),
-            clientIdParameterMatcher);
+
+        this.deviceAuthorizationRequestMatcher = new AndRequestMatcher(PathPatternRequestMatcher.pathPattern(HttpMethod.POST, deviceAuthorizationEndpointUri), clientIdParameterMatcher);
+
         this.deviceAccessTokenRequestMatcher = request ->
             AuthorizationGrantType.DEVICE_CODE.getValue().equals(request.getParameter(OAuth2ParameterNames.GRANT_TYPE)) &&
                 request.getParameter(OAuth2ParameterNames.DEVICE_CODE) != null &&

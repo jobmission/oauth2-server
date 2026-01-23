@@ -1,0 +1,38 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<databaseChangeLog xmlns="http://www.liquibase.org/xml/ns/dbchangelog"
+                   xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+                   xsi:schemaLocation="http://www.liquibase.org/xml/ns/dbchangelog http://www.liquibase.org/xml/ns/dbchangelog/dbchangelog-latest.xsd">
+    <changeSet id="login_history_entity_create" author="xyz">
+        <preConditions>
+            <not>
+                <tableExists tableName="login_history_entity"/>
+            </not>
+        </preConditions>
+        <createTable tableName="login_history_entity" remarks="login_history_entity">
+            <column name="id" type="BIGINT" remarks="id" autoIncrement="true">
+                <constraints primaryKey="true" nullable="false" primaryKeyName="pk_login_history_entity_id"/>
+            </column>
+            <column name="username" type="varchar(50)">
+                <constraints nullable="false"/>
+            </column>
+            <column name="client_id" type="varchar(255)"/>
+            <column name="device" type="varchar(1000)"/>
+            <column name="ip" type="varchar(255)"/>
+            <column name="version" type="INT" defaultValueNumeric="0">
+                <constraints nullable="false"/>
+            </column>
+            <column name="record_status" type="int" defaultValue="0">
+                <constraints nullable="false"/>
+            </column>
+            <column name="sort_priority" type="int" defaultValue="0">
+                <constraints nullable="false"/>
+            </column>
+            <column name="date_created" type="datetime" remarks="创建时间" defaultValueComputed="${timeDefaultValue}"/>
+            <column name="last_modified" type="datetime" remarks="更新时间"/>
+            <column name="remarks" type="varchar(1000)" remarks="备注"/>
+        </createTable>
+        <createIndex indexName="index_lhe_username" tableName="login_history_entity" unique="false">
+            <column name="username"/>
+        </createIndex>
+    </changeSet>
+</databaseChangeLog>

@@ -9,6 +9,8 @@
     <link rel="stylesheet" type="text/css" media="screen"
           href="../../static/assets/bootstrap-table/bootstrap-table.min.css"
           th:href="@{/assets/bootstrap-table/bootstrap-table.min.css}"/>
+    <link rel="stylesheet" type="text/css" media="screen" href="../../static/assets/bootstrap-icons/bootstrap-icons.min.css"
+          th:href="@{/assets/bootstrap-icons/bootstrap-icons.min.css}"/>
     <script src="../../static/assets/jquery.min.js"
             th:src="@{/assets/jquery.min.js}"></script>
 </head>
@@ -199,11 +201,11 @@
                     sortable: false
                 }, {
                     field: 'username',
-                    title: 'username',
+                    title: '用户名',
                     sortable: true
                 }, {
                     field: 'roles',
-                    title: 'roles',
+                    title: '角色',
                     sortable: false,
                     formatter: function (value, row, index) {
                         let roleArray = [];
@@ -214,11 +216,11 @@
                     }
                 }, {
                     field: 'nickName',
-                    title: 'nickName',
+                    title: '昵称',
                     sortable: false
                 }, {
                     field: 'dateCreated',
-                    title: 'dateCreated',
+                    title: '创建时间',
                     sortable: true
                 }, {
                     field: '',
